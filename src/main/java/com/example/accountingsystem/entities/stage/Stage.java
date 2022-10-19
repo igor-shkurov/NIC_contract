@@ -1,4 +1,4 @@
-package com.example.accountingsystem.entities.step;
+package com.example.accountingsystem.entities.stage;
 
 import com.example.accountingsystem.entities.contract.Contract;
 
@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Entity
 @Table
-public class Step {
+public class Stage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
