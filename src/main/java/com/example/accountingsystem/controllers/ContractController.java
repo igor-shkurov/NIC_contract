@@ -2,9 +2,8 @@ package com.example.accountingsystem.controllers;
 
 import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.contract.ContractService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,4 +22,9 @@ public class ContractController {
         return contractService.getContracts();
     }
 
+    @PostMapping(path = "/contracts")
+    public List<Contract> addContract(@RequestBody Contract contract) {
+        contractService.addContract(contract);
+        return contractService.getContracts();
+    }
 }

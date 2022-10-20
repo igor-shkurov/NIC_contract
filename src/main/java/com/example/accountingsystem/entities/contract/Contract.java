@@ -30,6 +30,19 @@ public class Contract {
     @Column(columnDefinition = "numeric(18,2)")
     private float sum;
 
+    public Contract() {
+    }
+
+    public Contract(String name, ContractType contractType, Date approxBeginDate, Date approxEndDate, Date beginDate, Date endDate, float sum) {
+        this.name = name;
+        this.contractType = contractType;
+        this.approxBeginDate = approxBeginDate;
+        this.approxEndDate = approxEndDate;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+        this.sum = sum;
+    }
+
     public Long getId() {
         return id;
     }

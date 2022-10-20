@@ -1,6 +1,5 @@
 package com.example.accountingsystem.entities.counterparty;
 
-
 import javax.persistence.*;
 
 @Entity

@@ -18,4 +18,8 @@ public class ContractService {
     public List<Contract> getContracts() {
         return contractRepo.findAll();
     }
+
+    public void addContract(Contract contract) {
+        contractRepo.save(contract);
+    }
 }
