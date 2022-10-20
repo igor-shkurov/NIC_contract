@@ -1,6 +1,9 @@
 package com.example.accountingsystem.entities.user;
 
+import com.sun.tools.javac.util.List;
+import jdk.nashorn.internal.objects.Global;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -22,8 +25,13 @@ public class User implements UserDetails {
     private String password;
     @Column(columnDefinition = "datetime")
     private LocalDateTime expirationDate;
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Role> roles;
+
+    private enum Role { // @todo: Подумать как лучше можно хранить роли (или и так норм)
+        USER, ADMIN;
+    };
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public User() {
     }
@@ -68,37 +76,37 @@ public class User implements UserDetails {
     public void setExpirationDate(LocalDateTime expirationDate) {
         this.expirationDate = expirationDate;
     }
-
+    /* todo: Подумать как булевские методы должны работать (осмысленно)  */
     @Override
     public boolean isAccountNonExpired() {
-        return expirationDate.isBefore(LocalDateTime.now());
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return expirationDate.isBefore(LocalDateTime.now());
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return expirationDate.isBefore(LocalDateTime.now());
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return expirationDate.isBefore(LocalDateTime.now());
+        return true;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        return List.of(new SimpleGrantedAuthority("ROLE_" + getRole().toString()));
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

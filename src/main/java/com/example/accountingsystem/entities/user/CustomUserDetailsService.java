@@ -1,7 +1,5 @@
-package com.example.accountingsystem.configuration;
+package com.example.accountingsystem.entities.user;
 
-import com.example.accountingsystem.entities.user.User;
-import com.example.accountingsystem.entities.user.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,10 +10,10 @@ import java.util.Optional;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepo userRepo;
+    private final UserDetailsRepo userRepo;
 
     @Autowired
-    public CustomUserDetailsService(UserRepo userRepo) {
+    public CustomUserDetailsService(UserDetailsRepo userRepo) {
         this.userRepo = userRepo;
     }
 
