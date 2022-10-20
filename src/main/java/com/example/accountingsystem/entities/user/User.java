@@ -1,7 +1,6 @@
 package com.example.accountingsystem.entities.user;
 
 import com.sun.tools.javac.util.List;
-import jdk.nashorn.internal.objects.Global;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Set;
 
 @Entity
 @Table
@@ -26,7 +24,7 @@ public class User implements UserDetails {
     @Column(columnDefinition = "datetime")
     private LocalDateTime expirationDate;
 
-    private enum Role { // @todo: Подумать как лучше можно хранить роли (или и так норм)
+    public enum Role { // @todo: Подумать как лучше можно хранить роли (или и так норм)
         USER, ADMIN;
     };
 
