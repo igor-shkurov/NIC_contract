@@ -19,7 +19,7 @@ public class User implements UserDetails {
     private String FIO;
     @Column(columnDefinition = "varchar(20)")
     private String username;
-    @Column(columnDefinition = "varchar(20)")
+    @Column(columnDefinition = "varchar(255)")
     private String password;
     @Column(columnDefinition = "datetime")
     private LocalDateTime expirationDate;
