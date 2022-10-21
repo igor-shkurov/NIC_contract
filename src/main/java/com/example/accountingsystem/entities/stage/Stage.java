@@ -3,6 +3,7 @@ package com.example.accountingsystem.entities.stage;
 import com.example.accountingsystem.entities.contract.Contract;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -15,13 +16,13 @@ public class Stage {
     private String name;
 
     @Column(columnDefinition = "date")
-    private Date approxBeginDate;
+    private LocalDate approxBeginDate;
     @Column(columnDefinition = "date")
-    private Date approxEndDate;
+    private LocalDate approxEndDate;
     @Column(columnDefinition = "date")
-    private Date beginDate;
+    private LocalDate beginDate;
     @Column(columnDefinition = "date")
-    private Date endDate;
+    private LocalDate endDate;
 
     @Column(columnDefinition = "numeric(18,2)")
     private float debit;
@@ -47,35 +48,35 @@ public class Stage {
         this.name = name;
     }
 
-    public Date getApproxBeginDate() {
+    public LocalDate getApproxBeginDate() {
         return approxBeginDate;
     }
 
-    public void setApproxBeginDate(Date approxBeginDate) {
+    public void setApproxBeginDate(LocalDate approxBeginDate) {
         this.approxBeginDate = approxBeginDate;
     }
 
-    public Date getApproxEndDate() {
+    public LocalDate getApproxEndDate() {
         return approxEndDate;
     }
 
-    public void setApproxEndDate(Date approxEndDate) {
+    public void setApproxEndDate(LocalDate approxEndDate) {
         this.approxEndDate = approxEndDate;
     }
 
-    public Date getBeginDate() {
+    public LocalDate getBeginDate() {
         return beginDate;
     }
 
-    public void setBeginDate(Date beginDate) {
+    public void setBeginDate(LocalDate beginDate) {
         this.beginDate = beginDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
