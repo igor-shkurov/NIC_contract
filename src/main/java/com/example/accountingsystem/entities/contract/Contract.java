@@ -1,8 +1,10 @@
 package com.example.accountingsystem.entities.contract;
 
+import com.example.accountingsystem.entities.ContractType;
+import com.example.accountingsystem.entities.user.User;
+
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table
@@ -12,10 +14,6 @@ public class Contract {
     private Long id;
     @Column(columnDefinition = "varchar(30)")
     private String name;
-
-    public enum ContractType {  /* @todo: вынести enum из класса, чтобы избавиться от дупликата в CounterpartyContract */
-        PURCHASE, SUPPLY, WORK;
-    };
 
     @Enumerated(EnumType.STRING)
     private ContractType contractType;
@@ -27,6 +25,8 @@ public class Contract {
     private LocalDate beginDate;
     @Column(columnDefinition = "date")
     private LocalDate endDate;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private User associatedUser;
 
     @Column(columnDefinition = "numeric(18,2)")
     private float sum;

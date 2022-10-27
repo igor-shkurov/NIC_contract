@@ -1,5 +1,7 @@
-package com.example.accountingsystem.configuration;
+package com.example.accountingsystem.security;
 
+import com.example.accountingsystem.security.jwt.CustomAuthenticationFilter;
+import com.example.accountingsystem.security.jwt.CustomAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,8 +44,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/login", "/api/token/refresh").permitAll();
         http.authorizeRequests().antMatchers("/api/contracts", "api/users").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/contracts.xlsx").hasRole("ADMIN")
-                .anyRequest().authenticated();
+                                .antMatchers("/api/contracts.xlsx").hasRole("ADMIN")
+                                .anyRequest().authenticated();
         http.formLogin();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

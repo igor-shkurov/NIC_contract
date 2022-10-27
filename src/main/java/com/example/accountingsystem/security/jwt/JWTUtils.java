@@ -1,4 +1,4 @@
-package com.example.accountingsystem.configuration;
+package com.example.accountingsystem.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -11,6 +11,9 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 public class JWTUtils {
+    public static final int JWT_ACCESS_DURATION = 10 * 60 * 1000;
+    public static final int JWT_REFRESH_DURATION = 1000 * 60 * 1000;
+
     public static void writeTokensToJSON(HttpServletResponse response, String access_token, String refresh_token) throws IOException {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", access_token);

@@ -1,5 +1,6 @@
 package com.example.accountingsystem.entities.counterparty_contract;
 
+import com.example.accountingsystem.entities.ContractType;
 import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.counterparty.Counterparty;
 
@@ -14,10 +15,6 @@ public class CounterpartyContract {
     private Long id;
     @Column(columnDefinition = "varchar(30)")
     private String name;
-
-    public enum ContractType {  /* @todo: вынести enum из класса, чтобы избавиться от дупликата в Contract */
-        PURCHASE, SUPPLY, WORK;
-    };
 
     @Enumerated(EnumType.STRING)
     private ContractType contractType;

@@ -1,4 +1,4 @@
-package com.example.accountingsystem.configuration;
+package com.example.accountingsystem.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.example.accountingsystem.security.jwt.AlgorithmBuilder.algorithmInstance;
 import static java.util.Arrays.stream;
 
 @Slf4j
@@ -32,7 +33,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 try {
                     String token = authHeader.substring("Bearer ".length());
-                    Algorithm algorithm = AlgorithmBuilder.algorithmInstance;
+                    Algorithm algorithm = algorithmInstance;
                     JWTVerifier verifier = JWT.require(algorithm).build();
                     DecodedJWT decodedJWT = verifier.verify(token);
                     String username = decodedJWT.getSubject();

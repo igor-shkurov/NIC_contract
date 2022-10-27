@@ -1,4 +1,4 @@
-package com.example.accountingsystem.configuration;
+package com.example.accountingsystem.security.jwt;
 
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.annotation.Autowired;

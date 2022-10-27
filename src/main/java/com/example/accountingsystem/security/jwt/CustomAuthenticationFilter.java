@@ -1,4 +1,4 @@
-package com.example.accountingsystem.configuration;
+package com.example.accountingsystem.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -18,6 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import static com.example.accountingsystem.security.jwt.AlgorithmBuilder.algorithmInstance;
+import static com.example.accountingsystem.security.jwt.JWTUtils.JWT_ACCESS_DURATION;
+import static com.example.accountingsystem.security.jwt.JWTUtils.JWT_REFRESH_DURATION;
 
 @Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -39,16 +43,16 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
-        Algorithm algorithm = AlgorithmBuilder.algorithmInstance;
+        Algorithm algorithm = algorithmInstance;
         String access_token = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + JWT_ACCESS_DURATION))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
         String refresh_token = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + JWT_REFRESH_DURATION))
                 .withIssuer(request.getRequestURL().toString())
                 .sign(algorithm);
         JWTUtils.writeTokensToJSON(response, access_token, refresh_token);
