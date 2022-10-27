@@ -24,6 +24,15 @@ public class SystemConfiguration {
 //            administrator.setExpirationDate(LocalDateTime.MAX);
 
             userDetailsService.saveUser(administrator);
+
+            User user = new User();
+            user.setFIO("Pyatizbyantsev Ilya Andreevich");
+            user.setUsername("aboba");
+            user.setPassword(cryptPasswordEncoder.encode("snusik"));
+            user.setRole(User.Role.USER);
+//            administrator.setExpirationDate(LocalDateTime.MAX);
+
+            userDetailsService.saveUser(user);
         };
     }
 }

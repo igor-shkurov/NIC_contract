@@ -1,5 +1,6 @@
 package com.example.accountingsystem.entities.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserDetailsRepo userDetailsRepo;
 
@@ -18,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public boolean saveUser(User user) {
-         if (userDetailsRepo.findUserByUsername(user.getUsername()).isPresent()) {
+         if (userDetailsRepo.findUserByUsername(user.getUsername()) != null)   {
              return false;
          }
          else {
@@ -29,7 +31,26 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> opt = userDetailsRepo.findUserByUsername(username);
-        return opt.get(); // @todo: Сюда исключение или что-то еще
+        User user = userDetailsRepo.findUserByUsername(username);
+        if (user == null) {
+            log.error("User not found");
+            throw new UsernameNotFoundException("User not found in db");
+        }
+        else {
+            log.info("User found");
+        }
+        return user;
+    }
+
+    public User getUser(String username) {
+        User user = userDetailsRepo.findUserByUsername(username);
+        if (user == null) {
+            log.error("User not found");
+            throw new UsernameNotFoundException("User not found in db");
+        }
+        else {
+            log.info("User found");
+        }
+        return user;
     }
 }

@@ -1,6 +1,8 @@
 package com.example.accountingsystem.entities.user;
 
-import com.sun.tools.javac.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collection.*;
 
 @Entity
 @Table
@@ -97,7 +100,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + getRole().toString()));
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + getRole().toString()));
     }
 
     public Role getRole() {
