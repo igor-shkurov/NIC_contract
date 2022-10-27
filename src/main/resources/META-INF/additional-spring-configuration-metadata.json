@@ -3,7 +3,7 @@
     {
       "name": "jwt-secret",
       "type": "java.lang.String",
-      "description": "Secret word used to encode and decode jwt tokens."
+      "description": "Secret phrase for JWT tokens."
     }
   ]
 }

@@ -2,15 +2,19 @@ package com.example.accountingsystem.configuration;
 
 import com.example.accountingsystem.entities.user.CustomUserDetailsService;
 import com.example.accountingsystem.entities.user.User;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.time.LocalDateTime;
-
+@Slf4j
 @Configuration
 public class SystemConfiguration {
+    @Autowired
+    Environment env;
 
     @Bean
     CommandLineRunner commandLineRunner(CustomUserDetailsService userDetailsService) {
@@ -21,7 +25,6 @@ public class SystemConfiguration {
             BCryptPasswordEncoder cryptPasswordEncoder = new BCryptPasswordEncoder();
             administrator.setPassword(cryptPasswordEncoder.encode("root"));
             administrator.setRole(User.Role.ADMIN);
-//            administrator.setExpirationDate(LocalDateTime.MAX);
 
             userDetailsService.saveUser(administrator);
 
@@ -30,8 +33,6 @@ public class SystemConfiguration {
             user.setUsername("aboba");
             user.setPassword(cryptPasswordEncoder.encode("snusik"));
             user.setRole(User.Role.USER);
-//            administrator.setExpirationDate(LocalDateTime.MAX);
-
             userDetailsService.saveUser(user);
         };
     }
