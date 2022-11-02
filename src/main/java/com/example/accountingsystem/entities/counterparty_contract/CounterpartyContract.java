@@ -1,15 +1,17 @@
 package com.example.accountingsystem.entities.counterparty_contract;
 
 import com.example.accountingsystem.entities.ContractType;
+import com.example.accountingsystem.entities.ExportableContract;
 import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.counterparty.Counterparty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Table
-public class CounterpartyContract {
+public class CounterpartyContract implements ExportableContract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,10 +32,10 @@ public class CounterpartyContract {
     @Column(columnDefinition = "numeric(18,2)")
     private float sum;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Contract contract;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Counterparty counterparty;
 
     public Long getId() {
@@ -100,6 +102,7 @@ public class CounterpartyContract {
         this.sum = sum;
     }
 
+    @JsonIgnore
     public Contract getContract() {
         return contract;
     }
@@ -108,6 +111,7 @@ public class CounterpartyContract {
         this.contract = contract;
     }
 
+    @JsonIgnore
     public Counterparty getCounterparty() {
         return counterparty;
     }

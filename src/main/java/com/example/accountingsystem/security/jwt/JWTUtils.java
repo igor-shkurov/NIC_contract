@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 public class JWTUtils {
@@ -23,10 +23,17 @@ public class JWTUtils {
     }
 
     public static void writeExceptionToJSON(HttpServletResponse response, Exception exception) throws IOException {
-        response.setHeader("error", exception.getMessage());
-        response.setStatus(FORBIDDEN.value());
+        String errorMessage;
+        if (exception.getMessage() == null) {
+            errorMessage = "Token is not valid (unknown error)";
+        }
+        else {
+            errorMessage = exception.getMessage();
+        }
+        response.setHeader("Error", errorMessage);
+        response.setStatus(UNAUTHORIZED.value());
         Map<String, String> error = new HashMap<>();
-        error.put("error_message", exception.getMessage());
+        error.put("error_message", errorMessage);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), error);
     }

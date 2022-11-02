@@ -1,6 +1,7 @@
 package com.example.accountingsystem.entities.stage;
 
 import com.example.accountingsystem.entities.contract.Contract;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -96,6 +97,7 @@ public class Stage {
         this.credit = credit;
     }
 
+    @JsonIgnore
     public Contract getContract() {
         return contract;
     }
