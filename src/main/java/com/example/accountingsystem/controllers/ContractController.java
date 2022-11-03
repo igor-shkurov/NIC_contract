@@ -7,7 +7,7 @@ import com.example.accountingsystem.entities.stage.Stage;
 import com.example.accountingsystem.entities.stage.StageService;
 import com.example.accountingsystem.entities.user.CustomUserDetailsService;
 import com.example.accountingsystem.entities.user.User;
-import com.example.accountingsystem.utility.ContractExcelExporter;
+import com.example.accountingsystem.utility.ExcelExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,14 +22,16 @@ public class ContractController {
     private final StageService stageService;
     private final ContractService contractService;
     private final CustomUserDetailsService userService;
-    private final ContractExcelExporter contractExcelExporter;
+    private final ExcelExportService excelExportService;
 
     @Autowired
-    public ContractController(StageService stageService, ContractService contractService, CustomUserDetailsService userService, CounterpartyContractService counterpartyContractService, ContractExcelExporter contractExcelExporter) {
+    public ContractController(StageService stageService, ContractService contractService,
+                              CustomUserDetailsService userService, CounterpartyContractService counterpartyContractService,
+                              ExcelExportService excelExportService) {
         this.stageService = stageService;
         this.contractService = contractService;
         this.userService = userService;
-        this.contractExcelExporter = contractExcelExporter;
+        this.excelExportService = excelExportService;
     }
 
     @GetMapping(path = "/contracts")
@@ -46,9 +48,15 @@ public class ContractController {
 
     @GetMapping(path = "/contracts.xlsx")
     public void getFile(HttpServletResponse response) {
+//        response.setContentType("application/octet-stream");
+//        try {
+//            excelExportService.exportContracts(response);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         response.setContentType("application/octet-stream");
         try {
-            contractExcelExporter.export(response);
+            excelExportService.exportStagesByContractId(response, 1L);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,8 +67,9 @@ public class ContractController {
         return userService.getUsers();
     }
 
-    @GetMapping(path = "/stages/{id}")
-    public List<Stage> showCounterContracts(@PathVariable("id") String stageId) {
-        return stageService.getStagesByContractId(Long.parseLong(stageId));
+    @GetMapping(path = "/contracts/{id}")
+    public Contract showCounterContracts(@PathVariable("id") String contractId) {
+
+        return contractService.getContractById(Long.parseLong(contractId));
     }
 }

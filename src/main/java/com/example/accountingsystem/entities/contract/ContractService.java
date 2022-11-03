@@ -22,4 +22,6 @@ public class ContractService {
     public void addContract(Contract contract) {
         contractRepo.save(contract);
     }
+
+    public Contract getContractById(Long id) { return contractRepo.findById(id).get(); }
 }
