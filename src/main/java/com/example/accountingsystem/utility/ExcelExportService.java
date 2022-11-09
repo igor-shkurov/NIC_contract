@@ -21,8 +21,8 @@ import java.util.List;
 
 @Component
 public class ExcelExportService {
-    private final XSSFWorkbook book;
-    private final XSSFSheet sheet;
+    private XSSFWorkbook book;
+    private XSSFSheet sheet;
     private static int currentRow = 1;
 
     ContractService contractService;
@@ -34,8 +34,6 @@ public class ExcelExportService {
         this.contractService = contractService;
         this.counterpartyContractService = counterpartyContractService;
         this.stageService = stageService;
-        book = new XSSFWorkbook();
-        sheet = book.createSheet("Contracts");
     }
 
     public void writeHeaderRow(Class<?> cl) {
@@ -204,9 +202,13 @@ public class ExcelExportService {
     }
 
     public void exportContracts(HttpServletResponse response) throws IOException {
+        book = new XSSFWorkbook();
+        sheet = book.createSheet("Contracts");
+
         List<Contract> contracts = contractService.getContracts();
         writeHeaderRow(Contract.class);
         writeTableRowsForContracts(contracts);
+        currentRow = 1;
         autoSizeColumns();
 
         ServletOutputStream outputStream = response.getOutputStream();
@@ -216,9 +218,13 @@ public class ExcelExportService {
     }
 
     public void exportStagesByContractId(HttpServletResponse response, Long id) throws IOException {
+        book = new XSSFWorkbook();
+        sheet = book.createSheet("Stages");
+
         List<Stage> stages = stageService.getStagesByContractId(id);
         writeHeaderRow(Stage.class);
         writeTableRowsForStages(stages);
+        currentRow = 1;
         autoSizeColumns();
 
         ServletOutputStream outputStream = response.getOutputStream();

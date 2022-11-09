@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContractService {
@@ -23,5 +24,8 @@ public class ContractService {
         contractRepo.save(contract);
     }
 
-    public Contract getContractById(Long id) { return contractRepo.findById(id).get(); }
+    public Contract getContractById(Long id) {
+        Optional<Contract> opt = contractRepo.findById(id);
+        return opt.orElse(null);
+    }
 }

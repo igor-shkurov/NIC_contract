@@ -9,9 +9,11 @@ import com.example.accountingsystem.entities.user.CustomUserDetailsService;
 import com.example.accountingsystem.entities.user.User;
 import com.example.accountingsystem.utility.ExcelExportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -47,16 +49,33 @@ public class ContractController {
     }
 
     @GetMapping(path = "/contracts.xlsx")
-    public void getFile(HttpServletResponse response) {
-//        response.setContentType("application/octet-stream");
-//        try {
-//            excelExportService.exportContracts(response);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+    public void getContractsExcel(HttpServletResponse response) throws FileNotFoundException {
         response.setContentType("application/octet-stream");
+        response.addHeader("content-disposition", "attachment; filename=contracts.xlsx");
+        response.setHeader("Pragma", "public");
+        response.setHeader("Cache-Control", "no-store");
+        response.addHeader("Cache-Control", "max-age=0");
         try {
-            excelExportService.exportStagesByContractId(response, 1L);
+            excelExportService.exportContracts(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @GetMapping(path = "/stages{contractId}.xlsx")
+    public void getStagesExcel(HttpServletResponse response, @PathVariable String contractId) throws FileNotFoundException {
+        Long id = Long.parseLong(contractId);
+        if (contractService.getContractById(id) == null) {
+            throw new FileNotFoundException("Can not create a file for this contract: No contract with such id");
+        }
+
+        response.setContentType("application/octet-stream");
+        response.addHeader("content-disposition", "attachment; filename=stages[" + id + "].xlsx");
+        response.setHeader("Pragma", "public");
+        response.setHeader("Cache-Control", "no-store");
+        response.addHeader("Cache-Control", "max-age=0");
+        try {
+            excelExportService.exportStagesByContractId(response, id);
         } catch (IOException e) {
             e.printStackTrace();
         }
