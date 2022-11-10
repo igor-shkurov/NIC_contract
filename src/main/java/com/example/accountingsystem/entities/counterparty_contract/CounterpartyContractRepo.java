@@ -1,5 +1,6 @@
 package com.example.accountingsystem.entities.counterparty_contract;
 
+import com.example.accountingsystem.entities.contract.Contract;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,4 +14,6 @@ public interface CounterpartyContractRepo extends JpaRepository<CounterpartyCont
     @Query(value = "SELECT * FROM counterparty_contract cc WHERE cc.contract_id = :id",
             nativeQuery = true)
     List<CounterpartyContract> getCounterpartyContractsByContractId(@Param("id") Long id);
+
+    List<CounterpartyContract> findCounterpartyContractByContract(Contract contract) ;
 }

@@ -2,6 +2,7 @@ package com.example.accountingsystem.controllers;
 
 import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.contract.ContractService;
+import com.example.accountingsystem.entities.counterparty.CounterpartyService;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
 import com.example.accountingsystem.entities.stage.StageService;
 import com.example.accountingsystem.entities.user.CustomUserDetailsService;
@@ -23,15 +24,17 @@ public class ContractController {
     private final ContractService contractService;
     private final CustomUserDetailsService userService;
     private final ExcelExportService excelExportService;
+    private final CounterpartyService counterpartyService;
 
     @Autowired
     public ContractController(StageService stageService, ContractService contractService,
                               CustomUserDetailsService userService, CounterpartyContractService counterpartyContractService,
-                              ExcelExportService excelExportService) {
+                              ExcelExportService excelExportService, CounterpartyService counterpartyService) {
         this.stageService = stageService;
         this.contractService = contractService;
         this.userService = userService;
         this.excelExportService = excelExportService;
+        this.counterpartyService = counterpartyService;
     }
 
     @GetMapping(path = "/contracts")
@@ -81,7 +84,6 @@ public class ContractController {
 
     @GetMapping(path = "/contracts/{id}")
     public Contract showCounterContracts(@PathVariable("id") String contractId) {
-
         return contractService.getContractById(Long.parseLong(contractId));
     }
 }
