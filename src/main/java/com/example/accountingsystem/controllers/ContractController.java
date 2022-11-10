@@ -3,18 +3,15 @@ package com.example.accountingsystem.controllers;
 import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.contract.ContractService;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
-import com.example.accountingsystem.entities.stage.Stage;
 import com.example.accountingsystem.entities.stage.StageService;
 import com.example.accountingsystem.entities.user.CustomUserDetailsService;
 import com.example.accountingsystem.entities.user.User;
 import com.example.accountingsystem.utility.ExcelExportService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -50,15 +47,15 @@ public class ContractController {
     }
 
     @PostMapping(path = "/contracts.xlsx")
-    public void getContractsExcel(HttpServletResponse response, @RequestParam LocalDate beginDate,
-                                                                @RequestParam LocalDate endDate) {
+    public void getContractsExcel(HttpServletResponse response, @RequestParam String beginDate,
+                                                                @RequestParam String endDate) {
         response.setContentType("application/octet-stream");
         response.addHeader("content-disposition", "attachment; filename=contracts.xlsx");
         response.setHeader("Pragma", "public");
         response.setHeader("Cache-Control", "no-store");
         response.addHeader("Cache-Control", "max-age=0");
-        excelExportService.exportContracts(response, beginDate, endDate);
 
+        excelExportService.exportContractsByGivenPeriod(response, LocalDate.parse(beginDate), LocalDate.parse(endDate));
     }
 
     @GetMapping(path = "/stages{contractId}.xlsx")
@@ -73,11 +70,8 @@ public class ContractController {
         response.setHeader("Pragma", "public");
         response.setHeader("Cache-Control", "no-store");
         response.addHeader("Cache-Control", "max-age=0");
-        try {
-            excelExportService.exportStagesByContractId(response, id);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        excelExportService.exportStagesByContractId(response, id);
     }
 
     @GetMapping(path = "/users")

@@ -202,7 +202,7 @@ public class ExcelExportService {
         }
     }
 
-    public void exportContracts(HttpServletResponse response, LocalDate beginDate, LocalDate endDate) {
+    public void exportContractsByGivenPeriod(HttpServletResponse response, LocalDate beginDate, LocalDate endDate) {
         book = new XSSFWorkbook();
         sheet = book.createSheet("Contracts");
 
