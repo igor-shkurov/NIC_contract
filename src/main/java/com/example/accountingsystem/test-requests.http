@@ -1,0 +1,22 @@
+POST http://localhost:8080/api/contracts
+Content-Type: application/json
+
+{
+  "name":"contract3",
+  "contractType":1,
+  "approxBeginDate":"2022-10-20T09:12:29",
+  "approxEndDate":"2022-10-20T09:12:29",
+  "beginDate":"2022-10-20T09:12:29",
+  "endDate":"2022-10-20T09:12:29",
+  "sum":6000.0
+}
+
+###
+
+POST http://localhost:8080/api/contracts
+Content-Type: application/json
+
+{
+
+}
+

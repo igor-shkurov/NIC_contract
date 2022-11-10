@@ -1,34 +1,49 @@
 package com.example.accountingsystem.entities.contract;
 
+import com.example.accountingsystem.entities.ContractType;
+import com.example.accountingsystem.entities.ExportableContract;
+import com.example.accountingsystem.entities.user.User;
+
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table
-public class Contract {
+public class Contract implements ExportableContract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(columnDefinition = "varchar(30)")
     private String name;
 
-    public enum ContractType {  /* @todo: вынести enum из класса, чтобы избавиться от дупликата в CounterpartyContract */
-        PURCHASE, SUPPLY, WORK;
-    };
-
     @Enumerated(EnumType.STRING)
     private ContractType contractType;
     @Column(columnDefinition = "date")
-    private Date approxBeginDate;
+    private LocalDate approxBeginDate;
     @Column(columnDefinition = "date")
-    private Date approxEndDate;
+    private LocalDate approxEndDate;
     @Column(columnDefinition = "date")
-    private Date beginDate;
+    private LocalDate beginDate;
     @Column(columnDefinition = "date")
-    private Date endDate;
+    private LocalDate endDate;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private User associatedUser;
 
     @Column(columnDefinition = "numeric(18,2)")
     private float sum;
+
+    public Contract() {
+    }
+
+    public Contract(String name, ContractType contractType, LocalDate approxBeginDate, LocalDate approxEndDate, LocalDate beginDate, LocalDate endDate, float sum) {
+        this.name = name;
+        this.contractType = contractType;
+        this.approxBeginDate = approxBeginDate;
+        this.approxEndDate = approxEndDate;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+        this.sum = sum;
+    }
 
     public Long getId() {
         return id;
@@ -54,35 +69,35 @@ public class Contract {
         this.contractType = contractType;
     }
 
-    public Date getApproxBeginDate() {
+    public LocalDate getApproxBeginDate() {
         return approxBeginDate;
     }
 
-    public void setApproxBeginDate(Date approxBeginDate) {
+    public void setApproxBeginDate(LocalDate approxBeginDate) {
         this.approxBeginDate = approxBeginDate;
     }
 
-    public Date getApproxEndDate() {
+    public LocalDate getApproxEndDate() {
         return approxEndDate;
     }
 
-    public void setApproxEndDate(Date approxEndDate) {
+    public void setApproxEndDate(LocalDate approxEndDate) {
         this.approxEndDate = approxEndDate;
     }
 
-    public Date getBeginDate() {
+    public LocalDate getBeginDate() {
         return beginDate;
     }
 
-    public void setBeginDate(Date beginDate) {
+    public void setBeginDate(LocalDate beginDate) {
         this.beginDate = beginDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 

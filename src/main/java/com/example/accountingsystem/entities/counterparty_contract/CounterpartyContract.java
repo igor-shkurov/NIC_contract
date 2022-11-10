@@ -1,42 +1,41 @@
 package com.example.accountingsystem.entities.counterparty_contract;
 
+import com.example.accountingsystem.entities.ContractType;
+import com.example.accountingsystem.entities.ExportableContract;
 import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.counterparty.Counterparty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table
-public class CounterpartyContract {
+public class CounterpartyContract implements ExportableContract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(columnDefinition = "varchar(30)")
     private String name;
 
-    public enum ContractType {  /* @todo: вынести enum из класса, чтобы избавиться от дупликата в Contract */
-        PURCHASE, SUPPLY, WORK;
-    };
-
     @Enumerated(EnumType.STRING)
     private ContractType contractType;
     @Column(columnDefinition = "date")
-    private Date approxBeginDate;
+    private LocalDate approxBeginDate;
     @Column(columnDefinition = "date")
-    private Date approxEndDate;
+    private LocalDate approxEndDate;
     @Column(columnDefinition = "date")
-    private Date beginDate;
+    private LocalDate beginDate;
     @Column(columnDefinition = "date")
-    private Date endDate;
+    private LocalDate endDate;
 
     @Column(columnDefinition = "numeric(18,2)")
     private float sum;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Contract contract;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Counterparty counterparty;
 
     public Long getId() {
@@ -63,35 +62,35 @@ public class CounterpartyContract {
         this.contractType = contractType;
     }
 
-    public Date getApproxBeginDate() {
+    public LocalDate getApproxBeginDate() {
         return approxBeginDate;
     }
 
-    public void setApproxBeginDate(Date approxBeginDate) {
+    public void setApproxBeginDate(LocalDate approxBeginDate) {
         this.approxBeginDate = approxBeginDate;
     }
 
-    public Date getApproxEndDate() {
+    public LocalDate getApproxEndDate() {
         return approxEndDate;
     }
 
-    public void setApproxEndDate(Date approxEndDate) {
+    public void setApproxEndDate(LocalDate approxEndDate) {
         this.approxEndDate = approxEndDate;
     }
 
-    public Date getBeginDate() {
+    public LocalDate getBeginDate() {
         return beginDate;
     }
 
-    public void setBeginDate(Date beginDate) {
+    public void setBeginDate(LocalDate beginDate) {
         this.beginDate = beginDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -103,6 +102,7 @@ public class CounterpartyContract {
         this.sum = sum;
     }
 
+    @JsonIgnore
     public Contract getContract() {
         return contract;
     }
@@ -111,6 +111,7 @@ public class CounterpartyContract {
         this.contract = contract;
     }
 
+    @JsonIgnore
     public Counterparty getCounterparty() {
         return counterparty;
     }
