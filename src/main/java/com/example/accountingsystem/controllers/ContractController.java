@@ -42,7 +42,7 @@ public class ContractController {
         return contractService.getContracts();
     }
 
-    @PostMapping(path = "/contracts")
+    @PostMapping(path = "/contracts") //postman
     public List<Contract> addContract(@RequestBody Contract contract) {
         contractService.addContract(contract);
 
@@ -86,4 +86,6 @@ public class ContractController {
     public Contract showCounterContracts(@PathVariable("id") String contractId) {
         return contractService.getContractById(Long.parseLong(contractId));
     }
+
+
 }
