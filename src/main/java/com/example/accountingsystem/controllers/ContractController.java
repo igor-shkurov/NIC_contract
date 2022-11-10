@@ -83,8 +83,8 @@ public class ContractController {
     }
 
     @GetMapping(path = "/contracts/{id}")
-    public Contract showCounterContracts(@PathVariable("id") String contractId) {
-        return contractService.getContractById(Long.parseLong(contractId));
+    public int showCounterContracts(@PathVariable("id") String contractId) {
+        return 10;
     }
 
 
