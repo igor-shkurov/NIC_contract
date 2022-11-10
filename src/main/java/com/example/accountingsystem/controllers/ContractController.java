@@ -82,6 +82,10 @@ public class ContractController {
         return userService.getUsers();
     }
 
+    @GetMapping(path = "/contracts/{id}")
+    public Contract showCounterContracts(@PathVariable("id") String contractId) {
+        return contractService.getContractById(Long.parseLong(contractId));
+    }
 
 
 }
