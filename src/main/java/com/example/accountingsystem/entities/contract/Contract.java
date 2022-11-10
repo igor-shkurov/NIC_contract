@@ -3,7 +3,6 @@ package com.example.accountingsystem.entities.contract;
 import com.example.accountingsystem.entities.ContractType;
 import com.example.accountingsystem.entities.ExportableContract;
 import com.example.accountingsystem.entities.user.User;
-import org.aspectj.apache.bcel.classfile.Module;
 
 import javax.persistence.*;
 import java.time.LocalDate;

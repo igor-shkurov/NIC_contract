@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -48,18 +49,16 @@ public class ContractController {
         return contractService.getContracts();
     }
 
-    @GetMapping(path = "/contracts.xlsx")
-    public void getContractsExcel(HttpServletResponse response) throws FileNotFoundException {
+    @PostMapping(path = "/contracts.xlsx")
+    public void getContractsExcel(HttpServletResponse response, @RequestParam LocalDate beginDate,
+                                                                @RequestParam LocalDate endDate) {
         response.setContentType("application/octet-stream");
         response.addHeader("content-disposition", "attachment; filename=contracts.xlsx");
         response.setHeader("Pragma", "public");
         response.setHeader("Cache-Control", "no-store");
         response.addHeader("Cache-Control", "max-age=0");
-        try {
-            excelExportService.exportContracts(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        excelExportService.exportContracts(response, beginDate, endDate);
+
     }
 
     @GetMapping(path = "/stages{contractId}.xlsx")

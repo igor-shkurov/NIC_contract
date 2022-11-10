@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 
@@ -201,35 +202,40 @@ public class ExcelExportService {
         }
     }
 
-    public void exportContracts(HttpServletResponse response) throws IOException {
+    public void exportContracts(HttpServletResponse response, LocalDate beginDate, LocalDate endDate) {
         book = new XSSFWorkbook();
         sheet = book.createSheet("Contracts");
 
-        List<Contract> contracts = contractService.getContracts();
+        List<Contract> contracts = contractService.getContractsByGivenPeriod(beginDate, endDate);
         writeHeaderRow(Contract.class);
         writeTableRowsForContracts(contracts);
-        currentRow = 1;
-        autoSizeColumns();
 
-        ServletOutputStream outputStream = response.getOutputStream();
-        book.write(outputStream);
-        book.close();
-        outputStream.close();
+        exportBook(response);
     }
 
-    public void exportStagesByContractId(HttpServletResponse response, Long id) throws IOException {
+    public void exportStagesByContractId(HttpServletResponse response, Long id) {
         book = new XSSFWorkbook();
         sheet = book.createSheet("Stages");
 
         List<Stage> stages = stageService.getStagesByContractId(id);
         writeHeaderRow(Stage.class);
         writeTableRowsForStages(stages);
+
+        exportBook(response);
+    }
+
+    private void exportBook(HttpServletResponse response) {
         currentRow = 1;
         autoSizeColumns();
 
-        ServletOutputStream outputStream = response.getOutputStream();
-        book.write(outputStream);
-        book.close();
-        outputStream.close();
+        ServletOutputStream outputStream = null;
+        try {
+            outputStream = response.getOutputStream();
+            book.write(outputStream);
+            book.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
