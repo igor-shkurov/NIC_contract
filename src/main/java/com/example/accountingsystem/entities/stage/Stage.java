@@ -4,6 +4,7 @@ import com.example.accountingsystem.entities.contract.Contract;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -26,8 +27,10 @@ public class Stage {
     private LocalDate endDate;
 
     @Column(columnDefinition = "numeric(18,2)")
+    @PositiveOrZero(message = "debit should not be negative")
     private float debit;
     @Column(columnDefinition = "numeric(18,2)")
+    @PositiveOrZero(message = "credit should not be negative")
     private float credit;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

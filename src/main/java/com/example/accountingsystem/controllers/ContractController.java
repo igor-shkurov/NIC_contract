@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
@@ -43,7 +44,7 @@ public class ContractController {
     }
 
     @PostMapping(path = "/contracts") //postman
-    public List<Contract> addContract(@RequestBody Contract contract) {
+    public List<Contract> addContract(@RequestBody @Valid Contract contract) {
         contractService.addContract(contract);
 
         return contractService.getContracts();
@@ -51,7 +52,7 @@ public class ContractController {
 
     @PostMapping(path = "/contracts.xlsx")
     public void getContractsExcel(HttpServletResponse response, @RequestParam String beginDate,
-                                                                @RequestParam String endDate) {
+                                  @RequestParam String endDate) {
         response.setContentType("application/octet-stream");
         response.addHeader("content-disposition", "attachment; filename=contracts.xlsx");
         response.setHeader("Pragma", "public");

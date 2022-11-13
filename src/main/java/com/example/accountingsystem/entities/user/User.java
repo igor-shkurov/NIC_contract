@@ -3,14 +3,17 @@ package com.example.accountingsystem.entities.user;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collection.*;
 
 @Entity
 @Table
@@ -18,7 +21,10 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "FIO should not be empty")
     @Column(columnDefinition = "varchar(60)")
+    //только буквы?
     private String FIO;
     @Column(columnDefinition = "varchar(20)")
     private String username;
@@ -29,7 +35,7 @@ public class User implements UserDetails {
 
     public enum Role { // @todo: Подумать как лучше можно хранить роли (или и так норм)
         USER, ADMIN;
-    };
+    }
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -77,6 +83,7 @@ public class User implements UserDetails {
     public void setExpirationDate(LocalDateTime expirationDate) {
         this.expirationDate = expirationDate;
     }
+
     /* todo: Подумать как булевские методы должны работать (осмысленно)  */
     @Override
     public boolean isAccountNonExpired() {
