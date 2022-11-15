@@ -13,10 +13,12 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/api/contracts
+POST http://localhost:8080/api/contracts.xlsx
 Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoxNjY4MDgyMzYzfQ.DW-7lWfUXCaAp_92kA5mDCeWNghCEyLXSyBQZibPfCw
 
 {
-
+  "beginDate": "2022-11-18",
+  "endDate": "2022-11-22"
 }
 

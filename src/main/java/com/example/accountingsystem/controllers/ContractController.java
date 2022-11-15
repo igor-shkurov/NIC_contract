@@ -38,7 +38,8 @@ public class ContractController {
     }
 
     @GetMapping(path = "/contracts")
-    public List<Contract> showContracts() {
+    public List<Contract> showContracts(HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         return contractService.getContracts();
     }
 
