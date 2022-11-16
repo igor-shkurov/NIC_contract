@@ -2,11 +2,6 @@ package com.example.accountingsystem.controllers;
 
 import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.contract.ContractService;
-import com.example.accountingsystem.entities.counterparty.CounterpartyService;
-import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
-import com.example.accountingsystem.entities.stage.StageService;
-import com.example.accountingsystem.entities.user.CustomUserDetailsService;
-import com.example.accountingsystem.entities.user.User;
 import com.example.accountingsystem.utility.ExcelExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,21 +16,14 @@ import java.util.List;
 @RequestMapping("/api")
 public class ContractController {
 
-    private final StageService stageService;
     private final ContractService contractService;
-    private final CustomUserDetailsService userService;
     private final ExcelExportService excelExportService;
-    private final CounterpartyService counterpartyService;
+
 
     @Autowired
-    public ContractController(StageService stageService, ContractService contractService,
-                              CustomUserDetailsService userService, CounterpartyContractService counterpartyContractService,
-                              ExcelExportService excelExportService, CounterpartyService counterpartyService) {
-        this.stageService = stageService;
+    public ContractController(ContractService contractService, ExcelExportService excelExportService) {
         this.contractService = contractService;
-        this.userService = userService;
         this.excelExportService = excelExportService;
-        this.counterpartyService = counterpartyService;
     }
 
     @GetMapping(path = "/contracts")
@@ -78,13 +66,8 @@ public class ContractController {
         excelExportService.exportStagesByContractId(response, id);
     }
 
-    @GetMapping(path = "/users")
-    public List<User> showUsers() {
-        return userService.getUsers();
-    }
-
     @GetMapping(path = "/contracts/{id}")
-    public Contract showCounterContracts(@PathVariable("id") String contractId) {
+    public Contract showContractsById(@PathVariable("id") String contractId) {
         return contractService.getContractById(Long.parseLong(contractId));
     }
 

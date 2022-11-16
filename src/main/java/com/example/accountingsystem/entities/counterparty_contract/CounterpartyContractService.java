@@ -1,5 +1,6 @@
 package com.example.accountingsystem.entities.counterparty_contract;
 
+import com.example.accountingsystem.entities.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,4 +22,9 @@ public class CounterpartyContractService {
     public List<CounterpartyContract> getCounterpartyContractsByContractId(Long id) {
         return counterpartyContractRepo.getCounterpartyContractsByContractId(id);
     }
+
+    public void addCounterpartyContract(CounterpartyContract counterpartyContract) {
+        counterpartyContractRepo.save(counterpartyContract);
+    }
+
 }

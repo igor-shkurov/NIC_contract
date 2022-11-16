@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -23,9 +24,12 @@ public class User implements UserDetails {
     private Long id;
 
     @NotBlank(message = "FIO should not be empty")
+    @Size(max = 60,  message = "Name should not be more then 60 letters")
     @Column(columnDefinition = "varchar(60)")
     //только буквы?
     private String FIO;
+    @NotBlank(message = "FIO should not be empty")
+    @Size(max = 20,  message = "Login should not be more then 20 letters")
     @Column(columnDefinition = "varchar(20)")
     private String username;
     @Column(columnDefinition = "varchar(255)")

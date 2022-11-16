@@ -14,9 +14,9 @@ public class Counterparty {
     private String name;
     @Column(columnDefinition = "varchar(50)")
     private String address;
-    //число 10 цифр. Long?
+    //число 10 цифр. Long? Нет проверки на то, числа это или нет
     @Size(min = 10, max = 10, message = "INN should be a 10-digit number")
-    @Column(columnDefinition = "char(12)")
+    @Column(columnDefinition = "char(10)")
     private String inn;
 
     public Long getId() {

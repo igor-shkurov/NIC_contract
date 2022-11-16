@@ -24,7 +24,7 @@ public class Contract implements ExportableContract {
     // @FutureOrPresent НАЧАЛО ДОЛЖНО БЫТЬ ДО КОНЦА!
     private LocalDate approxBeginDate;
     @Column(columnDefinition = "date")
-    // @FutureOrPresent
+    //@FutureOrPresent
     private LocalDate approxEndDate;
     @Column(columnDefinition = "date")
     // @FutureOrPresent
