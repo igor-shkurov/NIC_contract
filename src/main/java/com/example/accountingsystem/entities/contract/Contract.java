@@ -5,6 +5,7 @@ import com.example.accountingsystem.entities.ExportableContract;
 import com.example.accountingsystem.entities.user.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Entity
@@ -18,18 +19,24 @@ public class Contract implements ExportableContract {
 
     @Enumerated(EnumType.STRING)
     private ContractType contractType;
+
     @Column(columnDefinition = "date")
+    // @FutureOrPresent НАЧАЛО ДОЛЖНО БЫТЬ ДО КОНЦА!
     private LocalDate approxBeginDate;
     @Column(columnDefinition = "date")
+    //@FutureOrPresent
     private LocalDate approxEndDate;
     @Column(columnDefinition = "date")
+    // @FutureOrPresent
     private LocalDate beginDate;
     @Column(columnDefinition = "date")
+    // @FutureOrPresent
     private LocalDate endDate;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private User associatedUser;
 
     @Column(columnDefinition = "numeric(18,2)")
+    @PositiveOrZero(message = "sum of contract should not be negative")
     private float sum;
 
     public Contract() {

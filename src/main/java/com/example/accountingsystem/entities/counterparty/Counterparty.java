@@ -1,6 +1,8 @@
 package com.example.accountingsystem.entities.counterparty;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table
@@ -12,7 +14,9 @@ public class Counterparty {
     private String name;
     @Column(columnDefinition = "varchar(50)")
     private String address;
-    @Column(columnDefinition = "char(12)")
+    //число 10 цифр. Long? Нет проверки на то, числа это или нет
+    @Size(min = 10, max = 10, message = "INN should be a 10-digit number")
+    @Column(columnDefinition = "char(10)")
     private String inn;
 
     public Long getId() {

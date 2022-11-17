@@ -7,6 +7,7 @@ import com.example.accountingsystem.entities.counterparty.Counterparty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 
 @Entity
@@ -30,6 +31,7 @@ public class CounterpartyContract implements ExportableContract {
     private LocalDate endDate;
 
     @Column(columnDefinition = "numeric(18,2)")
+    @PositiveOrZero(message = "sum of contract should not be negative")
     private float sum;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
