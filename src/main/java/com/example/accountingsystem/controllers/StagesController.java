@@ -45,6 +45,6 @@ public class StagesController {
         //нужно?
         stage.setContract(contractService.getContractById(Long.parseLong(contractId)));
         stageService.addStage(stage);
-        return stageService.getStages();
+        return stageService.getStagesByContractId(Long.parseLong(contractId));
     }
 }

@@ -37,6 +37,6 @@ public class CounterpartyContractsController {
         //нужно?
         counterpartyContract.setContract(contractService.getContractById(Long.parseLong(contractId)));
         counterpartyContractService.addCounterpartyContract(counterpartyContract);
-        return counterpartyContractService.getContracts();
+        return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(contractId));
     }
 }
