@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public boolean saveUser(User user) {
-         if (userDetailsRepo.findUserByUsername(user.getUsername()) != null)   {
+         if (userDetailsRepo.existsByUsername(user.getUsername()))   {
              return false;
          }
          else {
@@ -58,4 +58,5 @@ public class CustomUserDetailsService implements UserDetailsService {
     public List<User> getUsers() {
         return userDetailsRepo.findAll();
     }
+
 }
