@@ -1,5 +1,6 @@
 package com.example.accountingsystem.entities.user;
 
+import com.example.accountingsystem.entities.contract.ContractService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,26 +9,33 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserDetailsRepo userDetailsRepo;
+    private final ContractService contractService;
 
     @Autowired
-    public CustomUserDetailsService(UserDetailsRepo userRepo) {
+    public CustomUserDetailsService(UserDetailsRepo userRepo, ContractService contractService) {
         this.userDetailsRepo = userRepo;
+        this.contractService = contractService;
     }
 
     public boolean saveUser(User user) {
-         if (userDetailsRepo.existsByUsername(user.getUsername()))   {
-             return false;
-         }
-         else {
-             userDetailsRepo.save(user);
-             return true;
-         }
+        if (userDetailsRepo.existsByUsername(user.getUsername())) {
+            System.out.println("ПОЛЬЗОВАТЕЛЬ УЖЕ СУЩЕСТВУЕТ");
+            return false;
+        } else {
+            userDetailsRepo.save(user);
+            System.out.println("ПОЛЬЗОВАТЕЛЬ ЕЩЁ НЕ СУЩЕСТВУЕТ");
+            return true;
+        }
+    }
+
+
+    public boolean existUser(User user){
+        return userDetailsRepo.findUserByUsername(user.getUsername()).equals(user);
     }
 
     @Override
@@ -36,8 +44,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             log.error("User not found");
             throw new UsernameNotFoundException("User not found in db");
-        }
-        else {
+        } else {
             log.info("User found");
         }
         return user;
@@ -48,8 +55,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             log.error("User not found");
             throw new UsernameNotFoundException("User not found in db");
-        }
-        else {
+        } else {
             log.info("User found");
         }
         return user;
@@ -59,4 +65,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         return userDetailsRepo.findAll();
     }
 
+
+    public void deleteUser(Long id) {
+        //ПРОБЛЕМА С УДАЛЕНИЕМ СВЯЗАННЫХ КОНТРАКТОВ!
+
+        contractService.deleteContractsByUserId(id);
+        if (userDetailsRepo.existsById(id))
+            userDetailsRepo.deleteById(id);
+    }
 }

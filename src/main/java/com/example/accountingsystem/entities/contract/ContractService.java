@@ -34,4 +34,27 @@ public class ContractService {
         Optional<Contract> opt = contractRepo.findById(id);
         return opt.orElse(null);
     }
+
+    public List<Contract> getContractsByUserId(Long id) {
+        return contractRepo.getContractsByUserId(id);
+    }
+
+    public void deleteById(Long id) {
+        contractRepo.deleteById(id);
+    }
+
+    //проблемы с удалением связаннных контрактов
+    public void deleteContractsByUserId(Long userId) {
+        List<Contract> userContracts = getContractsByUserId(userId);
+
+        for (Contract contract : userContracts) {
+            deleteById(contract.getId());
+
+        }
+    }
+
+    //не проверяет корректность. Если пользователя, который привязан к контракту нет, то создаёт этого пользователя
+    public void saveContract(Contract contract) {
+        contractRepo.save(contract);
+    }
 }
