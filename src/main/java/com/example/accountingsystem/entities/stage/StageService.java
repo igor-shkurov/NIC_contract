@@ -1,8 +1,5 @@
 package com.example.accountingsystem.entities.stage;
 
-import com.example.accountingsystem.entities.contract.Contract;
-import com.example.accountingsystem.entities.stage.Stage;
-import com.example.accountingsystem.entities.stage.StageRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +24,22 @@ public class StageService {
 
     public void addStage(Stage stage) {
         stageRepo.save(stage);
+    }
+
+    public void deleteById(Long id) {
+        stageRepo.deleteById(id);
+    }
+
+    public List<Stage> getStageByContractId(Long id) {
+        return stageRepo.getStagesByContractId(id);
+    }
+
+    public void deleteCounterpartyContractByContractId(Long contractId) {
+        List<Stage> contractStages = getStageByContractId(contractId);
+
+        for (Stage stage : contractStages) {
+            deleteById(stage.getId());
+        }
     }
 
 }

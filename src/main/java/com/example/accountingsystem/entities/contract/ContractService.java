@@ -1,5 +1,7 @@
 package com.example.accountingsystem.entities.contract;
 
+import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
+import com.example.accountingsystem.entities.stage.StageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +14,14 @@ import java.util.Optional;
 public class ContractService {
 
     private final ContractRepo contractRepo;
+    private final StageService stageService;
+    private final CounterpartyContractService counterpartyContractService;
 
     @Autowired
-    public ContractService(ContractRepo contractRepo) {
+    public ContractService(ContractRepo contractRepo, StageService stageService, CounterpartyContractService counterpartyContractService) {
         this.contractRepo = contractRepo;
+        this.stageService = stageService;
+        this.counterpartyContractService = counterpartyContractService;
     }
 
     public List<Contract> getContracts() {
@@ -40,10 +46,12 @@ public class ContractService {
     }
 
     public void deleteById(Long id) {
+        counterpartyContractService.deleteCounterpartyContractByContractId(id);
+        stageService.getStageByContractId(id);
         contractRepo.deleteById(id);
     }
 
-    //проблемы с удалением связаннных контрактов
+    //возможны проблемы с удалением связаннных контрактов
     public void deleteContractsByUserId(Long userId) {
         List<Contract> userContracts = getContractsByUserId(userId);
 

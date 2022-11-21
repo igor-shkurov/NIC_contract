@@ -20,7 +20,7 @@ public class SystemConfiguration {
     CommandLineRunner commandLineRunner(CustomUserDetailsService userDetailsService, ContractService contractService) {
         return args -> {
             BCryptPasswordEncoder cryptPasswordEncoder = new BCryptPasswordEncoder();
-            for (int i = 10; i < 15; i++) {
+            for (int i = 10; i < 18; i++) {
 
                 userDetailsService.deleteUser(Integer.toUnsignedLong(i));
             }
@@ -38,14 +38,22 @@ public class SystemConfiguration {
             user.setUsername("aboba");
             user.setPassword(cryptPasswordEncoder.encode("snusik"));
             user.setRole(User.Role.USER);
-             userDetailsService.saveUser(user);
+            userDetailsService.saveUser(user);
+
+
+            User user1 = new User();
+            user1.setFIO("Pyatizbyantsev Ilya Andreevich");
+            user1.setUsername("aboba2");
+            user1.setPassword(cryptPasswordEncoder.encode("snusik"));
+            user1.setRole(User.Role.USER);
+            userDetailsService.saveUser(user1);
 
             Contract contract = new Contract("String name", ContractType.WORK, LocalDate.parse("2022-10-10"), LocalDate.parse("2022-10-10"),
                     LocalDate.parse("2022-10-10"), LocalDate.parse("2022-10-10"), 200L);
 
-            contract.setAssociatedUser(user);
+            contract.setAssociatedUser(user1);
             contract.setId(10L);
-            //contractService.saveContract(contract);
+           // contractService.saveContract(contract);
         };
     }
 }
