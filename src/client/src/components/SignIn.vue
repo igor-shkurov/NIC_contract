@@ -66,7 +66,7 @@ export default {
     },
     async signIn() {
       try {
-        let res = await fetch('https://jsonplaceholder.typicode.com/users', {
+        let res = await fetch('https://jsonplaceholder.typicode.com/users'/*, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -76,7 +76,7 @@ export default {
             login: this.form.login,
             password: this.form.password
           })
-        })
+        }*/)
         if(res.ok){
           console.log('???-request with the check of the user...')
           console.log('Авторизация прошла успешно')

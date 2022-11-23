@@ -11,7 +11,8 @@ export default new Vuex.Store({
         contractsCounterparty: [],
         users: [],
         firstReport: [],
-        secondReport: []
+        secondReport: [],
+        cardHeader: []
     },
     getters: {
         getContracts(state) {
@@ -34,6 +35,9 @@ export default new Vuex.Store({
         },
         getSecondReport(state) {
             return state.secondReport
+        },
+        getCardHeader(state) {
+            return state.cardHeader
         }
     },
     mutations: {
@@ -57,9 +61,33 @@ export default new Vuex.Store({
         },
         SET_SECOND_REPORT(state, payload) {
             state.secondReport = payload
+        },
+        SET_CARD_HEADER(state, payload) {
+            state.cardHeader = payload
         }
     },
     actions: {
+        loadCardHeader({ commit }, mode) {
+            let text = null
+            switch (mode){
+                case 'contracts':
+                    text = 'договора'
+                    break
+                case 'counterparties':
+                    text = 'контрагента'
+                    break
+                case 'stages':
+                    text = 'этапа'
+                    break
+                case 'contractsCounterparty':
+                    text = 'договора с контрагентом'
+                    break
+                case 'users':
+                    text = 'пользователя'
+                    break
+            }
+            commit("SET_CARD_HEADER", text)
+        },
         async loadContracts({commit}) {
             try {
                 let response = await fetch(`http://localhost:8080/api/contracts`)
@@ -76,7 +104,7 @@ export default new Vuex.Store({
         },
         async loadStages({commit}, id) {
             try {
-                let response = await fetch(`https://jsonplaceholder.typicode.com/users`) //let response = await fetch(`https://jsonplaceholder.typicode.com/stages/${id}`)
+                let response = await fetch(`http://localhost:8080/api/contracts`) //let response = await fetch(`https://jsonplaceholder.typicode.com/stages/${id}`)
                 if(response.ok) {
                     const stages = await response.json();
                     commit("SET_STAGES", stages)
@@ -90,7 +118,7 @@ export default new Vuex.Store({
         },
         async loadContractsCounterparty({commit}, id) {
             try {
-                let response = await fetch(`https://jsonplaceholder.typicode.com/users`) //let response = await fetch(`https://jsonplaceholder.typicode.com/contracts_counterparty/${id}`)
+                let response = await fetch(`http://localhost:8080/api/contracts`) //let response = await fetch(`https://jsonplaceholder.typicode.com/contracts_counterparty/${id}`)
                 if(response.ok) {
                     const contractsCounterparty = await response.json();
                     commit("SET_CONTRACTS_COUNTERPARTY", contractsCounterparty)
@@ -104,7 +132,7 @@ export default new Vuex.Store({
         },
         async loadCounterparties({commit}) {
             try {
-                let response = await fetch(`https://jsonplaceholder.typicode.com/users`) //let response = await fetch(`https://jsonplaceholder.typicode.com/counterparties`)
+                let response = await fetch(`http://localhost:8080/api/counterparties`) //let response = await fetch(`https://jsonplaceholder.typicode.com/counterparties`)
                 if(response.ok) {
                     const counterparties = await response.json();
                     commit("SET_COUNTERPARTIES", counterparties)
@@ -118,7 +146,7 @@ export default new Vuex.Store({
         },
         async loadUsers({commit}) {
             try {
-                let response = await fetch(`https://jsonplaceholder.typicode.com/users`) //let response = await fetch(`https://jsonplaceholder.typicode.com/users`)
+                let response = await fetch(`http://localhost:8080/api/users`) //let response = await fetch(`https://jsonplaceholder.typicode.com/users`)
                 if(response.ok) {
                     const users = await response.json();
                     commit("SET_USERS", users)

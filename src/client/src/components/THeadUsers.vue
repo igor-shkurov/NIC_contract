@@ -1,8 +1,9 @@
 <template>
-  <thead class="thead-stages">
+  <thead class="thead-users">
   <tr>
-    <th rowspan="2">Логин</th>
-    <th rowspan="2">Пароль</th>
+    <th>ФИО</th>
+    <th>Логин</th>
+    <th>Пароль</th>
   </tr>
   </thead>
 </template>
