@@ -47,7 +47,7 @@ export default new VueRouter ({
                     path: '',
                     name: 'counterpartiesList',
                     component: CounterpartiesPage,
-                    props: { mode: 'counterparties'}
+                    props: { mode: 'counterparties', isInserted: false}
                 }
             ]
         },

@@ -7,6 +7,8 @@ import com.example.accountingsystem.entities.stage.StageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 import javax.validation.Valid;
 import java.util.List;
 
@@ -25,13 +27,15 @@ public class StagesController {
 
     //get all stages
     @GetMapping(path = "/stages")
-    public List<Stage> showStages() {
+    public List<Stage> showStages(HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         return stageService.getStages();
     }
 
     // get all stages of contract
     @GetMapping(path = "/stages/{contractId}")
-    public List<Stage> showStageById(@PathVariable("contractId") String contractId) {
+    public List<Stage> showStageById(@PathVariable("contractId") String contractId, HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         return stageService.getStagesByContractId(Long.parseLong(contractId));
     }
 
