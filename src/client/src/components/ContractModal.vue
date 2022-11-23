@@ -66,12 +66,31 @@
               class="if-container"
               v-if="mode === 'contracts'"
           >
-            <div class="contract-modal-header-text">Список этапов:</div>
+            <div class="contract-modal-header-container">
+              <div class="contract-modal-header-text">Список этапов:</div>
+              <button
+                  class="contract-modal-header-button"
+                  @click="isOpenAddStage=true"
+              >
+                <img src="../assets/icons/add.png" alt="">
+                <div class="contract-modal-header-button__header">Добавить</div>
+              </button>
+            </div>
+
             <list-all-inserted
                 :mode="'stages'"
                 :is-inserted="true"
             ></list-all-inserted>
-            <div class="contract-modal-header-text">Список договоров с контрагентами:</div>
+            <div class="contract-modal-header-container">
+              <div class="contract-modal-header-text">Список договоров с контрагентами:</div>
+              <button
+                  class="contract-modal-header-button"
+                  @click="isOpenAddStage=true"
+              >
+                <img src="../assets/icons/add.png" alt="">
+                <div class="contract-modal-header-button__header">Добавить</div>
+              </button>
+            </div>
             <list-all-inserted
                 :mode="'contractsCounterparty'"
                 :is-inserted="true"
@@ -114,7 +133,9 @@ export default {
       editMode: false,
       newObj: null,
       fieldsHeaders: null,
-      cardHeader: null
+      cardHeader: null,
+      isOpenAddStage: false,
+      isOpenAddContractCounterparty: false,
     }
   },
   methods: {
@@ -235,6 +256,9 @@ export default {
     text-transform: uppercase;
     text-shadow: 1px 2px 3px rgba(0,0,0,0.5);
     text-align: center;
+    width: 100%;
+    justify-self: center;
+    margin-left: 10%;
   }
   .contract-modal-info{
     width:70%;
@@ -331,12 +355,12 @@ export default {
     background-color: #C0C0C0;
   }
 
-  .contract-modal-controls{
+  .contract-modal-controls, .contract-modal-header-container{
     display: flex;
     justify-content: flex-end;
     width: 100%;
   }
-  .contract-modal-controls__button {
+  .contract-modal-controls__button, .contract-modal-header-button {
     display: flex;
     align-items: center;
     font-size: 15px;
@@ -347,18 +371,18 @@ export default {
     margin-left: 5px;
     padding: 3px 10px;
   }
-  .contract-modal-controls__button:hover{
+  .contract-modal-controls__button:hover, .contract-modal-header-button:hover{
     transform: translateY(-2px);
     background-color: #808080;
   }
-  .contract-modal-controls__button:active{
+  .contract-modal-controls__button:active, .contract-modal-header-button:active{
     transform: translateY(2px);
     background-color: #606060;
   }
-  .contract-modal-controls__button > img {
+  .contract-modal-controls__button > img, .contract-modal-header-button >img {
     width: 30px;
   }
-  .controls-button__header {
+  .controls-button__header, .contract-modal-header-button__header {
     display: flex;
     align-items: center;
     margin-left: 3px;

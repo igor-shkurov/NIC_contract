@@ -1,6 +1,7 @@
 <template>
   <list-all
     :mode = this.$props.mode
+    :is-inserted = this.$props.isInserted
   ></list-all>
 </template>
 
@@ -12,7 +13,8 @@ export default {
     'list-all': ListAll
   },
   props: {
-    mode: String
+    mode: String,
+    isInserted: Boolean
   }
 }
 </script>

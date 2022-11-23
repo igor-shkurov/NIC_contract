@@ -6,6 +6,8 @@ import com.example.accountingsystem.entities.counterparty_contract.CounterpartyC
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 import javax.validation.Valid;
 import java.util.List;
 
@@ -24,7 +26,8 @@ public class CounterpartyContractsController {
     }
 
     @GetMapping(path = "/contract_counterparties/{id}")
-    public List<CounterpartyContract> showCounterpartyContractById(@PathVariable("id") String contractId) {
+    public List<CounterpartyContract> showCounterpartyContractById(@PathVariable("id") String contractId, HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(contractId));
     }
 

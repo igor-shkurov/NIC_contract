@@ -8,6 +8,8 @@ import com.example.accountingsystem.entities.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 import javax.validation.Valid;
 import java.util.List;
 
@@ -23,7 +25,8 @@ public class CounterpartiesController {
     }
 
     @GetMapping(path = "/counterparties")
-    public List<Counterparty> showCounterpartyContractById() {
+    public List<Counterparty> showCounterpartyContractById(HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         return counterpartyService.getCounterparties();
     }
 }
