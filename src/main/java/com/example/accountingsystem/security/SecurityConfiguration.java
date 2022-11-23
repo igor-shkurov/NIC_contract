@@ -39,16 +39,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
         http.csrf().disable();
-//        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//        http.authorizeRequests().antMatchers("/login", "/token/refresh").permitAll();
-//        http.authorizeRequests().antMatchers("/api/contracts", "/api/users", "/api/**").hasAnyRole("USER", "ADMIN")
-//                                .antMatchers("/api/contracts.xlsx").hasRole("ADMIN")
-//                                .anyRequest().authenticated();
-//        http.formLogin();
-//        http.addFilter(customAuthenticationFilter);
-//        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.authorizeRequests().antMatchers("/login", "/token/refresh").permitAll();
+        http.authorizeRequests().antMatchers("/api/contracts", "/api/users", "/api/**").hasAnyRole("USER", "ADMIN")
+                                .antMatchers("/api/contracts.xlsx").hasRole("ADMIN")
+                                .anyRequest().authenticated();
+        http.formLogin();
+        http.addFilter(customAuthenticationFilter);
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

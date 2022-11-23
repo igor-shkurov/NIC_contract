@@ -72,5 +72,10 @@ public class ContractController {
         return contractService.getContractById(Long.parseLong(contractId));
     }
 
+    @PatchMapping(path = "/contracts/{id}")
+    public Contract patchContract(@PathVariable("id") String contractId) {
+        return contractService.getContractById(Long.parseLong(contractId));
+    }
+
 
 }
