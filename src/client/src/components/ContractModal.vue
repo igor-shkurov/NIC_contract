@@ -79,7 +79,7 @@
 
             <list-all-inserted
                 :mode="'stages'"
-                :is-inserted="true"
+                :inserting="{isInserted:true, openModalID: $props.obj.id}"
             ></list-all-inserted>
             <div class="contract-modal-header-container">
               <div class="contract-modal-header-text">Список договоров с контрагентами:</div>
@@ -93,7 +93,7 @@
             </div>
             <list-all-inserted
                 :mode="'contractsCounterparty'"
-                :is-inserted="true"
+                :inserting="{isInserted:true, openModalID: $props.obj.id}"
             ></list-all-inserted>
           </div>
         </div>
@@ -103,7 +103,6 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
 export default {
   name: 'contract-modal',
   components: {
@@ -112,21 +111,6 @@ export default {
   props: {
     obj: Object,
     mode: String
-  },
-  computed: {
-    ...mapGetters(['getStages', 'getCounterparties', 'getContractsCounterparty', 'getUsers']),
-    stages() {
-      return this.getStages
-    },
-    counterparties() {
-      return this.getCounterparties
-    },
-    contractsCounterparty() {
-      return this.getContractsCounterparty
-    },
-    users() {
-      return this.getUsers
-    }
   },
   data() {
     return {
@@ -199,13 +183,9 @@ export default {
     async removeObj() {
       //fetch body: id
       console.log(`DELETE-request with new info about ${this.mode} object...`)
-    },
-    ...mapActions(['loadStages', 'loadContractsCounterparty'])
+    }
   },
   created() {
-    this.loadStages(this.obj.id)
-    this.loadContractsCounterparty(this.obj.id)
-
     let clone = {};
     for (let key in this.obj) {
       clone[key] = this.obj[key];

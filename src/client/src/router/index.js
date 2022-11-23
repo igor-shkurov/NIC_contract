@@ -29,13 +29,13 @@ export default new VueRouter ({
                     path: '',
                     name: 'contractsList',
                     component: ContractsPage,
-                    props: { mode: 'contracts', isInserted: false}
+                    props: { mode: 'contracts', inserting: {isInserted: false, openModalID: null}}
                 }
             ]
         },
         {
             path: '/contracts/*',
-            redirect: { name: 'contractsList', props: {mode: 'contracts', isInserted: false} }
+            redirect: { name: 'contractsList', props: {mode: 'contracts', inserting: {isInserted: false, openModalID: null} } }
         },
 
         {
@@ -47,13 +47,13 @@ export default new VueRouter ({
                     path: '',
                     name: 'counterpartiesList',
                     component: CounterpartiesPage,
-                    props: { mode: 'counterparties', isInserted: false}
+                    props: { mode: 'counterparties', inserting: {isInserted: false, openModalID: null} }
                 }
             ]
         },
         {
             path: '/counterparties/*',
-            redirect: { name: 'counterpartiesList', props: {mode: 'counterparties', isInserted: false} }
+            redirect: { name: 'counterpartiesList', props: {mode: 'counterparties', inserting: {isInserted: false, openModalID: null}}}
         },
         {
             path: '/administration',
@@ -64,13 +64,13 @@ export default new VueRouter ({
                     path: '',
                     name: 'administrationList',
                     component: UsersPage,
-                    props: { mode: 'users', isInserted: false}
+                    props: { mode: 'users', inserting: {isInserted: false, openModalID: null}}
                 }
             ]
         },
         {
             path: '/administration/*',
-            redirect: { name: 'administartionList', props: {mode: 'users', isInserted: false} }
+            redirect: { name: 'administartionList', props: {mode: 'users', inserting: {isInserted: false, openModalID: null}}}
         },
         {
             path: '/reports',
