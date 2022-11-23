@@ -5,6 +5,7 @@ import com.example.accountingsystem.entities.ExportableContract;
 import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.counterparty.Counterparty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.*;
 import javax.validation.constraints.PositiveOrZero;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table
+@JsonPropertyOrder({"id", "name", "contractType", "counterparty", "sum", "approxBeginDate", "approxEndDate", "beginDate", "endDate"})
 public class CounterpartyContract implements ExportableContract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -113,9 +115,8 @@ public class CounterpartyContract implements ExportableContract {
         this.contract = contract;
     }
 
-    @JsonIgnore
-    public Counterparty getCounterparty() {
-        return counterparty;
+    public String getCounterparty() {
+        return counterparty.getName();
     }
 
     public void setCounterparty(Counterparty counterparty) {

@@ -21,9 +21,9 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
-@JsonPropertyOrder({"id", "fio", "username", "password"})
 @Entity
 @Table
+@JsonPropertyOrder({"id", "fio", "username", "password"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
