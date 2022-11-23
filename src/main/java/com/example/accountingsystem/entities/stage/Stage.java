@@ -2,6 +2,7 @@ package com.example.accountingsystem.entities.stage;
 
 import com.example.accountingsystem.entities.contract.Contract;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.*;
 import javax.validation.constraints.PositiveOrZero;
@@ -10,6 +11,7 @@ import java.util.Date;
 
 @Entity
 @Table
+@JsonPropertyOrder({"id", "name", "approxBeginDate", "approxEndDate", "beginDate", "endDate", "sum", "approxSalary", "approxCredit", "salary", "credit"})
 public class Stage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +29,19 @@ public class Stage {
     private LocalDate endDate;
 
     @Column(columnDefinition = "numeric(18,2)")
+    @PositiveOrZero(message = "sum should not be negative")
+    private float sum;
+
+    @Column(columnDefinition = "numeric(18,2)")
+    @PositiveOrZero(message = "approximate credit should not be negative")
+    private float approxSalary;
+    @Column(columnDefinition = "numeric(18,2)")
+    @PositiveOrZero(message = "approximate credit should not be negative")
+    private float approxCredit;
+
+    @Column(columnDefinition = "numeric(18,2)")
     @PositiveOrZero(message = "debit should not be negative")
-    private float debit;
+    private float salary;
     @Column(columnDefinition = "numeric(18,2)")
     @PositiveOrZero(message = "credit should not be negative")
     private float credit;
@@ -84,12 +97,36 @@ public class Stage {
         this.endDate = endDate;
     }
 
-    public float getDebit() {
-        return debit;
+    public float getSum() {
+        return sum;
     }
 
-    public void setDebit(float debit) {
-        this.debit = debit;
+    public void setSum(float sum) {
+        this.sum = sum;
+    }
+
+    public float getApproxSalary() {
+        return approxSalary;
+    }
+
+    public void setApproxSalary(float approxSalary) {
+        this.approxSalary = approxSalary;
+    }
+
+    public float getApproxCredit() {
+        return approxCredit;
+    }
+
+    public void setApproxCredit(float approxCredit) {
+        this.approxCredit = approxCredit;
+    }
+
+    public float getSalary() {
+        return salary;
+    }
+
+    public void setSalary(float salary) {
+        this.salary = salary;
     }
 
     public float getCredit() {

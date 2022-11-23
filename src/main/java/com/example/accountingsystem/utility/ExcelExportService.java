@@ -74,10 +74,19 @@ public class ExcelExportService {
 
         if (cl == Stage.class) {
             cell = row.createCell(6);
-            cell.setCellValue("Доход");
+            cell.setCellValue("Сумма");
 
             cell = row.createCell(7);
-            cell.setCellValue("Расход");
+            cell.setCellValue("Расход на зарплату (план)");
+
+            cell = row.createCell(8);
+            cell.setCellValue("Расход на материалы (план)");
+
+            cell = row.createCell(9);
+            cell.setCellValue("Расход на зарплату (факт)");
+
+            cell = row.createCell(10);
+            cell.setCellValue("Расход на материалы (план)");
         }
 
         setRowAlignment(row);
@@ -172,10 +181,19 @@ public class ExcelExportService {
             cell.setCellValue(stage.getName());
 
             cell = row.createCell(6);
-            cell.setCellValue(stage.getCredit());
+            cell.setCellValue(stage.getSum());
 
             cell = row.createCell(7);
-            cell.setCellValue(stage.getDebit());
+            cell.setCellValue(stage.getSalary());
+
+            cell = row.createCell(8);
+            cell.setCellValue(stage.getCredit());
+
+            cell = row.createCell(9);
+            cell.setCellValue(stage.getApproxSalary());
+
+            cell = row.createCell(10);
+            cell.setCellValue(stage.getApproxCredit());
 
             setRowAlignment(row);
         }
