@@ -1,7 +1,7 @@
 <template>
   <list-all
     :mode = this.$props.mode
-    :is-inserted = this.$props.isInserted
+    :inserting = this.$props.inserting
   ></list-all>
 </template>
 
@@ -14,7 +14,7 @@ export default {
   },
   props: {
     mode: String,
-    isInserted: Boolean
+    inserting: Object
   }
 }
 </script>

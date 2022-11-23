@@ -1,10 +1,10 @@
 <template>
   <div
-      :class="this.isInserted ? '' : 'wrapper'"
+      :class="this.inserting.isInserted ? '' : 'wrapper'"
 
   >
     <div
-        :class="this.isInserted ? '' : 'mainWindow'"
+        :class="this.inserting.isInserted ? '' : 'mainWindow'"
     >
       <table-template
         :arr-data="this.getArrData()"
@@ -36,7 +36,7 @@ export default {
   },
   props: {
     mode: String,
-    isInserted: Boolean
+    inserting: Object
   },
   data() {
       return {
@@ -96,7 +96,7 @@ export default {
         return data
       }
     },
-  created() {
+  mounted() {
     switch (this.mode){
       case 'contracts':
         this.loadContracts()
@@ -105,10 +105,10 @@ export default {
         this.loadCounterparties()
         break
       case 'stages':
-        this.loadStages()
+        this.loadStages(this.inserting.openModalID)
         break
       case 'contractsCounterparty':
-        this.loadContractsCounterparty()
+        this.loadContractsCounterparty(this.inserting.openModalID)
         break
       case 'users':
         this.loadUsers()
@@ -142,6 +142,14 @@ export default {
     background: slategray;
     transition: all 0.1s ease-in-out;
     box-shadow: inset 0px 0px 10px rgba(0,0,0,0.5);
+  }
+
+  .thead-contracts tr:hover, .thead-stages tr:hover, .thead-contracts-counterparty tr:hover, .thead-counterparties tr:hover {
+    box-shadow: none;
+  }
+
+  .thead-contracts tr:active, .thead-stages tr:active, .thead-contracts-counterparty tr:active, .thead-counterparties tr:active {
+    box-shadow: none;
   }
 
   .bordered tr:active{

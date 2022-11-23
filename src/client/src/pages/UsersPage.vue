@@ -1,6 +1,7 @@
 <template>
   <list-all
       :mode = this.$props.mode
+      :inserting = this.$props.inserting
   ></list-all>
 </template>
 
@@ -12,7 +13,8 @@ export default {
     'list-all': ListAll
   },
   props: {
-    mode: String
+    mode: String,
+    inserting: Object
   }
 }
 </script>
