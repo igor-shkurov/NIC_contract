@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
 
-    public boolean existUser(User user){
+    public boolean existUser(User user) {
         return userDetailsRepo.findUserByUsername(user.getUsername()).equals(user);
     }
 

@@ -22,7 +22,7 @@ public interface ContractRepo
 
 
     //проблемы с этапами и прочими связанными штуками
-    public void deleteById (Long id);
+    public void deleteById(Long id);
 
     @Override
     boolean existsById(Long aLong);

@@ -15,17 +15,18 @@ import java.util.Collection;
 @Entity
 @Table
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "FIO should not be empty")
-    @Size(max = 60,  message = "Name should not be more then 60 letters")
+    @Size(max = 60, message = "Name should not be more then 60 letters")
     @Column(columnDefinition = "varchar(60)")
     //только буквы?
     private String FIO;
     @NotBlank(message = "FIO should not be empty")
-    @Size(max = 20,  message = "Login should not be more then 20 letters")
+    @Size(max = 20, message = "Login should not be more then 20 letters")
     @Column(columnDefinition = "varchar(20)")
     private String username;
     @Column(columnDefinition = "varchar(255)")
@@ -33,23 +34,53 @@ public class User implements UserDetails {
     @Column(columnDefinition = "datetime")
     private LocalDateTime expirationDate;
 
+    public User() {
+
+    }
+
+
     public enum Role { // @todo: Подумать как лучше можно хранить роли (или и так норм)
-        USER, ADMIN;
+        USER, ADMIN, HOST;
     }
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    protected Role role;
 
-    public User() {
+    private void notHostCheck() {
+        if (role == Role.HOST) {
+            throw new IllegalArgumentException("user can't be host!");
+        }
+    }
+
+
+    public User(String FIO, String username, String password, LocalDateTime expirationDate, Role role) {
+        this.FIO = FIO;
+        this.username = username;
+        this.password = password;
+        this.expirationDate = expirationDate;
+        this.role = role;
+        notHostCheck();
+    }
+
+    public User(String FIO, String username, String password, Role role) {
+        this.FIO = FIO;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        notHostCheck();
+    }
+
+    public User(String FIO, String username, String password) {
+        this.FIO = FIO;
+        this.username = username;
+        this.password = password;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // public void setId(Long id) { this.id = id; }
 
     @Override
     public String getUsername() {
@@ -116,5 +147,6 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+        notHostCheck();
     }
 }

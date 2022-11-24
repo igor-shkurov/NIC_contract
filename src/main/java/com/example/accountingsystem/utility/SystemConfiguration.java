@@ -4,6 +4,7 @@ import com.example.accountingsystem.entities.ContractType;
 import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.contract.ContractService;
 import com.example.accountingsystem.entities.user.CustomUserDetailsService;
+import com.example.accountingsystem.entities.user.Superuser;
 import com.example.accountingsystem.entities.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -20,18 +21,11 @@ public class SystemConfiguration {
     CommandLineRunner commandLineRunner(CustomUserDetailsService userDetailsService, ContractService contractService) {
         return args -> {
             BCryptPasswordEncoder cryptPasswordEncoder = new BCryptPasswordEncoder();
-            for (int i = 10; i < 18; i++) {
 
-                userDetailsService.deleteUser(Integer.toUnsignedLong(i));
-            }
 
-            User administrator = new User();
-            administrator.setFIO("Shkurov Igor Olegovich");
-            administrator.setUsername("admin");
-            administrator.setPassword(cryptPasswordEncoder.encode("root"));
-            administrator.setRole(User.Role.ADMIN);
+            User administrator =  Superuser.INSTANCE;
+            userDetailsService.saveUser(administrator);
 
-            boolean bool = userDetailsService.saveUser(administrator);
 
             User user = new User();
             user.setFIO("Pyatizbyantsev Ilya Andreevich");
@@ -53,7 +47,9 @@ public class SystemConfiguration {
 
             contract.setAssociatedUser(user1);
             contract.setId(10L);
-           // contractService.saveContract(contract);
+            // contractService.saveContract(contract);
+
+            System.out.println(Superuser.INSTANCE.getId());
         };
     }
 }
