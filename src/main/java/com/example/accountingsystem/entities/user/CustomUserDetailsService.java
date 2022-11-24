@@ -2,6 +2,9 @@ package com.example.accountingsystem.entities.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -43,16 +46,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         return user;
     }
 
-    public User getUser(String username) {
-        User user = userDetailsRepo.findUserByUsername(username);
-        if (user == null) {
-            log.error("User not found");
-            throw new UsernameNotFoundException("User not found in db");
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            String currentUserName = authentication.getName();
+            return (User) loadUserByUsername(currentUserName);
         }
-        else {
-            log.info("User found");
-        }
-        return user;
+        throw new UsernameNotFoundException("No one is logged in");
     }
 
     public List<User> getUsers() {

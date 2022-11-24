@@ -29,4 +29,10 @@ public class UsersController {
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         return userService.getUsers();
     }
+
+    @GetMapping(path = "/current_user")
+    public User showMe(HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        return userService.getCurrentUser();
+    }
 }
