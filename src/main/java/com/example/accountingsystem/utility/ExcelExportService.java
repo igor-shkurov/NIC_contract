@@ -70,11 +70,14 @@ public class ExcelExportService {
 
             cell = row.createCell(8);
             cell.setCellValue("Основной/номер основного");
+
+            cell = row.createCell(9);
+            cell.setCellValue("Организация-контрагент");
         }
 
         if (cl == Stage.class) {
             cell = row.createCell(6);
-            cell.setCellValue("Сумма");
+            cell.setCellValue("Сумма этапа");
 
             cell = row.createCell(7);
             cell.setCellValue("Расход на зарплату (план)");
@@ -86,7 +89,7 @@ public class ExcelExportService {
             cell.setCellValue("Расход на зарплату (факт)");
 
             cell = row.createCell(10);
-            cell.setCellValue("Расход на материалы (план)");
+            cell.setCellValue("Расход на материалы (факт)");
         }
 
         setRowAlignment(row);
@@ -143,14 +146,18 @@ public class ExcelExportService {
             cell.setCellValue(contract.getSum());
 
             cell = row.createCell(8);
+            Cell cellCounterparty = row.createCell(9);
 
             if (contract.getClass() == Contract.class) {
                 cell.setCellValue("Основной");
+                cellCounterparty.setCellValue("-");
                 writeTableRowsForContracts(counterpartyContractService.getCounterpartyContractsByContractId(id));
             }
             else {
                 cell.setCellValue(((CounterpartyContract) contract).getContract().getId());
+                cellCounterparty.setCellValue(((CounterpartyContract) contract).getCounterparty());
             }
+
 
             setRowAlignment(row);
         }

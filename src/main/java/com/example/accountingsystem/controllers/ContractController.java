@@ -17,13 +17,10 @@ import java.util.List;
 public class ContractController {
 
     private final ContractService contractService;
-    private final ExcelExportService excelExportService;
-
 
     @Autowired
-    public ContractController(ContractService contractService, ExcelExportService excelExportService) {
+    public ContractController(ContractService contractService) {
         this.contractService = contractService;
-        this.excelExportService = excelExportService;
     }
 
     @GetMapping(path = "/contracts")
@@ -39,34 +36,6 @@ public class ContractController {
         return contractService.getContracts();
     }
 
-    @PostMapping(path = "/contracts.xlsx")
-    public void getContractsExcel(HttpServletResponse response, @RequestParam String beginDate,
-                                  @RequestParam String endDate) {
-        response.setContentType("application/octet-stream");
-        response.addHeader("content-disposition", "attachment; filename=contracts.xlsx");
-        response.setHeader("Pragma", "public");
-        response.setHeader("Cache-Control", "no-store");
-        response.addHeader("Cache-Control", "max-age=0");
-
-        excelExportService.exportContractsByGivenPeriod(response, LocalDate.parse(beginDate), LocalDate.parse(endDate));
-    }
-
-    @GetMapping(path = "/stages{contractId}.xlsx")
-    public void getStagesExcel(HttpServletResponse response, @PathVariable String contractId) throws FileNotFoundException {
-        Long id = Long.parseLong(contractId);
-        if (contractService.getContractById(id) == null) {
-            throw new FileNotFoundException("Can not create a file for this contract: No contract with such id");
-        }
-
-        response.setContentType("application/octet-stream");
-        response.addHeader("content-disposition", "attachment; filename=stages[" + id + "].xlsx");
-        response.setHeader("Pragma", "public");
-        response.setHeader("Cache-Control", "no-store");
-        response.addHeader("Cache-Control", "max-age=0");
-
-        excelExportService.exportStagesByContractId(response, id);
-    }
-
     @GetMapping(path = "/contracts/{id}")
     public Contract showContractsById(@PathVariable("id") String contractId) {
         return contractService.getContractById(Long.parseLong(contractId));
@@ -76,6 +45,4 @@ public class ContractController {
     public Contract patchContract(@PathVariable("id") String contractId) {
         return contractService.getContractById(Long.parseLong(contractId));
     }
-
-
 }
