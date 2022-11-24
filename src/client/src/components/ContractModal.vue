@@ -68,13 +68,13 @@
           >
             <div class="contract-modal-header-container">
               <div class="contract-modal-header-text">Список этапов:</div>
-              <button
-                  class="contract-modal-header-button"
-                  @click="isOpenAddStage=true"
-              >
-                <img src="../assets/icons/add.png" alt="">
-                <div class="contract-modal-header-button__header">Добавить</div>
-              </button>
+<!--              <button-->
+<!--                  class="contract-modal-header-button"-->
+<!--                  @click="isOpenAddStage=true"-->
+<!--              >-->
+<!--                <img src="../assets/icons/add.png" alt="">-->
+<!--                <div class="contract-modal-header-button__header">Добавить</div>-->
+<!--              </button>-->
             </div>
 
             <list-all-inserted
@@ -83,13 +83,13 @@
             ></list-all-inserted>
             <div class="contract-modal-header-container">
               <div class="contract-modal-header-text">Список договоров с контрагентами:</div>
-              <button
-                  class="contract-modal-header-button"
-                  @click="isOpenAddStage=true"
-              >
-                <img src="../assets/icons/add.png" alt="">
-                <div class="contract-modal-header-button__header">Добавить</div>
-              </button>
+<!--              <button-->
+<!--                  class="contract-modal-header-button"-->
+<!--                  @click="isOpenAddStage=true"-->
+<!--              >-->
+<!--                <img src="../assets/icons/add.png" alt="">-->
+<!--                <div class="contract-modal-header-button__header">Добавить</div>-->
+<!--              </button>-->
             </div>
             <list-all-inserted
                 :mode="'contractsCounterparty'"
@@ -238,7 +238,7 @@ export default {
     text-align: center;
     width: 100%;
     justify-self: center;
-    margin-left: 10%;
+    margin-left: 5%;
   }
   .contract-modal-info{
     width:70%;
@@ -280,7 +280,7 @@ export default {
     display: grid;
     grid-template-rows: repeat(8, 1fr);
     grid-row-gap: 10px;
-    margin: 10px;
+    margin: 10px 0 0 0;
     width: 100%;
   }
   .contract-fields-element{
@@ -340,7 +340,11 @@ export default {
     justify-content: flex-end;
     width: 100%;
   }
-  .contract-modal-controls__button, .contract-modal-header-button {
+  .contract-modal-header-container{
+    line-height: 1;
+    margin-top: 20px;
+  }
+  .contract-modal-controls__button {
     display: flex;
     align-items: center;
     font-size: 15px;
@@ -351,18 +355,18 @@ export default {
     margin-left: 5px;
     padding: 3px 10px;
   }
-  .contract-modal-controls__button:hover, .contract-modal-header-button:hover{
+  .contract-modal-controls__button:hover{
     transform: translateY(-2px);
     background-color: #808080;
   }
-  .contract-modal-controls__button:active, .contract-modal-header-button:active{
+  .contract-modal-controls__button:active{
     transform: translateY(2px);
     background-color: #606060;
   }
-  .contract-modal-controls__button > img, .contract-modal-header-button >img {
+  .contract-modal-controls__button > img {
     width: 30px;
   }
-  .controls-button__header, .contract-modal-header-button__header {
+  .controls-button__header {
     display: flex;
     align-items: center;
     margin-left: 3px;

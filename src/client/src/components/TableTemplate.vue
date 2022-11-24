@@ -1,23 +1,15 @@
 <template>
   <div class="table-template">
-    <table class="bordered">
-      <thead-stages
-        v-if="mode === 'stages'"
-      ></thead-stages>
-      <thead-contracts-counterparty
-          v-if="mode === 'contractsCounterparty'"
-      ></thead-contracts-counterparty>
-      <thead-counterparties
-          v-if="mode === 'counterparties'"
-      ></thead-counterparties>
-      <thead-contracts
-        v-if="mode === 'contracts'"
-      >
-      </thead-contracts>
-      <thead-users
-        v-if="mode === 'users'"
-      >
-      </thead-users>
+    <table
+        class="bordered">
+      <thead>
+        <tr>
+          <th
+              v-for="(value, index) in headers.fieldsHeaders"
+              :key="index"
+          >{{value}}</th>
+        </tr>
+      </thead>
       <tbody>
       <tr
           v-for="(elemData, ind) in arrData"
@@ -35,20 +27,14 @@
 </template>
 
 <script>
-import THeadStages from '../components/THeadStages'
-import THeadContractsCounterparty from '../components/THeadContractsCounterparty'
-import THeadCounterparties from '../components/THeadCounterparties'
-import THeadContracts from "../components/THeadContracts";
-import THeadUsers from "@/components/THeadUsers";
+
 
 export default {
   name: "TableTemplate.vue",
-  components: {
-    'thead-stages': THeadStages,
-    'thead-contracts-counterparty': THeadContractsCounterparty,
-    'thead-counterparties': THeadCounterparties,
-    'thead-contracts': THeadContracts,
-    'thead-users': THeadUsers
+  data() {
+    return {
+      headers: null,
+    }
   },
   props: {
     arrData: Array,
@@ -66,7 +52,37 @@ export default {
     },
     openModalEvent(id) {
       this.$emit('openModal', id)
+    },
+    getHeaders() {
+      let headers = null
+      let cardHeader = null
+      switch (this.$props.mode){
+        case 'contracts':
+          headers = ['Название','Тип договора','Плановые сроки начала','Плановые сроки окончания','Фактические сроки начала', 'Фактические сроки окончания', 'Сумма договора']
+          cardHeader = 'договора'
+          break
+        case 'counterparties':
+          headers = ['Название','Адрес','ИНН']
+          cardHeader = 'контрагента'
+          break
+        case 'stages':
+          headers = ['Название','Плановые сроки начала','Плановые сроки окончания','Фактические сроки начала', 'Фактические сроки окончания', 'Сумма этапа', 'Плановые расходы на материалы', 'Плановые расходы на зарплату', 'Фактические расходы на материалы', 'Фактические расходы на зарплату']
+          cardHeader = 'этапа'
+          break
+        case 'contractsCounterparty':
+          headers = ['Название','Тип договора','Организация-контрагент', 'Сумма договора', 'Плановые сроки начала','Плановые сроки окончания','Фактические сроки начала', 'Фактические сроки окончания']
+          cardHeader = 'договора с контрагентом'
+          break
+        case 'users':
+          headers = ['ФИО', 'Логин', 'Пароль']
+          cardHeader = 'пользователя'
+      }
+      return { fieldsHeaders: headers, cardHeader: cardHeader}
     }
+  },
+  created() {
+    this.headers = this.getHeaders()
+    this.$emit('sendHeaders', this.headers)
   }
 
 

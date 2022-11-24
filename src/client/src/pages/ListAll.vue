@@ -6,19 +6,36 @@
     <div
         :class="this.inserting.isInserted ? '' : 'mainWindow'"
     >
-      <table-template
-        :arr-data="this.getArrData()"
-        :mode="this.mode"
-        @openModal="openModalWindow"
-      >
-      </table-template>
-      <contract-modal
-        v-if="isOpenModal"
-        @close="closeModalWindow"
-        :obj="this.openObj"
-        :mode="this.mode"
-      >
-      </contract-modal>
+      <div class="list-all-container">
+        <button
+            class="table-add-button"
+            @click="isOpenAddModal=true"
+        >
+          <img src="../assets/icons/add.png" alt="">
+          <div class="table-add-button__header">Добавить</div>
+        </button>
+        <table-template
+            :arr-data="this.getArrData()"
+            :mode="this.mode"
+            @openModal="openModalWindow"
+            @sendHeaders="getHeaders"
+        >
+        </table-template>
+        <contract-modal
+            v-if="isOpenModal"
+            @close="closeModalWindow"
+            :obj="this.openObj"
+            :mode="this.mode"
+        >
+        </contract-modal>
+        <add-modal
+          v-if="isOpenAddModal"
+          @close="isOpenAddModal=false"
+          :fieldsHeaders="this.addCardFields"
+          :cardHeader="this.addCardHeader"
+        >
+        </add-modal>
+      </div>
     </div>
   </div>
 </template>
@@ -27,12 +44,14 @@
 import {mapActions, mapGetters} from 'vuex'
 import ContractModal from '../components/ContractModal.vue'
 import TableTemplate from '../components/TableTemplate'
+import AddModal from "../components/AddModal";
 
 export default {
   name: 'ListAll',
   components: {
-    TableTemplate,
-    'contract-modal': ContractModal
+    'table-template':TableTemplate,
+    'contract-modal': ContractModal,
+    'add-modal': AddModal
   },
   props: {
     mode: String,
@@ -42,7 +61,10 @@ export default {
       return {
         arrData: null,
         isOpenModal: false,
-        openObj: null
+        openObj: null,
+        isOpenAddModal: false,
+        addCardFields: null,
+        addCardHeader:  null
       }
     },
     computed: {
@@ -72,6 +94,10 @@ export default {
         this.openObj = null
         this.isOpenModal = false
       },
+      getHeaders(headers){
+        this.addCardFields = headers.fieldsHeaders
+        this.addCardHeader = headers.cardHeader
+      },
       ...mapActions(['loadContracts', 'loadCounterparties', 'loadStages', 'loadContractsCounterparty', 'loadUsers']),
       getArrData() {
         let data = null
@@ -96,7 +122,7 @@ export default {
         return data
       }
     },
-  mounted() {
+  created() {
     switch (this.mode){
       case 'contracts':
         this.loadContracts()
@@ -119,12 +145,17 @@ export default {
 </script>
 
 <style>
+  .list-all-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   table {
     width: 100%;
     table-layout: fixed;
     border-collapse: separate !important;
     border-spacing: 0;
-    margin: 30px 0;
+    margin: 0px 0;
   }
 
   thead, tbody {
@@ -187,5 +218,32 @@ export default {
   }
   th:nth-child(1) {
     width: 17%;
+  }
+  .table-add-button {
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: #707070;
+    border: 2px solid #454545;
+    border-radius: 6px;
+    padding: 3px 10px;
+  }
+  .table-add-button:hover{
+    transform: translateY(-2px);
+    background-color: #808080;
+  }
+  .table-add-button:active{
+    transform: translateY(2px);
+    background-color: #606060;
+  }
+  .table-add-button >img {
+    width: 30px;
+  }
+  .table-add-button__header{
+    display: flex;
+    align-items: center;
+    margin-left: 3px;
   }
 </style>
