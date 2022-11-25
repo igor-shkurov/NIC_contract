@@ -1,8 +1,12 @@
 package com.example.accountingsystem.controllers;
 
 import com.example.accountingsystem.entities.contract.ContractService;
+import com.example.accountingsystem.entities.counterparty.CounterpartyService;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContract;
+import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractDTO;
+import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractMapper;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,13 +20,18 @@ import java.util.List;
 public class CounterpartyContractsController {
 
     private final CounterpartyContractService counterpartyContractService;
-
     private final ContractService contractService;
+    private final CounterpartyService counterpartyService;
+
+    private final CounterpartyContractMapper mapper;
 
     @Autowired
-    public CounterpartyContractsController(CounterpartyContractService counterpartyContractService, ContractService contractService) {
+    public CounterpartyContractsController(CounterpartyContractService counterpartyContractService, ContractService contractService, CounterpartyService counterpartyService) {
         this.counterpartyContractService = counterpartyContractService;
         this.contractService = contractService;
+        this.counterpartyService = counterpartyService;
+
+        this.mapper = Mappers.getMapper(CounterpartyContractMapper.class);
     }
 
     @GetMapping(path = "/{id}")
@@ -31,13 +40,15 @@ public class CounterpartyContractsController {
         return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(id));
     }
 
-    @PostMapping(path = "/{id}")
-    public List<CounterpartyContract> addContract(@RequestBody @Valid CounterpartyContract counterpartyContract,
+    @PostMapping(path = "/{id}", consumes = {"application/json"})
+    public void addContract(@RequestBody @Valid CounterpartyContractDTO dto,
                                                   @PathVariable("id") String id, HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        CounterpartyContract counterpartyContract = mapper.DTOtoCounterpartyContract(dto);
         counterpartyContract.setContract(contractService.getContractById(Long.parseLong(id)));
+        counterpartyContract.setCounterparty(counterpartyService.getCounterpartyById(dto.counterparty_id));
         counterpartyContractService.addCounterpartyContract(counterpartyContract);
-        return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(id));
+//        return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(id));
     }
 
     @PutMapping(path = "/{id}/update", consumes = {"application/json"})

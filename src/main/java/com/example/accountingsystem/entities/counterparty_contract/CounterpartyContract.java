@@ -106,7 +106,6 @@ public class CounterpartyContract implements ExportableContract {
         this.sum = sum;
     }
 
-    @JsonIgnore
     public Contract getContract() {
         return contract;
     }

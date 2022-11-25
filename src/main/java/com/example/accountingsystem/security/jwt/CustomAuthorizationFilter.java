@@ -45,14 +45,14 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     filterChain.doFilter(request, response);
-                    log.info("JWT token successfully verified");
+//                    log.info("JWT token successfully verified");
                 }
                 catch (Exception exception) {
                     JWTUtils.writeExceptionToJSON(response, exception);
                 }
             }
             else {
-                log.warn("No JWT token provided");
+//                log.warn("No JWT token provided");
                 filterChain.doFilter(request, response);
             }
         }

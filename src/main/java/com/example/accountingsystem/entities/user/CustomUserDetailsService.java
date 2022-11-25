@@ -37,11 +37,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDetailsRepo.findUserByUsername(username);
         if (user == null) {
-            log.error("User not found");
+//            log.error("User not found");
             throw new UsernameNotFoundException("User not found in db");
         }
         else {
-            log.info("User found");
+//            log.info("User found");
         }
         return user;
     }
