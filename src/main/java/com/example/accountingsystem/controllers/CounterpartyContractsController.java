@@ -12,7 +12,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/contract_counterparties")
 public class CounterpartyContractsController {
 
     private final CounterpartyContractService counterpartyContractService;
@@ -25,18 +25,25 @@ public class CounterpartyContractsController {
         this.contractService = contractService;
     }
 
-    @GetMapping(path = "/contract_counterparties/{id}")
-    public List<CounterpartyContract> showCounterpartyContractById(@PathVariable("id") String contractId, HttpServletResponse response) {
+    @GetMapping(path = "/{id}")
+    public List<CounterpartyContract> showCounterpartyContractById(@PathVariable("id") String id, HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(contractId));
+        return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(id));
     }
 
-    //не проверено/ Почему передаётся только айди контракта без айди контрагента
-    @PostMapping(path = "/contract_counterparties/{id}")
-    public List<CounterpartyContract> addContract(@RequestBody @Valid CounterpartyContract counterpartyContract, @PathVariable("id") String contractId) {
-        //нужно?
-        counterpartyContract.setContract(contractService.getContractById(Long.parseLong(contractId)));
+    @PostMapping(path = "/{id}")
+    public List<CounterpartyContract> addContract(@RequestBody @Valid CounterpartyContract counterpartyContract,
+                                                  @PathVariable("id") String id, HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        counterpartyContract.setContract(contractService.getContractById(Long.parseLong(id)));
         counterpartyContractService.addCounterpartyContract(counterpartyContract);
-        return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(contractId));
+        return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(id));
+    }
+
+    @PutMapping(path = "/{id}/update", consumes = {"application/json"})
+    public void updateContract(@RequestBody @Valid CounterpartyContract counterpartyContract,
+                                                     @PathVariable("id") String id, HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        counterpartyContractService.updateContract(Long.parseLong(id), counterpartyContract);
     }
 }

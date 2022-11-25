@@ -2,9 +2,6 @@ package com.example.accountingsystem.controllers;
 
 import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.contract.ContractService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,27 +27,21 @@ public class ContractController {
     }
 
     @PostMapping(path = "") //postman
-    public List<Contract> addContract(@RequestBody @Valid Contract contract) {
+    public List<Contract> addContract(@RequestBody @Valid Contract contract, HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         contractService.addContract(contract);
-
         return contractService.getContracts();
     }
 
     @GetMapping(path = "/{id}")
-    public Contract showContractsById(@PathVariable("id") String contractId) {
-        return contractService.getContractById(Long.parseLong(contractId));
+    public Contract showContractsById(@PathVariable("id") String id, HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        return contractService.getContractById(Long.parseLong(id));
     }
 
-    @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
-    public Contract patchContract(@PathVariable("id") String contractId, @RequestBody JsonPatch patch) {
-        Contract contract = contractService.getContractById(Long.parseLong(contractId));
-        try {
-            Contract patchedContract = contractService.applyPatch(patch, contract);
-        } catch (JsonPatchException e) {
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return null;
+    @PutMapping(path = "/{id}/update", consumes = {"application/json"})
+    public void updateContract(@RequestBody Contract contract, @PathVariable("id") String id, HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        contractService.updateContract(Long.parseLong(id), contract);
     }
 }

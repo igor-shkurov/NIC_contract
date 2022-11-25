@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/reports")
 public class ReportController {
 
     private final ExcelExportService excelExportService;
@@ -22,7 +22,7 @@ public class ReportController {
         this.contractService = contractService;
     }
 
-    @PostMapping(path = "/reports")
+    @PostMapping(path = "")
     public void getContractsExcel(HttpServletResponse response, @RequestParam String beginDate,
                                   @RequestParam String endDate) {
         response.setContentType("application/octet-stream");
@@ -34,7 +34,7 @@ public class ReportController {
         excelExportService.exportContractsByGivenPeriod(response, LocalDate.parse(beginDate), LocalDate.parse(endDate));
     }
 
-    @GetMapping(path = "/reports/{contractId}")
+    @GetMapping(path = "/{contractId}")
     public void getStagesExcel(HttpServletResponse response, @PathVariable String contractId) throws FileNotFoundException {
         Long id = Long.parseLong(contractId);
         if (contractService.getContractById(id) == null) {

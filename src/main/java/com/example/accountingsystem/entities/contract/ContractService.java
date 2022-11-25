@@ -1,13 +1,10 @@
 package com.example.accountingsystem.entities.contract;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -17,20 +14,14 @@ import java.util.Optional;
 public class ContractService {
 
     private final ContractRepo contractRepo;
-    private final ObjectMapper objectMapper;
 
     @Autowired
     public ContractService(ContractRepo contractRepo) {
         this.contractRepo = contractRepo;
-        this.objectMapper = new ObjectMapper();
     }
 
     public List<Contract> getContracts() {
         return contractRepo.findAll();
-    }
-
-    public List<Contract> getContractsByGivenPeriod(LocalDate beginDate, LocalDate endDate) {
-        return contractRepo.getContractsByGivenPeriod(Date.valueOf(beginDate), Date.valueOf(endDate));
     }
 
     public void addContract(Contract contract) {
@@ -40,5 +31,25 @@ public class ContractService {
     public Contract getContractById(Long id) {
         Optional<Contract> opt = contractRepo.findById(id);
         return opt.orElse(null);
+    }
+
+    public List<Contract> getContractsByGivenPeriod(LocalDate beginDate, LocalDate endDate) {
+        return contractRepo.getContractsByGivenPeriod(Date.valueOf(beginDate), Date.valueOf(endDate));
+    }
+
+    public void updateContract(long id, Contract updatingContract) {
+        Contract contractToBeUpdated = getContractById(id);
+        if (contractToBeUpdated != null) {
+            try {
+                BeanUtils.copyProperties(contractToBeUpdated, updatingContract);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            contractToBeUpdated.setId(id);
+            contractRepo.save(contractToBeUpdated);
+        }
+        else {
+            contractRepo.save(updatingContract);
+        }
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 @Repository
@@ -15,5 +14,5 @@ public interface CounterpartyContractRepo extends JpaRepository<CounterpartyCont
             nativeQuery = true)
     List<CounterpartyContract> getCounterpartyContractsByContractId(@Param("id") Long id);
 
-    List<CounterpartyContract> findCounterpartyContractByContract(Contract contract) ;
+    List<CounterpartyContract> findCounterpartyContractByContract(Contract contract);
 }
