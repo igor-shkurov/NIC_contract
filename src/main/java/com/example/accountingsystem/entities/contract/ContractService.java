@@ -1,6 +1,7 @@
 package com.example.accountingsystem.entities.contract;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,20 +16,33 @@ public class ContractService {
 
     private final ContractRepo contractRepo;
 
+    private final ContractMapper mapper;
+
     @Autowired
     public ContractService(ContractRepo contractRepo) {
         this.contractRepo = contractRepo;
+        this.mapper = Mappers.getMapper(ContractMapper.class);
     }
 
-    public List<Contract> getContracts() {
-        return contractRepo.findAll();
+    public List<ContractDTO> getContracts() {
+        List<Contract> entities = contractRepo.findAll();
+        return mapper.toListOfDTO(entities);
     }
 
     public void addContract(Contract contract) {
         contractRepo.save(contract);
     }
 
-    public Contract getContractById(Long id) {
+    public ContractDTO getContractDtoById(long id) {
+        Optional<Contract> opt = contractRepo.findById(id);
+        ContractDTO dto = null;
+        if (opt.isPresent()) {
+            dto = mapper.contractContractToDTO(opt.get());
+        }
+        return dto;
+    }
+
+    public Contract getContractById(long id) {
         Optional<Contract> opt = contractRepo.findById(id);
         return opt.orElse(null);
     }
@@ -37,7 +51,9 @@ public class ContractService {
         return contractRepo.getContractsByGivenPeriod(Date.valueOf(beginDate), Date.valueOf(endDate));
     }
 
-    public void updateContract(long id, Contract updatingContract) {
+    public void updateContract(ContractDTO dto) {
+        long id = dto.id;
+        Contract updatingContract = mapper.DTOtoContract(dto);
         Contract contractToBeUpdated = getContractById(id);
         if (contractToBeUpdated != null) {
             try {

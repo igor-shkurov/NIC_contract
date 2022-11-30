@@ -115,4 +115,12 @@ public class Contract implements ExportableContract {
     public void setSum(float sum) {
         this.sum = sum;
     }
+
+    public User getAssociatedUser() {
+        return associatedUser;
+    }
+
+    public void setAssociatedUser(User associatedUser) {
+        this.associatedUser = associatedUser;
+    }
 }

@@ -1,11 +1,11 @@
-package com.example.accountingsystem.entities.counterparty_contract;
+package com.example.accountingsystem.entities.contract;
 
 import com.example.accountingsystem.entities.ContractType;
 import com.example.accountingsystem.entities.ExportableContract;
 
 import java.time.LocalDate;
 
-public class CounterpartyContractDTO implements ExportableContract {
+public class ContractDTO implements ExportableContract {
     public long id;
     public String name;
     public ContractType contractType;
@@ -14,9 +14,8 @@ public class CounterpartyContractDTO implements ExportableContract {
     public LocalDate beginDate;
     public LocalDate endDate;
     public float sum;
-    public long counterparty_id;
-    public long contract_id;
-
+    public long user_id;
+    // @todo: get rid of getters by removing the interface from excel exporter
     @Override
     public Long getId() {
         return id;

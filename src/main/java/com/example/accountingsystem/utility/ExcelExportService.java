@@ -155,9 +155,8 @@ public class ExcelExportService {
             }
             else {
                 cell.setCellValue(((CounterpartyContract) contract).getContract().getId());
-                cellCounterparty.setCellValue(((CounterpartyContract) contract).getCounterparty());
+                cellCounterparty.setCellValue(((CounterpartyContract) contract).getCounterparty().getName());
             }
-
 
             setRowAlignment(row);
         }

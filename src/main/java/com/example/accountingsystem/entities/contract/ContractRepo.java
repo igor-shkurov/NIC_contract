@@ -14,6 +14,4 @@ public interface ContractRepo
     @Query(value = "SELECT * FROM contract c WHERE c.begin_date>=:beginDate and c.end_date<=:endDate ;",
             nativeQuery = true)
     List<Contract> getContractsByGivenPeriod(@Param("beginDate") Date beginDate, @Param("endDate") Date endDate);
-
-//    List<Contract> findContractsByBeginDateIsAfterAndEndDateIsBefore(LocalDate beginDate, LocalDate endDate);
 }

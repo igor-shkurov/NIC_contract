@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Entity
 @Table
 @JsonPropertyOrder({"id", "name", "contractType", "counterparty", "sum", "approxBeginDate", "approxEndDate", "beginDate", "endDate"})
-public class CounterpartyContract implements ExportableContract {
+public class CounterpartyContrac{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -114,8 +114,8 @@ public class CounterpartyContract implements ExportableContract {
         this.contract = contract;
     }
 
-    public String getCounterparty() {
-        return counterparty.getName();
+    public Counterparty getCounterparty() {
+        return counterparty;
     }
 
     public void setCounterparty(Counterparty counterparty) {
