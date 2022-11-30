@@ -47,8 +47,9 @@ public class ContractService {
         return opt.orElse(null);
     }
 
-    public List<Contract> getContractsByGivenPeriod(LocalDate beginDate, LocalDate endDate) {
-        return contractRepo.getContractsByGivenPeriod(Date.valueOf(beginDate), Date.valueOf(endDate));
+    public List<ContractDTO> getContractsByGivenPeriod(LocalDate beginDate, LocalDate endDate) {
+        List<Contract> entities = contractRepo.getContractsByGivenPeriod(Date.valueOf(beginDate), Date.valueOf(endDate));
+        return mapper.toListOfDTO(entities);
     }
 
     public void updateContract(ContractDTO dto) {

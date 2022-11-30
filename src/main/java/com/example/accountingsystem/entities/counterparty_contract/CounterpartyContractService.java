@@ -33,8 +33,8 @@ public class CounterpartyContractService {
 
     public void addCounterpartyContract(CounterpartyContractDTO dto) {
         CounterpartyContract counterpartyContract = mapper.DTOtoCounterpartyContract(dto);
-        counterpartyContract.setContract(contractService.getContractById(dto.contract_id));
-        counterpartyContract.setCounterparty(counterpartyService.getCounterpartyById(dto.counterparty_id));
+        counterpartyContract.setContract(contractService.getContractById(dto.contractId));
+        counterpartyContract.setCounterparty(counterpartyService.getCounterpartyById(dto.counterpartyId));
         counterpartyContractRepo.save(counterpartyContract);
     }
 
@@ -51,8 +51,8 @@ public class CounterpartyContractService {
     public void updateContract(CounterpartyContractDTO dto) {
         long id = dto.id;
         CounterpartyContract updatingContract = mapper.DTOtoCounterpartyContract(dto);
-        updatingContract.setContract(contractService.getContractById(dto.contract_id));
-        updatingContract.setCounterparty(counterpartyService.getCounterpartyById(dto.counterparty_id));
+        updatingContract.setContract(contractService.getContractById(dto.contractId));
+        updatingContract.setCounterparty(counterpartyService.getCounterpartyById(dto.counterpartyId));
         CounterpartyContract contractToBeUpdated = getCounterpartyContractById(id);
         if (contractToBeUpdated != null) {
             try {

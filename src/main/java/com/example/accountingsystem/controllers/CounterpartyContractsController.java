@@ -35,7 +35,7 @@ public class CounterpartyContractsController {
     public void addContract(@RequestBody @Valid CounterpartyContractDTO dto,
                                                      @PathVariable("id") String pathId, HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        dto.contract_id = Long.parseLong(pathId);
+        dto.contractId = Long.parseLong(pathId);
         counterpartyContractService.addCounterpartyContract(dto);
     }
 
@@ -43,7 +43,7 @@ public class CounterpartyContractsController {
     public void updateContract(@RequestBody @Valid CounterpartyContractDTO dto,
                                                      @PathVariable("id") String pathId, HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        dto.contract_id = Long.parseLong(pathId);
+        dto.id = Long.parseLong(pathId);
         counterpartyContractService.updateContract(dto);
     }
 }

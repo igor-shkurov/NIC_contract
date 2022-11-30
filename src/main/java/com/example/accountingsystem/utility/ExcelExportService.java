@@ -2,8 +2,10 @@ package com.example.accountingsystem.utility;
 
 import com.example.accountingsystem.entities.ExportableContract;
 import com.example.accountingsystem.entities.contract.Contract;
+import com.example.accountingsystem.entities.contract.ContractDTO;
 import com.example.accountingsystem.entities.contract.ContractService;
-import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContract;
+import com.example.accountingsystem.entities.counterparty.CounterpartyService;
+import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractDTO;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
 import com.example.accountingsystem.entities.stage.Stage;
 import com.example.accountingsystem.entities.stage.StageService;
@@ -26,19 +28,21 @@ public class ExcelExportService {
     private XSSFSheet sheet;
     private static int currentRow = 1;
 
-    ContractService contractService;
-    CounterpartyContractService counterpartyContractService;
-    StageService stageService;
+    private final ContractService contractService;
+    private final CounterpartyContractService counterpartyContractService;
+    private final StageService stageService;
+    private final CounterpartyService counterpartyService;
 
     @Autowired
-    public ExcelExportService(ContractService contractService, CounterpartyContractService counterpartyContractService, StageService stageService) {
+    public ExcelExportService(ContractService contractService, CounterpartyContractService counterpartyContractService, StageService stageService, CounterpartyService counterpartyService) {
         this.contractService = contractService;
         this.counterpartyContractService = counterpartyContractService;
         this.stageService = stageService;
+        this.counterpartyService = counterpartyService;
     }
 
     public void writeHeaderRow(Class<?> cl) {
-        if (cl != Stage.class && !ExportableContract.class.isAssignableFrom(cl)) {
+        if (cl != Stage.class && cl != ExportableContract.class) {
             throw new IllegalArgumentException(cl + " class passed, but Contract/CounterpartyContract/Stage class expected");
         }
         Row row = sheet.createRow(0);
@@ -61,12 +65,12 @@ public class ExcelExportService {
         cell = row.createCell(5);
         cell.setCellValue("Название");
 
-        if (ExportableContract.class.isAssignableFrom(cl)) {
-            cell = row.createCell(6);
-            cell.setCellValue("Тип договора");
+        cell = row.createCell(6);
+        cell.setCellValue("Сумма");
 
+        if (ExportableContract.class.isAssignableFrom(cl)) {
             cell = row.createCell(7);
-            cell.setCellValue("Сумма договора");
+            cell.setCellValue("Тип договора");
 
             cell = row.createCell(8);
             cell.setCellValue("Основной/номер основного");
@@ -76,8 +80,6 @@ public class ExcelExportService {
         }
 
         if (cl == Stage.class) {
-            cell = row.createCell(6);
-            cell.setCellValue("Сумма этапа");
 
             cell = row.createCell(7);
             cell.setCellValue("Расход на зарплату (план)");
@@ -99,34 +101,34 @@ public class ExcelExportService {
         for (ExportableContract contract : list) {
             Row row = sheet.createRow(currentRow++);
 
-            Long id = contract.getId();
+            long id = contract.id;
 
             CellStyle cellStyle = book.createCellStyle();
             cellStyle.setAlignment(HorizontalAlignment.CENTER);
 
             Cell cell = row.createCell(0);
-            if (contract.getClass() == Contract.class) {
+            if (contract.getClass() == ContractDTO.class) {
                 cell.setCellValue(id);
             }
 
             cell = row.createCell(1);
-            cell.setCellValue(contract.getApproxBeginDate().toString());
+            cell.setCellValue(contract.name);
 
             cell = row.createCell(2);
-            cell.setCellValue(contract.getApproxEndDate().toString());
+            cell.setCellValue(contract.approxBeginDate);
 
             cell = row.createCell(3);
-            cell.setCellValue(contract.getBeginDate().toString());
+            cell.setCellValue(contract.approxEndDate);
 
             cell = row.createCell(4);
-            cell.setCellValue(contract.getEndDate().toString());
+            cell.setCellValue(contract.beginDate);
 
             cell = row.createCell(5);
-            cell.setCellValue(contract.getName());
+            cell.setCellValue(contract.endDate);
 
             cell = row.createCell(6);
             String str;
-            switch (contract.getContractType()) {
+            switch (contract.contractType) {
                 case SUPPLY:
                     str = "Поставка";
                     break;
@@ -143,19 +145,20 @@ public class ExcelExportService {
             cell.setCellValue(str);
 
             cell = row.createCell(7);
-            cell.setCellValue(contract.getSum());
+            cell.setCellValue(contract.sum);
 
             cell = row.createCell(8);
             Cell cellCounterparty = row.createCell(9);
 
-            if (contract.getClass() == Contract.class) {
+            if (contract.getClass() == ContractDTO.class) {
                 cell.setCellValue("Основной");
                 cellCounterparty.setCellValue("-");
                 writeTableRowsForContracts(counterpartyContractService.getCounterpartyContractsByContractId(id));
             }
             else {
-                cell.setCellValue(((CounterpartyContract) contract).getContract().getId());
-                cellCounterparty.setCellValue(((CounterpartyContract) contract).getCounterparty().getName());
+                cell.setCellValue(((CounterpartyContractDTO) contract).contractId);
+                long counterpartyId = ((CounterpartyContractDTO) contract).counterpartyId;
+                cellCounterparty.setCellValue(counterpartyService.getCounterpartyById(counterpartyId).getName());
             }
 
             setRowAlignment(row);
@@ -230,8 +233,8 @@ public class ExcelExportService {
         book = new XSSFWorkbook();
         sheet = book.createSheet("Contracts");
 
-        List<Contract> contracts = contractService.getContractsByGivenPeriod(beginDate, endDate);
-        writeHeaderRow(Contract.class);
+        List<ContractDTO> contracts = contractService.getContractsByGivenPeriod(beginDate, endDate);
+        writeHeaderRow(ExportableContract.class);
         writeTableRowsForContracts(contracts);
 
         exportBook(response);

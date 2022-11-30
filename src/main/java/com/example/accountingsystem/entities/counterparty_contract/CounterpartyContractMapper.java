@@ -9,8 +9,8 @@ import java.util.List;
 
 @Mapper
 public interface CounterpartyContractMapper {
-    @Mapping(target="contract_id", source="entity.contract")
-    @Mapping(target="counterparty_id", source="entity.counterparty")
+    @Mapping(target="contractId", source="entity.contract")
+    @Mapping(target="counterpartyId", source="entity.counterparty")
     CounterpartyContractDTO counterpartyContractToDTO(CounterpartyContract entity);
 
     CounterpartyContract DTOtoCounterpartyContract(CounterpartyContractDTO dto);

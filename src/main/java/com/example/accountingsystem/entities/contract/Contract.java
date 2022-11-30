@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table
-public class Contract implements ExportableContract {
+public class Contract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,7 +21,7 @@ public class Contract implements ExportableContract {
     private ContractType contractType;
 
     @Column(columnDefinition = "date")
-    // @FutureOrPresent НАЧАЛО ДОЛЖНО БЫТЬ ДО КОНЦА!
+
     private LocalDate approxBeginDate;
     @Column(columnDefinition = "date")
     //@FutureOrPresent

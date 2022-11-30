@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface ContractMapper  {
-    @Mapping(target = "user_id", source = "entity.associatedUser")
+    @Mapping(target = "userId", source = "entity.associatedUser")
     ContractDTO contractContractToDTO(Contract entity);
 
     Contract DTOtoContract(ContractDTO dto);
