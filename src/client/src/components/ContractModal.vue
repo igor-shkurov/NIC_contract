@@ -7,13 +7,13 @@
             <img class="contract-modal-cancel-btn" src="../assets/icons/cancel.png" alt="" />
           </button>
         </div>
-        <div class="contract-modal-header-text">Карточка {{ this.cardHeader }}</div>
+        <div class="contract-modal-header-text">Карточка {{ $props.cardHeader }}</div>
 
         <div class="contract-modal-info">
           <div class="contract-modal-controls">
             <button
                 class="contract-modal-controls__button"
-                @click="editMode ? editMode=false : editMode=true; idInputDisabled();"
+                @click="editMode ? editMode=false : editMode=true"
                 v-if="!editMode"
             >
               <img src="../assets/icons/edit.png" alt="">
@@ -42,67 +42,98 @@
           >
             <div
                 class="contract-fields-element"
-                v-for="(value, key, index) in obj"
+                v-for="(key, index) in inputElemsKeys"
                 :key="index"
             >
-                <div class="fields-element__title">
-                  <div class="element-title__container">
-                    {{fieldsHeaders[index]}}:
-                  </div>
+              <div class="fields-element__title">
+                <div class="element-title__container">
+                  {{inputElemsHeaders[index]}}:
                 </div>
-              <div
-                  class="fields-element__value"
-                  :class="editMode ? 'noHover' : ''"
-              >{{ value }}</div>
-                <input
-                    type="text"
-                    class="fields-element__edit"
-                    v-if="editMode"
-                    v-model="newObj[key]"
-                >
-            </div>
-          </div>
-          <div
-              class="if-container"
-              v-if="mode === 'contracts'"
-          >
-            <div class="contract-modal-header-container">
-              <div class="contract-modal-header-text">Список этапов:</div>
-              <button
-                  class="contract-modal-header-button"
-                  @click="isOpenAddStage=true"
+              </div>
+              <div class="fields-element__value">
+                {{ $props.obj[key]}}
+              </div>
+              <input
+                  :type="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')? 'date' : 'text'"
+                  class="fields-element__edit"
+                  v-if="editMode"
+                  v-model="newObj[key]"
               >
-                <img src="../assets/icons/add.png" alt="">
-                <div class="contract-modal-header-button__header">Добавить</div>
-              </button>
             </div>
 
-            <list-all-inserted
-                :mode="'stages'"
-                :inserting="{isInserted:true, openModalID: $props.obj.id}"
-            ></list-all-inserted>
-            <div class="contract-modal-header-container">
-              <div class="contract-modal-header-text">Список договоров с контрагентами:</div>
-              <button
-                  class="contract-modal-header-button"
-                  @click="isOpenAddStage=true"
+            <div
+                class="contract-fields-element"
+                v-if="mode === 'contractsCounterparty'"
+            >
+              <div class="fields-element__title"><div class="element-title__container">Организация-контрагент:</div></div>
+              <div class="fields-element__value">
+                {{ $props.obj['counterparty']}}
+              </div>
+              <select
+                  class="fields-element__edit select-element"
+                  v-model="newObj['counterparty']"
+                  v-if="editMode"
               >
-                <img src="../assets/icons/add.png" alt="">
-                <div class="contract-modal-header-button__header">Добавить</div>
-              </button>
+                <option
+                    v-for="(counterparty, index) in this.counterparties"
+                    :key="index"
+                    :value="counterparty.id">
+                  {{ counterparty.name}}
+                </option>
+              </select>
             </div>
-            <list-all-inserted
-                :mode="'contractsCounterparty'"
-                :inserting="{isInserted:true, openModalID: $props.obj.id}"
-            ></list-all-inserted>
+
+            <div
+                class="contract-fields-element"
+                v-if="mode === 'contracts' || mode === 'contractsCounterparty'"
+            >
+              <div class="fields-element__title">
+                <div class="element-title__container">Тип договора:
+                </div>
+              </div>
+              <div class="fields-element__value">
+                {{ $props.obj['contractType']}}
+              </div>
+              <select
+                  class="fields-element__edit select-element"
+                  v-model="newObj['contractType']"
+                  v-if="editMode"
+              >
+                <option value="PURCHASE">Закупка</option>
+                <option value="SUPPLY">Поставка</option>
+                <option value="WORK">Работы</option>
+              </select>
+            </div>
           </div>
+        </div>
+        <div
+            class="if-container"
+            v-if="mode === 'contracts'"
+        >
+          <div class="contract-modal-header-container">
+            <div class="contract-modal-header-text">Список этапов:</div>
+          </div>
+          <list-all-inserted
+              :mode="'stages'"
+              :inserting="{isInserted:true, openModalID: $props.obj.id}"
+          ></list-all-inserted>
+          <div class="contract-modal-header-container">
+            <div class="contract-modal-header-text">Список договоров с контрагентами:</div>
+          </div>
+          <list-all-inserted
+              :mode="'contractsCounterparty'"
+              :inserting="{isInserted:true, openModalID: $props.obj.id}"
+          ></list-all-inserted>
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
 <script>
+import {mapActions, mapGetters} from "vuex";
+
 export default {
   name: 'contract-modal',
   components: {
@@ -110,72 +141,50 @@ export default {
   },
   props: {
     obj: Object,
-    mode: String
+    mode: String,
+    cardKeys: Array,
+    cardFields: Array,
+    cardHeader: String
   },
   data() {
     return {
       editMode: false,
       newObj: null,
-      fieldsHeaders: null,
-      cardHeader: null,
       isOpenAddStage: false,
       isOpenAddContractCounterparty: false,
     }
   },
+  computed: {
+    ...mapGetters(['getCounterparties']),
+    counterparties(){
+      return this.getCounterparties
+    },
+    inputElemsKeys(){
+      let arr = []
+      this.$props.cardKeys.forEach(key => {
+        if (key !== 'contractType' && key !== 'counterparty')
+          arr.push(key)
+      })
+      return arr
+    },
+    inputElemsHeaders(){
+      let arr = []
+      this.$props.cardFields.forEach(header => {
+        if (header !== 'Тип договора' && header !== 'Организация-контрагент')
+          arr.push(header)
+      })
+      return arr
+    }
+  },
   methods: {
-    idInputDisabled() {
-      setTimeout(() => {
-        const idInput = document.getElementsByClassName('fields-element__edit').item(0)
-        idInput.setAttribute('disabled', 'true')
-        idInput.style = 'background-color: #525252; font-weight: 400; color: #ababab'
-      }, 0.000001)
-    },
-    getCardHeader() {
-      let text = null
-      switch (this.$props.mode){
-        case 'contracts':
-          text = 'договора'
-          break
-        case 'counterparties':
-          text = 'контрагента'
-          break
-        case 'stages':
-          text = 'этапа'
-          break
-        case 'contractsCounterparty':
-          text = 'договора с контрагентом'
-          break
-        case 'users':
-          text = 'пользователя'
-          break
-      }
-      return text
-    },
-    getFieldsHeaders() {
-      let headers = null
-      switch (this.$props.mode){
-        case 'contracts':
-          headers = ['ID','Название','Тип договора','Плановые сроки начала','Плановые сроки окончания','Фактические сроки начала', 'Фактические сроки окончания', 'Сумма договора']
-          break
-        case 'counterparties':
-          headers = ['ID','Название','Адрес','ИНН']
-          break
-        case 'stages':
-          headers = ['ID','Название','Плановые сроки начала','Плановые сроки окончания','Фактические сроки начала', 'Фактические сроки окончания', 'Сумма этапа', 'Расходы на материалы', 'Расходы на зарплату']
-          break
-        case 'contractsCounterparty':
-          headers = ['ID','Название','Тип договора','Организация-контрагент', 'Сумма договора', 'Плановые сроки начала','Плановые сроки окончания','Фактические сроки начала', 'Фактические сроки окончания', 'Сумма договора']
-          break
-        case 'users':
-          headers = ['Логин', 'Пароль']
-      }
-      return headers
-    },
+    ...mapActions(['loadCounterparties']),
     async updateObj() {
       this.editMode = false
       const values = document.getElementsByClassName('fields-element__value')
+      //const editValues = document.getElementsByClassName('fields-element__edit')
       for (let i = 0; i < values.length; i++) {
-        values[i].innerHTML = this.newObj[Object.keys(this.obj)[i]]
+          values[i].innerHTML = this.newObj[this.cardKeys[i]]
+       // console.log(editValues[i])
       }
       //fetch body: newContract
       console.log(`PUT-request to update info about ${this.mode} object...`)
@@ -186,16 +195,21 @@ export default {
     }
   },
   created() {
+    this.loadCounterparties()
     let clone = {};
     for (let key in this.obj) {
-      clone[key] = this.obj[key];
+      if (key === 'counterparty'){
+        let id = this.counterparties.find(counterparty => {
+          if (counterparty.name === this.obj[key])
+            return counterparty.id
+        })
+        clone[key] = id
+      }
+      else
+        clone[key] = this.obj[key];
     }
     this.newObj = clone;
-
-    this.cardHeader = this.getCardHeader()
-    this.fieldsHeaders = this.getFieldsHeaders()
   }
-
 }
 </script>
 
@@ -238,14 +252,16 @@ export default {
     text-align: center;
     width: 100%;
     justify-self: center;
-    margin-left: 10%;
+    margin-left: 5%;
   }
   .contract-modal-info{
-    width:70%;
     margin-top: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+  .contract-modal-info, .if-container {
+    width:70%;
   }
   .contract-modal-cancel-btn{
     width: 30px;
@@ -278,9 +294,8 @@ export default {
   }
   .contract-fields {
     display: grid;
-    grid-template-rows: repeat(8, 1fr);
     grid-row-gap: 10px;
-    margin: 10px;
+    margin: 10px 0 0 0;
     width: 100%;
   }
   .contract-fields-element{
@@ -292,10 +307,6 @@ export default {
   }
   .fields-element__value:hover{
     background-color: #606060;
-  }
-  .noHover{
-    pointer-events: none;
-    color: #ababab;
   }
 
   .fields-element__title{
@@ -340,7 +351,11 @@ export default {
     justify-content: flex-end;
     width: 100%;
   }
-  .contract-modal-controls__button, .contract-modal-header-button {
+  .contract-modal-header-container{
+    line-height: 1;
+    margin-top: 20px;
+  }
+  .contract-modal-controls__button {
     display: flex;
     align-items: center;
     font-size: 15px;
@@ -351,18 +366,18 @@ export default {
     margin-left: 5px;
     padding: 3px 10px;
   }
-  .contract-modal-controls__button:hover, .contract-modal-header-button:hover{
+  .contract-modal-controls__button:hover{
     transform: translateY(-2px);
     background-color: #808080;
   }
-  .contract-modal-controls__button:active, .contract-modal-header-button:active{
+  .contract-modal-controls__button:active{
     transform: translateY(2px);
     background-color: #606060;
   }
-  .contract-modal-controls__button > img, .contract-modal-header-button >img {
+  .contract-modal-controls__button > img {
     width: 30px;
   }
-  .controls-button__header, .contract-modal-header-button__header {
+  .controls-button__header {
     display: flex;
     align-items: center;
     margin-left: 3px;
