@@ -22,17 +22,23 @@
         >
         </table-template>
         <contract-modal
-            v-if="isOpenModal"
+            v-if="this.isOpenModal"
             @close="closeModalWindow"
             :obj="this.openObj"
             :mode="this.mode"
+            :cardKeys="this.cardKeys"
+            :cardFields="this.cardFields"
+            :cardHeader="this.cardHeader"
         >
         </contract-modal>
         <add-modal
           v-if="isOpenAddModal"
           @close="isOpenAddModal=false"
-          :fieldsHeaders="this.addCardFields"
-          :cardHeader="this.addCardHeader"
+          :mode="this.mode"
+          :id="this.inserting.openModalID"
+          :cardKeys="this.cardKeys"
+          :cardFields="this.cardFields"
+          :cardHeader="this.cardHeader"
         >
         </add-modal>
       </div>
@@ -63,8 +69,9 @@ export default {
         isOpenModal: false,
         openObj: null,
         isOpenAddModal: false,
-        addCardFields: null,
-        addCardHeader:  null
+        cardFields: null,
+        cardHeader:  null,
+        cardKeys: null
       }
     },
     computed: {
@@ -86,8 +93,8 @@ export default {
       }
     },
     methods: {
-      openModalWindow(id) {
-        this.openObj = this.arrData[id-1]
+      openModalWindow(ind) {
+        this.openObj = this.arrData[ind]
         this.isOpenModal = true
       },
       closeModalWindow() {
@@ -95,8 +102,9 @@ export default {
         this.isOpenModal = false
       },
       getHeaders(headers){
-        this.addCardFields = headers.fieldsHeaders
-        this.addCardHeader = headers.cardHeader
+        this.cardFields = headers.fieldsHeaders
+        this.cardHeader = headers.cardHeader
+        this.cardKeys = headers.keysElemData
       },
       ...mapActions(['loadContracts', 'loadCounterparties', 'loadStages', 'loadContractsCounterparty', 'loadUsers']),
       getArrData() {
