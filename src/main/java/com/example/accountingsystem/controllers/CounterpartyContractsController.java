@@ -31,19 +31,15 @@ public class CounterpartyContractsController {
         return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(pathId));
     }
 
-    @PostMapping(path = "/{id}", consumes = {"application/json"})
-    public void addContract(@RequestBody @Valid CounterpartyContractDTO dto,
-                                                     @PathVariable("id") String pathId, HttpServletResponse response) {
+    @PostMapping(path = "/add", consumes = {"application/json"})
+    public void addContract(@RequestBody @Valid CounterpartyContractDTO dto, HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        dto.contractId = Long.parseLong(pathId);
         counterpartyContractService.addCounterpartyContract(dto);
     }
 
-    @PutMapping(path = "/{id}/update", consumes = {"application/json"})
-    public void updateContract(@RequestBody @Valid CounterpartyContractDTO dto,
-                                                     @PathVariable("id") String pathId, HttpServletResponse response) {
+    @PutMapping(path = "/update", consumes = {"application/json"})
+    public void updateContract(@RequestBody @Valid CounterpartyContractDTO dto, HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        dto.id = Long.parseLong(pathId);
         counterpartyContractService.updateContract(dto);
     }
 }

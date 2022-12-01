@@ -39,8 +39,8 @@ public class ContractController {
         return contractService.getContractDtoById(Long.parseLong(pathId));
     }
 
-    @PutMapping(path = "/{id}/update", consumes = {"application/json"})
-    public void updateContract(@RequestBody ContractDTO dto, @PathVariable("id") String pathId, HttpServletResponse response) {
+    @PutMapping(path = "/update", consumes = {"application/json"})
+    public void updateContract(@RequestBody ContractDTO dto, HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         contractService.updateContract(dto);
     }

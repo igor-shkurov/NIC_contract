@@ -1,11 +1,10 @@
 package com.example.accountingsystem.entities.contract;
 
 import com.example.accountingsystem.entities.ContractType;
-import com.example.accountingsystem.entities.ExportableContract;
 import com.example.accountingsystem.entities.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 
 @Entity

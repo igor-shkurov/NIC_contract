@@ -1,6 +1,8 @@
 package com.example.accountingsystem.entities.stage;
 
+import com.example.accountingsystem.entities.contract.ContractService;
 import org.apache.commons.beanutils.BeanUtils;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,27 +12,33 @@ import java.util.List;
 @Service
 public class StageService {
     private final StageRepo stageRepo;
+    private final ContractService contractService;
+
+    private final StageMapper mapper;
 
     @Autowired
-    public StageService(StageRepo stageRepo) {
+    public StageService(StageRepo stageRepo, ContractService contractService) {
         this.stageRepo = stageRepo;
+        this.contractService = contractService;
+        mapper = Mappers.getMapper(StageMapper.class);
     }
 
-    public List<Stage> getStages() {
-        return stageRepo.findAll();
-    }
-
-    public void addStage(Stage stage) {
-        stageRepo.save(stage);
+    public void addStage(StageDTO dto) {
+        Stage entity = mapper.DTOtoStage(dto);
+        stageRepo.save(entity);
     }
 
     public Stage getStageById(long id) { return stageRepo.findById(id).orElse(null); }
 
-    public List<Stage> getStagesByContractId(Long id) {
-        return stageRepo.getStagesByContractId(id);
+    public List<StageDTO> getStagesByContractId(long id) {
+        List<Stage> entities = stageRepo.getStagesByContractId(id);
+        return mapper.toListOfDTO(entities);
     }
 
-    public void updateStage(long id, Stage updatingStage) {
+    public void updateStage(StageDTO dto) {
+        long id = dto.id;
+        Stage updatingStage = mapper.DTOtoStage(dto);
+        updatingStage.setContract(contractService.getContractById(dto.contractId));
         Stage stageToBeUpdated = getStageById(id);
         if (stageToBeUpdated != null) {
             try {

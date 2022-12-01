@@ -1,5 +1,6 @@
 package com.example.accountingsystem.entities.contract;
 
+import com.example.accountingsystem.entities.user.CustomUserDetailsService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,14 @@ import java.util.Optional;
 public class ContractService {
 
     private final ContractRepo contractRepo;
+    private final CustomUserDetailsService userDetailsService;
 
     private final ContractMapper mapper;
 
     @Autowired
-    public ContractService(ContractRepo contractRepo) {
+    public ContractService(ContractRepo contractRepo, CustomUserDetailsService userDetailsService) {
         this.contractRepo = contractRepo;
+        this.userDetailsService = userDetailsService;
         this.mapper = Mappers.getMapper(ContractMapper.class);
     }
 
@@ -55,6 +58,7 @@ public class ContractService {
     public void updateContract(ContractDTO dto) {
         long id = dto.id;
         Contract updatingContract = mapper.DTOtoContract(dto);
+        updatingContract.setAssociatedUser(userDetailsService.getUserById(dto.userId));
         Contract contractToBeUpdated = getContractById(id);
         if (contractToBeUpdated != null) {
             try {

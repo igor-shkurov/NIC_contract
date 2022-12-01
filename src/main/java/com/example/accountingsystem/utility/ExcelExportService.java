@@ -8,6 +8,7 @@ import com.example.accountingsystem.entities.counterparty.CounterpartyService;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractDTO;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
 import com.example.accountingsystem.entities.stage.Stage;
+import com.example.accountingsystem.entities.stage.StageDTO;
 import com.example.accountingsystem.entities.stage.StageService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -42,7 +43,7 @@ public class ExcelExportService {
     }
 
     public void writeHeaderRow(Class<?> cl) {
-        if (cl != Stage.class && cl != ExportableContract.class) {
+        if (cl != StageDTO.class && cl != ExportableContract.class) {
             throw new IllegalArgumentException(cl + " class passed, but Contract/CounterpartyContract/Stage class expected");
         }
         Row row = sheet.createRow(0);
@@ -79,7 +80,7 @@ public class ExcelExportService {
             cell.setCellValue("Организация-контрагент");
         }
 
-        if (cl == Stage.class) {
+        if (cl == StageDTO.class) {
 
             cell = row.createCell(7);
             cell.setCellValue("Расход на зарплату (план)");
@@ -165,44 +166,44 @@ public class ExcelExportService {
         }
     }
 
-    private void writeTableRowsForStages(List<Stage> list) {
-        for (Stage stage : list) {
+    private void writeTableRowsForStages(List<StageDTO> list) {
+        for (StageDTO stage : list) {
             Row row = sheet.createRow(currentRow++);
 
-            Long id = stage.getId();
+            long id = stage.id;
 
             Cell cell = row.createCell(0);
             cell.setCellValue(id);
 
             cell = row.createCell(1);
-            cell.setCellValue(stage.getApproxBeginDate().toString());
+            cell.setCellValue(stage.approxBeginDate);
 
             cell = row.createCell(2);
-            cell.setCellValue(stage.getApproxEndDate().toString());
+            cell.setCellValue(stage.approxEndDate);
 
             cell = row.createCell(3);
-            cell.setCellValue(stage.getBeginDate().toString());
+            cell.setCellValue(stage.beginDate);
 
             cell = row.createCell(4);
-            cell.setCellValue(stage.getEndDate().toString());
+            cell.setCellValue(stage.endDate);
 
             cell = row.createCell(5);
-            cell.setCellValue(stage.getName());
+            cell.setCellValue(stage.name);
 
             cell = row.createCell(6);
-            cell.setCellValue(stage.getSum());
+            cell.setCellValue(stage.sum);
 
             cell = row.createCell(7);
-            cell.setCellValue(stage.getSalary());
+            cell.setCellValue(stage.salary);
 
             cell = row.createCell(8);
-            cell.setCellValue(stage.getCredit());
+            cell.setCellValue(stage.credit);
 
             cell = row.createCell(9);
-            cell.setCellValue(stage.getApproxSalary());
+            cell.setCellValue(stage.approxSalary);
 
             cell = row.createCell(10);
-            cell.setCellValue(stage.getApproxCredit());
+            cell.setCellValue(stage.approxCredit);
 
             setRowAlignment(row);
         }
@@ -244,8 +245,8 @@ public class ExcelExportService {
         book = new XSSFWorkbook();
         sheet = book.createSheet("Stages");
 
-        List<Stage> stages = stageService.getStagesByContractId(id);
-        writeHeaderRow(Stage.class);
+        List<StageDTO> stages = stageService.getStagesByContractId(id);
+        writeHeaderRow(StageDTO.class);
         writeTableRowsForStages(stages);
 
         exportBook(response);

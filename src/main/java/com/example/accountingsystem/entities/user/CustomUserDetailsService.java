@@ -46,6 +46,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         return user;
     }
 
+    public User getUserById(long id) {
+        Optional<User> opt = userDetailsRepo.findById(id);
+        return opt.orElse(null);
+    }
+
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {

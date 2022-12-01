@@ -1,6 +1,7 @@
 package com.example.accountingsystem.controllers;
 
 import com.example.accountingsystem.entities.counterparty.Counterparty;
+import com.example.accountingsystem.entities.counterparty.CounterpartyDTO;
 import com.example.accountingsystem.entities.counterparty.CounterpartyService;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContract;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +25,14 @@ public class CounterpartiesController {
     }
 
     @GetMapping(path = "")
-    public List<Counterparty> showCounterparties(HttpServletResponse response) {
+    public List<CounterpartyDTO> showCounterparties(HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         return counterpartyService.getCounterparties();
     }
 
-    @PutMapping(path = "/{id}/update", consumes = {"application/json"})
-    public void updateCounterparty(@RequestBody @Valid Counterparty counterpartyContract,
-                               @PathVariable("id") String id, HttpServletResponse response) {
+    @PutMapping(path = "/update", consumes = {"application/json"})
+    public void updateCounterparty(@RequestBody @Valid CounterpartyDTO counterpartyContract, HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        counterpartyService.updateCounterparty(Long.parseLong(id), counterpartyContract);
+        counterpartyService.updateCounterparty(counterpartyContract);
     }
 }

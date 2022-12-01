@@ -1,10 +1,8 @@
 package com.example.accountingsystem.entities.counterparty_contract;
 
 import com.example.accountingsystem.entities.ContractType;
-import com.example.accountingsystem.entities.ExportableContract;
 import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.counterparty.Counterparty;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.*;
