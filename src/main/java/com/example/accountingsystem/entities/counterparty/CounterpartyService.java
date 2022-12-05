@@ -47,4 +47,8 @@ public class CounterpartyService {
             counterpartyRepo.save(updatingCp);
         }
     }
+
+    public void deleteCounterparty(long id) {
+        counterpartyRepo.deleteById(id);
+    }
 }

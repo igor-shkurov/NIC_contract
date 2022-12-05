@@ -54,4 +54,7 @@ public class StageService {
         }
     }
 
+    public void deleteStage(long id) {
+        stageRepo.deleteById(id);
+    }
 }

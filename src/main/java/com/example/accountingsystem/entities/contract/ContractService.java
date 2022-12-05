@@ -1,6 +1,7 @@
 package com.example.accountingsystem.entities.contract;
 
 import com.example.accountingsystem.entities.user.CustomUserDetailsService;
+import com.example.accountingsystem.entities.user.User;
 import org.apache.commons.beanutils.BeanUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +28,21 @@ public class ContractService {
         this.mapper = Mappers.getMapper(ContractMapper.class);
     }
 
-    public List<ContractDTO> getContracts() {
-        List<Contract> entities = contractRepo.findAll();
+    public List<ContractDTO> getContractsForUser(long id) {
+        User user = userDetailsService.getUserById(id);
+        if (user == null) {
+            return null;
+        }
+        if (user.getRole() == User.Role.ADMIN) {
+            return mapper.toListOfDTO(contractRepo.findAll());
+        }
+        List<Contract> entities = contractRepo.getContractByAssociatedUserId(id);
         return mapper.toListOfDTO(entities);
     }
 
-    public void addContract(Contract contract) {
+    public void addContract(ContractDTO dto) {
+        Contract contract = mapper.DTOtoContract(dto);
+        contract.setAssociatedUser(userDetailsService.getCurrentUser());
         contractRepo.save(contract);
     }
 
@@ -72,5 +82,9 @@ public class ContractService {
         else {
             contractRepo.save(updatingContract);
         }
+    }
+
+    public void deleteContract(long id) {
+        contractRepo.deleteById(id);
     }
 }

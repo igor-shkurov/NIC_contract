@@ -31,7 +31,7 @@ public class CounterpartiesController {
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public void updateCounterparty(@RequestBody @Valid CounterpartyDTO counterpartyContract, HttpServletResponse response) {
+    public void updateCounterparty(@RequestBody CounterpartyDTO counterpartyContract, HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         counterpartyService.updateCounterparty(counterpartyContract);
     }

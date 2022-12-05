@@ -68,4 +68,8 @@ public class CounterpartyContractService {
         }
     }
 
+    public void deleteContract(long id) {
+        counterpartyContractRepo.deleteById(id);
+    }
+
 }

@@ -1,8 +1,7 @@
 package com.example.accountingsystem.entities.user;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 import com.example.accountingsystem.security.SecurityConfiguration;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,7 +18,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.Collection;
 
 @Entity
 @Table
@@ -28,14 +26,8 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank(message = "FIO should not be empty")
-    @Size(max = 60,  message = "Name should not be more then 60 letters")
     @Column(columnDefinition = "varchar(60)")
-    //только буквы?
     private String FIO;
-    @NotBlank(message = "FIO should not be empty")
-    @Size(max = 20,  message = "Login should not be more then 20 letters")
     @Column(columnDefinition = "varchar(20)")
     private String username;
     @Column(columnDefinition = "varchar(255)")
@@ -48,7 +40,7 @@ public class User implements UserDetails {
     }
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    public Role role;
 
     public User() {
     }
@@ -100,25 +92,25 @@ public class User implements UserDetails {
     @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return expirationDate.isAfter(LocalDateTime.now());
     }
 
     @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return expirationDate.isAfter(LocalDateTime.now());
     }
 
     @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return expirationDate.isAfter(LocalDateTime.now());
     }
 
     @JsonIgnore
     @Override
     public boolean isEnabled() {
-        return true;
+        return expirationDate.isAfter(LocalDateTime.now());
     }
 
     @JsonIgnore
