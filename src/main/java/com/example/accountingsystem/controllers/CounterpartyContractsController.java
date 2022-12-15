@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/contract_counterparties")
 public class CounterpartyContractsController {
@@ -27,19 +27,19 @@ public class CounterpartyContractsController {
 
     @GetMapping(path = "/{id}")
     public List<CounterpartyContractDTO> showContractsById(@PathVariable("id") String pathId, HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(pathId));
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
     public void addContract(@RequestBody @Valid CounterpartyContractDTO dto, HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         counterpartyContractService.addCounterpartyContract(dto);
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
     public void updateContract(@RequestBody @Valid CounterpartyContractDTO dto, HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         counterpartyContractService.updateContract(dto);
     }
 }

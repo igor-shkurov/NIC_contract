@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.List;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
@@ -25,7 +25,7 @@ public class UsersController {
 
     @GetMapping(path = "")
     public List<UserDTO> showUsers(HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         return userService.getUsers();
     }
 
@@ -37,13 +37,13 @@ public class UsersController {
 
     @PostMapping(path = "")
     public void addUser(HttpServletResponse response, UserDTO dto) {
-        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         userService.saveUser(dto);
     }
 
     @PutMapping(path = "/update")
     public void updateUser(HttpServletResponse response, UserDTO dto) {
-        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         userService.saveUser(dto);
     }
 
