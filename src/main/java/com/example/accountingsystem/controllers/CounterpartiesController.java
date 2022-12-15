@@ -11,7 +11,7 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/counterparties")
 public class CounterpartiesController {
@@ -26,13 +26,13 @@ public class CounterpartiesController {
 
     @GetMapping(path = "")
     public List<CounterpartyDTO> showCounterparties(HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         return counterpartyService.getCounterparties();
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
     public void updateCounterparty(@RequestBody CounterpartyDTO counterpartyContract, HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
         counterpartyService.updateCounterparty(counterpartyContract);
     }
 }
