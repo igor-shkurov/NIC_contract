@@ -21,7 +21,7 @@
             @sendHeaders="getHeaders"
         >
         </table-template>
-        <contract-modal
+        <edit-modal
             v-if="this.isOpenModal"
             @close="closeModalWindow"
             :obj="this.openObj"
@@ -30,7 +30,7 @@
             :cardFields="this.cardFields"
             :cardHeader="this.cardHeader"
         >
-        </contract-modal>
+        </edit-modal>
         <add-modal
           v-if="isOpenAddModal"
           @close="isOpenAddModal=false"
@@ -48,7 +48,7 @@
 
 <script>
 import {mapActions, mapGetters} from 'vuex'
-import ContractModal from '../components/ContractModal.vue'
+import EditModal from '../components/EditModal.vue'
 import TableTemplate from '../components/TableTemplate'
 import AddModal from "../components/AddModal";
 
@@ -56,7 +56,7 @@ export default {
   name: 'ListAll',
   components: {
     'table-template':TableTemplate,
-    'contract-modal': ContractModal,
+    'edit-modal': EditModal,
     'add-modal': AddModal
   },
   props: {

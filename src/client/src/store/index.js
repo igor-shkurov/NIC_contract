@@ -90,7 +90,7 @@ export default new Vuex.Store({
         },
         async loadContracts({commit}) {
             try {
-                let response = await fetch(`http://localhost:8080/api/contracts`)
+                let response = await fetch(`http://localhost:8080/api/contracts/user_id=1`)
                 if(response.ok){
                     const contracts = await response.json();
                     commit("SET_CONTRACTS", contracts)
