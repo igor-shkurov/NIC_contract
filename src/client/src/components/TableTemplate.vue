@@ -43,7 +43,6 @@ export default {
   },
   methods: {
     openModalEvent(id) {
-      //console.log('Открываю договор с ID: ' + id)
       this.$emit('openModal', id)
     },
     getHeaders() {
@@ -69,7 +68,7 @@ export default {
         case 'contractsCounterparty':
           headers = ['Название','Тип договора','Организация-контрагент', 'Сумма договора', 'Плановые сроки начала','Плановые сроки окончания','Фактические сроки начала', 'Фактические сроки окончания']
           cardHeader = 'договора с контрагентом'
-          keysElemData = ['name','contractType','counterparty', 'sum', 'approxBeginDate','approxEndDate','beginDate', 'endDate']
+          keysElemData = ['name','contractType','counterpartyId', 'sum', 'approxBeginDate','approxEndDate','beginDate', 'endDate']
           break
         case 'users':
           headers = ['ФИО', 'Логин', 'Пароль']
