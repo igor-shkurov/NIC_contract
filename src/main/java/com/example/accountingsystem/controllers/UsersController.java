@@ -1,6 +1,5 @@
 package com.example.accountingsystem.controllers;
 
-
 import com.example.accountingsystem.entities.user.CustomUserDetailsService;
 import com.example.accountingsystem.entities.user.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
