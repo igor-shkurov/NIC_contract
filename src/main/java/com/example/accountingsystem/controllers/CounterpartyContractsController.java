@@ -1,18 +1,13 @@
 package com.example.accountingsystem.controllers;
 
-import com.example.accountingsystem.entities.contract.ContractService;
-import com.example.accountingsystem.entities.counterparty.CounterpartyService;
-import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContract;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractDTO;
-import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractMapper;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.util.List;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/contract_counterparties")
@@ -25,21 +20,33 @@ public class CounterpartyContractsController {
         this.counterpartyContractService = counterpartyContractService;
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/contract_id={id}")
     public List<CounterpartyContractDTO> showContractsById(@PathVariable("id") String pathId, HttpServletResponse response) {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        return counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(pathId));
+        List<CounterpartyContractDTO> list = counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(pathId));
+        if (list == null) {
+            response.setStatus(404);
+        }
+        return list;
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public void addContract(@RequestBody @Valid CounterpartyContractDTO dto, HttpServletResponse response) {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        counterpartyContractService.addCounterpartyContract(dto);
+    public void addContract(@RequestBody CounterpartyContractDTO dto, HttpServletResponse response) {
+        if (counterpartyContractService.addCounterpartyContract(dto)) {
+            response.setStatus(403);
+        }
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public void updateContract(@RequestBody @Valid CounterpartyContractDTO dto, HttpServletResponse response) {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        counterpartyContractService.updateContract(dto);
+    public void updateContract(@RequestBody CounterpartyContractDTO dto, HttpServletResponse response) {
+        if (!counterpartyContractService.updateContract(dto)) {
+            response.setStatus(403);
+        }
+    }
+
+    @DeleteMapping(path = "/delete/contract_id={id}")
+    public void deleteContract(@PathVariable Long id, HttpServletResponse response) {
+        if (!counterpartyContractService.deleteContract(id)) {
+            response.setStatus(404);
+        }
     }
 }

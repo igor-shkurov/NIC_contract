@@ -5,16 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.*;
-import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table
 @JsonPropertyOrder({"id", "name", "approxBeginDate", "approxEndDate", "beginDate", "endDate", "sum", "approxSalary", "approxCredit", "salary", "credit"})
 public class Stage {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(columnDefinition = "varchar(30)")
     private String name;
@@ -29,24 +27,19 @@ public class Stage {
     private LocalDate endDate;
 
     @Column(columnDefinition = "numeric(18,2)")
-    @PositiveOrZero(message = "sum should not be negative")
     private float sum;
 
     @Column(columnDefinition = "numeric(18,2)")
-    @PositiveOrZero(message = "approximate credit should not be negative")
     private float approxSalary;
     @Column(columnDefinition = "numeric(18,2)")
-    @PositiveOrZero(message = "approximate credit should not be negative")
     private float approxCredit;
 
     @Column(columnDefinition = "numeric(18,2)")
-    @PositiveOrZero(message = "debit should not be negative")
     private float salary;
     @Column(columnDefinition = "numeric(18,2)")
-    @PositiveOrZero(message = "credit should not be negative")
     private float credit;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private Contract contract;
 
     public Long getId() {
