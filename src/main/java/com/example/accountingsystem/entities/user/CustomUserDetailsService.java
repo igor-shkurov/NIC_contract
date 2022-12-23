@@ -1,7 +1,5 @@
 package com.example.accountingsystem.entities.user;
 
-import com.example.accountingsystem.entities.counterparty.Counterparty;
-import com.example.accountingsystem.entities.counterparty.CounterpartyDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.mapstruct.factory.Mappers;
@@ -12,10 +10,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -66,14 +67,27 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public List<UserDTO> getUsers() {
+        User currentUser = getCurrentUser();
+
+        if (currentUser.getRole() != User.Role.ADMIN) {
+            return null;
+        }
         List<User> entities = userDetailsRepo.findAll();
         return mapper.toListOfDTO(entities);
     }
 
-    public void updateUser(UserDTO dto) {
+    public boolean updateUser(UserDTO dto) {
+        User currentUser = getCurrentUser();
         long id = dto.id;
         User updatingUser = mapper.DTOtoUser(dto);
         User userToBeUpdated = getUserById(id);
+
+        if (!Objects.equals(updatingUser.getId(), currentUser.getId()) ||
+                !Objects.equals(userToBeUpdated.getId(), currentUser.getId())
+                && currentUser.getRole() != User.Role.ADMIN) {
+            return false;
+        }
+
         if (userToBeUpdated != null) {
             try {
                 BeanUtils.copyProperties(userToBeUpdated, updatingUser);
@@ -82,13 +96,21 @@ public class CustomUserDetailsService implements UserDetailsService {
             }
             userToBeUpdated.setId(id);
             userDetailsRepo.save(userToBeUpdated);
+            return true;
         }
         else {
-            userDetailsRepo.save(updatingUser);
+            return false;
         }
     }
 
-    public void deleteUser(long id) {
-        userDetailsRepo.deleteById(id);
+    public boolean deleteUser(long id) {
+        User currentUser = getCurrentUser();
+        if (userDetailsRepo.findById(id).isPresent()) {
+            if (currentUser.getRole() == User.Role.ADMIN && currentUser.getId() != id) {
+                userDetailsRepo.deleteById(id);
+                return true;
+            }
+        }
+        return false;
     }
 }

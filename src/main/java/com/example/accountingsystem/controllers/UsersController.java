@@ -2,16 +2,13 @@ package com.example.accountingsystem.controllers;
 
 
 import com.example.accountingsystem.entities.user.CustomUserDetailsService;
-import com.example.accountingsystem.entities.user.User;
 import com.example.accountingsystem.entities.user.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.List;
-@CrossOrigin
+
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
@@ -25,30 +22,30 @@ public class UsersController {
 
     @GetMapping(path = "")
     public List<UserDTO> showUsers(HttpServletResponse response) {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        return userService.getUsers();
+        List<UserDTO> list = userService.getUsers();
+        if (list == null) {
+            response.setStatus(403);
+        }
+        return list;
     }
 
-//    @GetMapping(path = "/current")
-//    public UserDTO showMe(HttpServletResponse response) {
-//        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-//        return userService.getCurrentUser();
-//    }
-
-    @PostMapping(path = "")
-    public void addUser(HttpServletResponse response, UserDTO dto) {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+    // @todo: переделать в соответствии с логикой регистрации
+    @PostMapping(path = "/add")
+    public void addUser(UserDTO dto, HttpServletResponse response) {
         userService.saveUser(dto);
     }
 
     @PutMapping(path = "/update")
-    public void updateUser(HttpServletResponse response, UserDTO dto) {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        userService.saveUser(dto);
+    public void updateUser(UserDTO dto, HttpServletResponse response) {
+        if (!userService.updateUser(dto)) {
+            response.setStatus(403);
+        }
     }
 
-    @DeleteMapping(path = "/delete")
-    public void deleteUser(HttpServletResponse response, @RequestParam long id) {
-        userService.deleteUser(id);
+    @DeleteMapping(path = "/delete/user_id={id}")
+    public void deleteUser(@PathVariable("id") Long id, HttpServletResponse response) {
+        if (!userService.deleteUser(id)) {
+            response.setStatus(404);
+        }
     }
 }
