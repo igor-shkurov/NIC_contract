@@ -104,7 +104,6 @@ export default new Vuex.Store({
         },
         async loadStages({commit}, id) {
             try {
-                console.log('Передали айдишник договора для этапов: ', id)
                 let response = await fetch(`http://localhost:8080/api/stages/${id}`) //let response = await fetch(`https://jsonplaceholder.typicode.com/stages/${id}`)
                 if(response.ok) {
                     const stages = await response.json();
@@ -119,7 +118,6 @@ export default new Vuex.Store({
         },
         async loadContractsCounterparty({commit}, id) {
             try {
-                console.log('Передали айдишник договора для договоров с контрагентами: ', id)
                 let response = await fetch(`http://localhost:8080/api/contract_counterparties/${id}`) //let response = await fetch(`https://jsonplaceholder.typicode.com/contracts_counterparty/${id}`)
                 if(response.ok) {
                     const contractsCounterparty = await response.json();

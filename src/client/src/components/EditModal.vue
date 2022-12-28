@@ -46,9 +46,7 @@
                 :key="index"
             >
               <div class="fields-element__title">
-                <div class="element-title__container">
                   {{inputElemsHeaders[index]}}:
-                </div>
               </div>
               <div class="fields-element__value">
                 {{ $props.obj[key]}}
@@ -65,7 +63,7 @@
                 class="edit-fields-element"
                 v-if="mode === 'contractsCounterparty'"
             >
-              <div class="fields-element__title"><div class="element-title__container">Организация-контрагент:</div></div>
+              <div class="fields-element__title">Организация-контрагент:</div>
               <div class="fields-element__value" id="select-counterparty__value">
                 {{this.getCounterpartyName }}
               </div>
@@ -88,11 +86,10 @@
                 v-if="mode === 'contracts' || mode === 'contractsCounterparty'"
             >
               <div class="fields-element__title">
-                <div class="element-title__container">Тип договора:
-                </div>
+                Тип договора:
               </div>
               <div class="fields-element__value" id="select-contractType__value">
-                {{ $props.obj['contractType']}}
+                {{ this.getContractType}}
               </div>
               <select
                   class="fields-element__edit"
@@ -176,49 +173,74 @@ export default {
       return arr
     },
     getCounterpartyName() {
-      return this.counterparties.find((counterparty) => {
+      let counterparty = this.counterparties.find((counterparty) => {
         if (counterparty.id === this.obj['counterpartyId'])
-          return counterparty.name
+          return counterparty
       })
+      return counterparty.name
+    },
+    getContractType() {
+      let type = this.$props.obj['contractType']
+      let res = ''
+      switch (type) {
+        case 'WORK':
+          res = 'Работы'
+          break
+        case 'PURCHASE':
+          res = 'Закупка'
+          break
+        case 'SUPPLY':
+          res = 'Поставка'
+          break
+      }
+      return res
     }
   },
   methods: {
     ...mapActions(['loadCounterparties']),
     async updateObj() {
       this.editMode = false
-      const values = document.getElementsByClassName('fields-element__value')
-      // for (let i = 0; i < this.inputElemsKeys.length; i++) {
-      //     values[i].innerHTML = this.newObj[this.inputElemsKeys[i]]
-      // }
-      // //обновить values после селектов, если это договор или договор с контрагентом, i должно было остаться для перебора values
-      // if (this.mode === 'contracts' || this.mode === 'contractsCounterparty') {
-      //   let value = document.getElementById('select-contractType__value')
-      //   value.innerHTML = this.newObj['contractType']
-      //   if (this.mode === 'contractsCounterparty'){
-      //     let value2 = document.getElementById('select-counterparty__value')
-      //     value2.innerHTML = this.counterparties.find((counterparty) => {
-      //       if (counterparty.id === this.newObj['counterpartyId'])
-      //         return counterparty.name
-      //     })
-      //   }
-      // }
-      console.log(values)
-      for ( var i=0; i< this.cardKeys.length;i++){
-        if(this.cardKeys[i]!=='contractType')
-          values[i].innerHTML = this.newObj[this.cardKeys[i]]
-      }
-      if (this.mode === 'contracts' || this.mode === 'contractsCounterparty'){
-        values[i++].innerHTML = this.newObj['contractType']
-      }
-      if (this.mode === 'contractsCounterparty'){
-        values[i].innerHTML = this.counterparties.find((counterparty) => {
-          if (counterparty.id === this.newObj['counterpartyId'])
-            return counterparty.name
-        })
+
+      let url = ''
+      switch (this.$props.mode) {
+        case 'contracts':
+          url = `http://localhost:8080/api/contracts/${this.newObj.id}/update`
+          break
+        case 'counterparties':
+          url = `http://localhost:8080/api/counterparties/${this.newObj.id}/update`
+          break
+        case 'stages':
+          url = `http://localhost:8080/api/stages/${this.newObj.id}/update`
+          break
+        case 'contractsCounterparty':
+          url = `http://localhost:8080/api/contract_counterparties/${this.newObj.id}/update`
+          break
+        case 'users':
+          url = `http://localhost:8080/api/users/${this.newObj.id}/update`
+          break
       }
 
-      //fetch body: newContract
-      console.log(`PUT-request to update info about ${this.mode} object...`)
+      try {
+        let response = await fetch( url ,{
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(this.newObj)
+        })
+        if(response.ok) {
+          console.log(`Объект  ${this.mode} успешно отредактирован и сохранен. PUT-request отправлен. Изменения загружены в БД.`)
+          this.$emit('close')
+          console.log('response.ok')
+        } else {
+          alert("Ошибка HTTP: " + response.status);
+          console.log('response NOT ok')
+        }
+      } catch(error) {
+        console.error(error)
+        console.log('ERROR FETCH')
+        this.$emit('close')
+      }
     },
     async removeObj() {
       //fetch body: id
