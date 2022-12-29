@@ -34,19 +34,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
-
-        http.csrf().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/login", "/token/refresh").permitAll();
-        http.authorizeRequests().antMatchers("/api/reports/**").hasRole("ADMIN")
-                .antMatchers("/api/counterparties").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/counterparties/**").hasRole("ADMIN")
-                .antMatchers("/api/**").hasAnyRole("USER", "ADMIN")
-                .anyRequest().authenticated();
-        http.formLogin();
-        http.addFilter(customAuthenticationFilter);
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+//
+//        http.csrf().disable();
+//        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//        http.authorizeRequests().antMatchers("/login", "/token/refresh").permitAll();
+//        http.authorizeRequests().antMatchers("/api/reports/**").hasRole("ADMIN")
+//                .antMatchers("/api/counterparties").hasAnyRole("USER", "ADMIN")
+//                .antMatchers("/api/counterparties/**").hasRole("ADMIN")
+//                .antMatchers("/api/**").hasAnyRole("USER", "ADMIN")
+//                .anyRequest().authenticated();
+//        http.formLogin();
+//        http.addFilter(customAuthenticationFilter);
+//        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
