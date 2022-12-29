@@ -1,7 +1,7 @@
 <template>
-  <form class="sign-in" @submit.prevent="formSubmit">
+  <form action="http://localhost:8081/contracts" class="sign-in" @submit.prevent="signIn">
     <div class="form-container">
-      <div class="form-header">{{ isSignInForm ? 'Авторизация' : 'Регистрация'}} в учётной системе:</div>
+      <div class="form-header">Авторизация в учётной системе:</div>
       <div class="form-group-element">
         <div class="form-element">
           <label for="login" class="form-element__label">Логин:</label>
@@ -12,6 +12,9 @@
               v-model.trim="form.login"
           >
         </div>
+        <p v-if="$v.form.login.$dirty && !$v.form.login.required" class="invalid-feedback">
+          Введите логин
+        </p>
         <div class="form-element">
           <label for="password" class="form-element__label">Пароль:</label>
           <input
@@ -21,26 +24,27 @@
               v-model="form.password"
           >
         </div>
-        <div class="form-element">
+        <p v-if="$v.form.password.$dirty && !$v.form.password.required" class="invalid-feedback">
+          Введите пароль
+        </p>
+        <div class="form-element buttonSubmit">
           <button
               type="submit"
               class="auth-sign-in"
-          >{{ isSignInForm ? 'Войти' : 'Зарегистрироваться' }}
+          >
+            Войти
           </button>
         </div>
-      </div>
-      <div class="form-sign-up">
-        <a
-            href="#"
-            @click.prevent="mode = isSignInForm ? 'signUp' : 'signIn'"
-        >{{ isSignInForm ? 'Регистрация аккаунта' : 'Вернуться к авторизации' }}</a>
       </div>
     </div>
   </form>
 </template>
 
 <script>
+import { validationMixin } from 'vuelidate'
+import { required } from 'vuelidate/lib/validators'
 export default {
+  mixins: [validationMixin],
   data() {
     return {
       mode: 'signIn',
@@ -51,22 +55,15 @@ export default {
       errors: []
     }
   },
-  computed: {
-    isSignInForm() {
-      return this.mode === 'signIn'
-    }
-  },
   methods: {
-    formSubmit() {
-      if (this.isSignInForm) {
-        this.signIn()
-      } else {
-        this.signUp()
-      }
+    isValidForm() {
+      this.$v.form.$touch()
+      return !this.$v.form.$error
     },
     async signIn() {
-      try {
-        let res = await fetch('https://jsonplaceholder.typicode.com/users'/*, {
+      if(this.isValidForm()){
+        try {
+          let res = await fetch('https://jsonplaceholder.typicode.com/users'/*, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -77,30 +74,25 @@ export default {
             password: this.form.password
           })
         }*/)
-        if(res.ok){
-          console.log('???-request with the check of the user...')
-          console.log('Авторизация прошла успешно')
-          window.location.href='http://localhost:8081/contracts'
-        } else {
-          alert("Ошибка HTTP / Ошибка входа...?: " + res.status);
+          if(res.ok){
+            console.log('???-request with the check of the user...')
+            console.log('Авторизация прошла успешно')
+            window.location.href='http://localhost:8081/contracts'
+          } else {
+            alert("Ошибка HTTP / Ошибка входа...?: " + res.status);
+          }
+        } catch (error) {
+          console.error(error)
         }
-      } catch (error) {
-        console.error(error)
+      } else {
+        console.log('Введенные данные не прошли валидацию.')
       }
-    },
-    async signUp() {
-      try {
-        let res = await fetch('https://jsonplaceholder.typicode.com/users')
-        if(res.ok){
-          console.log("POST-request with the new user's data...")
-          console.log('Регистрация прошла успешно')
-          alert('Регистрация прошла успешно! Вернитесь к авторизации')
-        } else {
-          alert("Ошибка HTTP: " + res.status);
-        }
-      } catch (error) {
-        console.error(error)
-      }
+    }
+  },
+  validations: {
+    form: {
+      login: { required},
+      password: { required }
     }
   }
   
@@ -158,6 +150,7 @@ export default {
   padding: 1px 7px;
   border-radius: 3px;
   height: 30px;
+
 }
 .auth-sign-in:hover, .auth-sign-in:focus{
   background-color: rgb(0, 0, 0, 0.3);
@@ -166,17 +159,15 @@ export default {
   justify-content: center;
   margin-top: 5px;
 }
-.form-sign-up {
-  margin-top: 12px;
-  text-decoration: underline;
-  color: rgb(255,255,255,0.3);
-}
 .form-sign-up > a:hover{
   transform: translateY(-2px);
 }
 .form-sign-up > a:active {
   transform: translateY(1px);
 }
-
+.buttonSubmit {
+  display: flex;
+  justify-content: center;
+}
 
 </style>
