@@ -29,10 +29,10 @@ public class UsersController {
         return list;
     }
 
+    // @todo: переделать в соответствии с логикой регистрации
     @PostMapping(path = "/add")
     public void addUser(UserDTO dto, HttpServletResponse response) {
-        response.setStatus(userService.saveUser(dto) ? 200 : 409);
-
+        userService.saveUser(dto);
     }
 
     @PutMapping(path = "/update")
