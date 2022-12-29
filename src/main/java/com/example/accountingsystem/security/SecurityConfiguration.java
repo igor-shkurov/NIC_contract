@@ -36,17 +36,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
 
-        http.csrf().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/login", "/token/refresh").permitAll();
-        http.authorizeRequests().antMatchers("/api/reports/**").hasRole("ADMIN")
-                .antMatchers("/api/counterparties").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/counterparties/**").hasRole("ADMIN")
-                .antMatchers("/api/**").hasAnyRole("USER", "ADMIN")
-                .anyRequest().authenticated();
-        http.formLogin();
-        http.addFilter(customAuthenticationFilter);
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http
+//            .authorizeRequests()
+//                .antMatchers("/api/contracts/user_id={userId}")
+//            .access("@userSecurity.hasUserId(authentication, #userId)");
+//        http
+//            .authorizeRequests()
+//                .antMatchers("/api/contracts/contract_id={contractId}")
+//            .access("@userSecurity.contractBelongsToUser(authentication, #contractId)");
+//        http.csrf().disable();
+//        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//        http.authorizeRequests().antMatchers("/login", "/token/refresh").permitAll();
+//        http.authorizeRequests().antMatchers("/api/**").hasAnyRole("USER", "ADMIN")
+//                                .antMatchers("/api/contracts.xlsx").hasRole("ADMIN")
+//                                .anyRequest().authenticated();
+//        http.formLogin();
+//        http.addFilter(customAuthenticationFilter);
+//        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

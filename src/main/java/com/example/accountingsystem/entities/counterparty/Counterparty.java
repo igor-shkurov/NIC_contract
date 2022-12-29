@@ -1,24 +1,23 @@
 package com.example.accountingsystem.entities.counterparty;
 
-import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContract;
-
 import javax.persistence.*;
-import java.util.List;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table
 public class Counterparty {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(columnDefinition = "varchar(30)", unique = true)
+    @Column(columnDefinition = "varchar(30)")
     private String name;
     @Column(columnDefinition = "varchar(50)")
     private String address;
-    @Column(columnDefinition = "char(10)", unique = true)
+    //число 10 цифр. Long? Нет проверки на то, числа это или нет
+    @Size(min = 10, max = 10, message = "INN should be a 10-digit number")
+    @Column(columnDefinition = "char(10)")
     private String inn;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "counterparty")
-    private List<CounterpartyContract> counterpartyContracts;
 
     public Long getId() {
         return id;
@@ -50,13 +49,5 @@ public class Counterparty {
 
     public void setInn(String inn) {
         this.inn = inn;
-    }
-
-    public List<CounterpartyContract> getCounterpartyContracts() {
-        return counterpartyContracts;
-    }
-
-    public void setCounterpartyContracts(List<CounterpartyContract> counterpartyContracts) {
-        this.counterpartyContracts = counterpartyContracts;
     }
 }

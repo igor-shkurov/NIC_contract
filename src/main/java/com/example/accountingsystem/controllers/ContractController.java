@@ -1,11 +1,14 @@
 package com.example.accountingsystem.controllers;
 
+import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.contract.ContractDTO;
 import com.example.accountingsystem.entities.contract.ContractService;
+import com.example.accountingsystem.entities.user.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 import java.util.List;
 
 @CrossOrigin
@@ -20,42 +23,31 @@ public class ContractController {
         this.contractService = contractService;
     }
 
-    @GetMapping(path = "")
-    public List<ContractDTO> showContractsForUser(HttpServletResponse response) {
-        List<ContractDTO> list = contractService.getContractsForUser();
+    @GetMapping(path = "/user_id={user_id}")
+    public List<ContractDTO> showContractsForUser(HttpServletResponse response, @PathVariable("user_id") Long userId) {
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        List<ContractDTO> list = contractService.getContractsForUser(userId);
         if (list == null) {
             response.setStatus(404);
         }
         return list;
     }
 
-    @GetMapping(path = "/contract_id={id}")
-    public ContractDTO showContractById(@PathVariable("id") Long id, HttpServletResponse response) {
-        ContractDTO dto = contractService.getContractDtoById(id);
-        if (dto == null) {
-            response.setStatus(404);
-        }
-        return dto;
+    @PostMapping(path = "", consumes = {"application/json"}) //postman
+    public void addContract(@RequestBody ContractDTO dto, HttpServletResponse response) {
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        contractService.addContract(dto);
     }
 
-    @PostMapping(path = "/add", consumes = {"application/json"})
-    public void addContract(@RequestBody ContractDTO dto, HttpServletResponse response) {
-        if (!contractService.addContract(dto)) {
-            response.setStatus(403);
-        }
+    @GetMapping(path = "/contract_id={contract_id}")
+    public ContractDTO showContractById(HttpServletResponse response, @PathVariable("contract_id") Long contractId) {
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        return contractService.getContractDtoById(contractId);
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
     public void updateContract(@RequestBody ContractDTO dto, HttpServletResponse response) {
-        if (!contractService.updateContract(dto)) {
-            response.setStatus(403);
-        }
-    }
-
-    @DeleteMapping(path = "/delete/contract_id={id}")
-    public void deleteContract(@PathVariable("id") Long id, HttpServletResponse response) {
-        if (!contractService.deleteContract(id)) {
-            response.setStatus(404);
-        }
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+        contractService.updateContract(dto);
     }
 }
