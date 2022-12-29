@@ -3,6 +3,7 @@ package com.example.accountingsystem.security.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.accountingsystem.entities.user.User;
+import com.example.accountingsystem.utility.LoginHistoryRecorder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,6 +43,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
+        LoginHistoryRecorder.record(user.getUsername());
         Algorithm algorithm = algorithmInstance;
         String access_token = JWT.create()
                 .withSubject(user.getUsername())
