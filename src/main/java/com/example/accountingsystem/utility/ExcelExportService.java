@@ -116,16 +116,16 @@ public class ExcelExportService {
             cell.setCellValue(contract.name);
 
             cell = row.createCell(2);
-            cell.setCellValue(contract.approxBeginDate.toString());
+            cell.setCellValue(contract.approxBeginDate);
 
             cell = row.createCell(3);
-            cell.setCellValue(contract.approxEndDate.toString());
+            cell.setCellValue(contract.approxEndDate);
 
             cell = row.createCell(4);
-            cell.setCellValue(contract.beginDate.toString());
+            cell.setCellValue(contract.beginDate);
 
             cell = row.createCell(5);
-            cell.setCellValue(contract.endDate.toString());
+            cell.setCellValue(contract.endDate);
 
             cell = row.createCell(6);
             String str;
@@ -176,16 +176,16 @@ public class ExcelExportService {
             cell.setCellValue(id);
 
             cell = row.createCell(1);
-            cell.setCellValue(stage.approxBeginDate.toString());
+            cell.setCellValue(stage.approxBeginDate);
 
             cell = row.createCell(2);
-            cell.setCellValue(stage.approxEndDate.toString());
+            cell.setCellValue(stage.approxEndDate);
 
             cell = row.createCell(3);
-            cell.setCellValue(stage.beginDate.toString());
+            cell.setCellValue(stage.beginDate);
 
             cell = row.createCell(4);
-            cell.setCellValue(stage.endDate.toString());
+            cell.setCellValue(stage.endDate);
 
             cell = row.createCell(5);
             cell.setCellValue(stage.name);

@@ -15,6 +15,4 @@ public interface CounterpartyContractRepo extends JpaRepository<CounterpartyCont
     List<CounterpartyContract> getCounterpartyContractsByContractId(@Param("id") Long id);
 
     List<CounterpartyContract> findCounterpartyContractByContract(Contract contract);
-
-    boolean existsCounterpartyContractByCounterpartyId(Long id);
 }

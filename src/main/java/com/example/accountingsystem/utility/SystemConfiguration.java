@@ -22,7 +22,7 @@ public class SystemConfiguration {
             UserDTO administrator = new UserDTO();
             administrator.FIO = "Shkurov Igor Olegovich";
             administrator.username = "admin";
-            administrator.password = "root";
+            administrator.password = cryptPasswordEncoder.encode("root");
             administrator.role = User.Role.ADMIN;
             administrator.expirationDate = LocalDateTime.now().plusMonths(6);
 
@@ -31,9 +31,9 @@ public class SystemConfiguration {
             UserDTO user = new UserDTO();
             user.FIO = "Pyatizbyantsev Ilya Andreevich";
             user.username = "aboba";
-            user.password = "snusik";
+            user.password = cryptPasswordEncoder.encode("snusik");
             user.role = User.Role.USER;
-            user.expirationDate = LocalDateTime.now().plusMonths(6);
+            user.expirationDate = LocalDateTime.now().minusDays(6);
 
             userDetailsService.saveUser(user);
         };
