@@ -37,6 +37,9 @@
               class="edit-modal-control-warning"
               v-if="editMode"
           >После изменений нажмите "Сохранить".</div>
+          <p class="invalid-feedback" v-if="!this.isValidForm">
+            Пожалуйста, введите все поля
+          </p>
           <div
               class="edit-fields"
           >
@@ -46,9 +49,7 @@
                 :key="index"
             >
               <div class="fields-element__title">
-                <div class="element-title__container">
                   {{inputElemsHeaders[index]}}:
-                </div>
               </div>
               <div class="fields-element__value">
                 {{ $props.obj[key]}}
@@ -65,7 +66,7 @@
                 class="edit-fields-element"
                 v-if="mode === 'contractsCounterparty'"
             >
-              <div class="fields-element__title"><div class="element-title__container">Организация-контрагент:</div></div>
+              <div class="fields-element__title">Организация-контрагент:</div>
               <div class="fields-element__value" id="select-counterparty__value">
                 {{this.getCounterpartyName }}
               </div>
@@ -88,11 +89,10 @@
                 v-if="mode === 'contracts' || mode === 'contractsCounterparty'"
             >
               <div class="fields-element__title">
-                <div class="element-title__container">Тип договора:
-                </div>
+                Тип договора:
               </div>
               <div class="fields-element__value" id="select-contractType__value">
-                {{ $props.obj['contractType']}}
+                {{ this.getContractType}}
               </div>
               <select
                   class="fields-element__edit"
@@ -132,7 +132,11 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
+
+import {mapActions, mapGetters} from "vuex"
+import { validationMixin } from 'vuelidate'
+import { required } from 'vuelidate/lib/validators'
+
 
 export default {
   name: 'edit-modal',
@@ -146,12 +150,20 @@ export default {
     cardFields: Array,
     cardHeader: String
   },
+  mixins: [validationMixin],
   data() {
     return {
       editMode: false,
       newObj: null,
       isOpenAddStage: false,
       isOpenAddContractCounterparty: false,
+      userForm: {},
+      contractForm: {},
+      contractCounterpartyForm: {},
+      counterpartyForm: {},
+      stageForm: {},
+      isValidForm: true
+
     }
   },
   computed: {
@@ -176,54 +188,157 @@ export default {
       return arr
     },
     getCounterpartyName() {
-      return this.counterparties.find((counterparty) => {
+      let counterparty = this.counterparties.find((counterparty) => {
         if (counterparty.id === this.obj['counterpartyId'])
-          return counterparty.name
+          return counterparty
       })
+      return counterparty.name
+    },
+    getContractType() {
+      let type = this.$props.obj['contractType']
+      let res = ''
+      switch (type) {
+        case 'WORK':
+          res = 'Работы'
+          break
+        case 'PURCHASE':
+          res = 'Закупка'
+          break
+        case 'SUPPLY':
+          res = 'Поставка'
+          break
+      }
+      return res
     }
   },
   methods: {
     ...mapActions(['loadCounterparties']),
-    async updateObj() {
-      this.editMode = false
-      const values = document.getElementsByClassName('fields-element__value')
-      // for (let i = 0; i < this.inputElemsKeys.length; i++) {
-      //     values[i].innerHTML = this.newObj[this.inputElemsKeys[i]]
-      // }
-      // //обновить values после селектов, если это договор или договор с контрагентом, i должно было остаться для перебора values
-      // if (this.mode === 'contracts' || this.mode === 'contractsCounterparty') {
-      //   let value = document.getElementById('select-contractType__value')
-      //   value.innerHTML = this.newObj['contractType']
-      //   if (this.mode === 'contractsCounterparty'){
-      //     let value2 = document.getElementById('select-counterparty__value')
-      //     value2.innerHTML = this.counterparties.find((counterparty) => {
-      //       if (counterparty.id === this.newObj['counterpartyId'])
-      //         return counterparty.name
-      //     })
-      //   }
-      // }
-      console.log(values)
-      for ( var i=0; i< this.cardKeys.length;i++){
-        if(this.cardKeys[i]!=='contractType')
-          values[i].innerHTML = this.newObj[this.cardKeys[i]]
-      }
-      if (this.mode === 'contracts' || this.mode === 'contractsCounterparty'){
-        values[i++].innerHTML = this.newObj['contractType']
-      }
-      if (this.mode === 'contractsCounterparty'){
-        values[i].innerHTML = this.counterparties.find((counterparty) => {
-          if (counterparty.id === this.newObj['counterpartyId'])
-            return counterparty.name
-        })
-      }
 
-      //fetch body: newContract
-      console.log(`PUT-request to update info about ${this.mode} object...`)
+    async updateObj() {
+      let url = ''
+      let isValidForm = ''
+      switch (this.$props.mode) {
+        case 'contracts':
+          url = `http://localhost:8080/api/contracts/${this.newObj.id}/update`
+          for (let key in this.newObj) {
+            this.contractForm[key] = this.newObj[key];
+          }
+          this.$v.contractForm.$touch()
+          isValidForm = !this.$v.contractForm.$error
+          break
+        case 'counterparties':
+          url = `http://localhost:8080/api/counterparties/${this.newObj.id}/update`
+          for (let key in this.newObj) {
+            this.counterpartyForm[key] = this.newObj[key];
+          }
+          this.$v.counterpartyForm.$touch()
+          isValidForm = !this.$v.counterpartyForm.$error
+          break
+        case 'stages':
+          url = `http://localhost:8080/api/stages/${this.newObj.id}/update`
+          for (let key in this.newObj) {
+            this.stageForm[key] = this.newObj[key];
+          }
+          this.$v.stageForm.$touch()
+          isValidForm = !this.$v.stageForm.$error
+          break
+        case 'contractsCounterparty':
+          url = `http://localhost:8080/api/contract_counterparties/${this.newObj.id}/update`
+          for (let key in this.newObj) {
+            this.contractCounterpartyForm[key] = this.newObj[key];
+          }
+          this.$v.contractCounterpartyForm.$touch()
+          isValidForm = !this.$v.contractCounterpartyForm.$error
+          break
+        case 'users':
+          url = `http://localhost:8080/api/users/${this.newObj.id}/update`
+          for (let key in this.newObj) {
+            this.userForm[key] = this.newObj[key];
+          }
+          this.$v.userForm.$touch()
+          isValidForm = !this.$v.userForm.$error
+          break
+      }
+      console.log(this.$v)
+      this.isValidForm = isValidForm
+      if (isValidForm) {
+        console.log('Валидация прошла успешно.')
+        this.editMode = false
+
+        try {
+
+          let response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.newObj)
+          })
+          if (response.ok) {
+            console.log(`Объект  ${this.mode} успешно отредактирован и сохранен. PUT-request отправлен. Изменения загружены в БД.`)
+            this.$emit('close')
+            console.log('response.ok')
+          } else {
+            alert("Ошибка HTTP: " + response.status);
+            console.log('response NOT ok')
+          }
+        } catch (error) {
+          console.error(error)
+          console.log('ERROR FETCH')
+          this.$emit('close')
+        }
+      } else {
+        console.log('Введенные данные не прошли валидацию')
+      }
     },
+
     async removeObj() {
       //fetch body: id
       console.log(`DELETE-request with new info about ${this.mode} object...`)
-    }
+    },
+  },
+  validations: {
+      userForm: {
+        FIO: { required },
+        username : { required },
+        password : { required }
+      },
+      contractForm: {
+        name: { required },
+        contractType: { required },
+        approxBeginDate: { required },
+        approxEndDate: { required },
+        beginDate: { required },
+        endDate: {  required },
+        sum: { required }
+      },
+      contractCounterpartyForm: {
+        name: { required },
+        contractType: { required },
+        counterpartyId: { required },
+        sum: { required },
+        approxBeginDate: { required },
+        approxEndDate: { required },
+        beginDate: { required },
+        endDate: {  required }
+      },
+      counterpartyForm: {
+        name: { required },
+        address: { required },
+        inn: { required }
+      },
+      stageForm: {
+        name: { required },
+        approxBeginDate: { required },
+        approxEndDate: { required },
+        beginDate: { required },
+        endDate: { required },
+        sum: { required },
+        approxCredit: { required },
+        approxSalary: { required },
+        credit: { required },
+        salary: { required }
+      }
   },
   created() {
     this.loadCounterparties()
@@ -233,6 +348,25 @@ export default {
       clone[key] = this.obj[key];
     }
     this.newObj = clone
+  },
+  updated() {
+    switch (this.$props.mode) {
+      case 'contracts':
+        this.contractForm = this.newObj
+        break
+      case 'counterparties':
+        this.counterpartyForm = this.newObj
+        break
+      case 'stages':
+        this.stageForm = this.newObj
+        break
+      case 'contractsCounterparty':
+        this.contractCounterpartyForm = this.newObj
+        break
+      case 'users':
+        this.userForm = this.newObj
+        break
+    }
   }
 }
 </script>
