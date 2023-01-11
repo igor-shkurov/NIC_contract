@@ -3,9 +3,13 @@ package com.example.accountingsystem.controllers;
 import com.example.accountingsystem.entities.counterparty.CounterpartyDTO;
 import com.example.accountingsystem.entities.counterparty.CounterpartyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin
@@ -26,8 +30,8 @@ public class CounterpartiesController {
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public void addCounterparty(@RequestBody CounterpartyDTO dto, HttpServletResponse response) {
-        counterpartyService.addCounterparty(dto);
+    public ResponseEntity<CounterpartyDTO> addCounterparty(@Valid @RequestBody CounterpartyDTO dto) {
+        return new ResponseEntity<>(counterpartyService.addCounterparty(dto), HttpStatus.CREATED);
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})

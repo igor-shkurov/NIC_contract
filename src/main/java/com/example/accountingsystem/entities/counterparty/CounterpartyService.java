@@ -30,9 +30,9 @@ public class CounterpartyService {
         return counterpartyRepo.findById(id).orElse(null);
     }
 
-    public void addCounterparty(CounterpartyDTO dto) {
+    public CounterpartyDTO addCounterparty(CounterpartyDTO dto) {
         Counterparty counterparty = mapper.DTOtoCounterparty(dto);
-        counterpartyRepo.save(counterparty);
+        return mapper.CounterpartyToDTO(counterpartyRepo.save(counterparty));
     }
 
     public void updateCounterparty(CounterpartyDTO dto) {

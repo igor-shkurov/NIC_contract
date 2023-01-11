@@ -3,6 +3,8 @@ package com.example.accountingsystem.controllers;
 import com.example.accountingsystem.entities.contract.ContractDTO;
 import com.example.accountingsystem.entities.contract.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,12 +32,9 @@ public class ContractController {
     }
 
     @GetMapping(path = "/contract_id={id}")
-    public ContractDTO showContractById(@PathVariable("id") Long id, HttpServletResponse response) {
+    public ResponseEntity<ContractDTO> showContractById(@PathVariable("id") Long id) {
         ContractDTO dto = contractService.getContractDtoById(id);
-        if (dto == null) {
-            response.setStatus(404);
-        }
-        return dto;
+        return new ResponseEntity<>(dto, (dto == null) ? HttpStatus.NOT_FOUND : HttpStatus.OK); // @todo: change all HttpServletResponse parameters to ResponseEntity<> return val
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
