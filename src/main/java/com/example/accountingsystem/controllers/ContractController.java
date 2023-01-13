@@ -43,7 +43,7 @@ public class ContractController {
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public ResponseEntity<Object> updateContract(@RequestBody @Valid() ContractDTO dto) {
+    public ResponseEntity<Object> updateContract(@RequestBody @Validated({ExportableContract.Modify.class}) ContractDTO dto) {
         boolean status = contractService.updateContract(dto);
         return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
     }

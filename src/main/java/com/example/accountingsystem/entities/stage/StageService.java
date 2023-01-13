@@ -32,12 +32,12 @@ public class StageService {
 
     public boolean addStage(StageDTO dto) {
         User currentUser = userDetailsService.getCurrentUser();
-        Contract contract = contractService.getContractById(dto.contractId);
+        Contract contract = contractService.getContractById(dto.getContractId());
         if (!Objects.equals(contract.getAssociatedUser().getId(), currentUser.getId()) && currentUser.getRole() != User.Role.ADMIN) {
             return false;
         }
         Stage entity = mapper.DTOtoStage(dto);
-        entity.setContract(contractService.getContractById(dto.contractId));
+        entity.setContract(contractService.getContractById(dto.getContractId()));
 
         stageRepo.save(entity);
         return true;
@@ -57,9 +57,9 @@ public class StageService {
 
     public boolean updateStage(StageDTO dto) {
         User currentUser = userDetailsService.getCurrentUser();
-        long id = dto.id;
+        long id = dto.getId();
         Stage updatingStage = mapper.DTOtoStage(dto);
-        updatingStage.setContract(contractService.getContractById(dto.contractId));
+        updatingStage.setContract(contractService.getContractById(dto.getContractId()));
 
         Stage stageToBeUpdated = getStageById(id);
 

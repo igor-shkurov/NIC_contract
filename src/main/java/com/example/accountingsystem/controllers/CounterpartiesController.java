@@ -37,7 +37,7 @@ public class CounterpartiesController {
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public ResponseEntity<Object> updateCounterparty(@RequestBody CounterpartyDTO dto) {
+    public ResponseEntity<Object> updateCounterparty(@RequestBody @Valid CounterpartyDTO dto) {
         boolean status = counterpartyService.updateCounterparty(dto);
         return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
     }

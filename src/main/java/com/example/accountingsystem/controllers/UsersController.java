@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin
@@ -29,13 +30,13 @@ public class UsersController {
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public ResponseEntity<Object> addUser(UserDTO dto) {
+    public ResponseEntity<Object> addUser(@RequestBody @Valid UserDTO dto) {
         boolean status = userService.saveUser(dto);
         return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public ResponseEntity<Object> updateUser(UserDTO dto) {
+    public ResponseEntity<Object> updateUser(@RequestBody @Valid UserDTO dto) {
         boolean status = userService.updateUser(dto);
         return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
     }

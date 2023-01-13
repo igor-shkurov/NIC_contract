@@ -5,7 +5,6 @@ import com.example.accountingsystem.entities.user.User;
 import org.apache.commons.beanutils.BeanUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +43,7 @@ public class ContractService {
 
     public boolean addContract(ContractDTO dto) {
         User currentUser = userDetailsService.getCurrentUser();
-        if (!Objects.equals(dto.userId, currentUser.getId()) && currentUser.getRole() != User.Role.ADMIN) {
+        if (!Objects.equals(dto.getUserId(), currentUser.getId()) && currentUser.getRole() != User.Role.ADMIN) {
             return false;
         }
         Contract contract = mapper.DTOtoContract(dto);
@@ -87,13 +86,13 @@ public class ContractService {
 
     public boolean updateContract(ContractDTO dto) {
         User currentUser = userDetailsService.getCurrentUser();
-        long id = dto.id;
+        long id = dto.getId();
         Contract updatingContract = mapper.DTOtoContract(dto);
-        updatingContract.setAssociatedUser(userDetailsService.getUserById(dto.userId));
+        updatingContract.setAssociatedUser(userDetailsService.getUserById(dto.getUserId()));
         Contract contractToBeUpdated = getContractById(id);
 
         if (currentUser.getRole() != User.Role.ADMIN) {
-            if (!Objects.equals(dto.userId, contractToBeUpdated.getAssociatedUser().getId()) || !Objects.equals(dto.userId, currentUser.getId())) {
+            if (!Objects.equals(dto.getUserId(), contractToBeUpdated.getAssociatedUser().getId()) || !Objects.equals(dto.getUserId(), currentUser.getId())) {
                 return false;
             }
         }

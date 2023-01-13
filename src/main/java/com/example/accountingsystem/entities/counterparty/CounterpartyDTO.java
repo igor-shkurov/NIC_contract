@@ -6,16 +6,22 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class CounterpartyDTO {
-    @Null
+    public interface New {}
+    public interface Modify {}
+
+    @Null(groups = {New.class})
     private Long id;
-    @NotBlank
-    @Size(min = 3, max = 30)
+
+    @NotBlank(groups = {New.class, Modify.class})
+    @Size(min = 3, max = 30, groups = {New.class, Modify.class})
     private String name;
-    @NotBlank
-    @Size(min = 5, max = 50)
+
+    @NotBlank(groups = {New.class, Modify.class})
+    @Size(min = 5, max = 50, groups = {New.class, Modify.class})
     private String address;
-    @NotBlank
-    @Pattern(regexp="[\\d]{10}")
+
+    @NotBlank(groups = {New.class, Modify.class})
+    @Pattern(regexp="[\\d]{10}", groups = {New.class, Modify.class})
     private String inn;
 
     public CounterpartyDTO() {

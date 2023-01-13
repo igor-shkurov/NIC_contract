@@ -6,7 +6,15 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class ContractDTO extends ExportableContract {
-    @NotNull
-    @Min(value = 0)
-    public Long userId;
+    @NotNull(groups = {New.class, Modify.class})
+    @Min(value = 0, groups = {New.class, Modify.class})
+    private Long userId;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 }

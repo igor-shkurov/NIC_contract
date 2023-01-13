@@ -10,8 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -78,7 +76,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public boolean updateUser(UserDTO dto) {
         User currentUser = getCurrentUser();
-        long id = dto.id;
+        long id = dto.getId();
         User updatingUser = mapper.DTOtoUser(dto);
         User userToBeUpdated = getUserById(id);
 

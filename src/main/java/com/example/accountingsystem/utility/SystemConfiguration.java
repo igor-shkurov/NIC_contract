@@ -20,20 +20,20 @@ public class SystemConfiguration {
             BCryptPasswordEncoder cryptPasswordEncoder = new BCryptPasswordEncoder();
 
             UserDTO administrator = new UserDTO();
-            administrator.FIO = "Shkurov Igor Olegovich";
-            administrator.username = "admin";
-            administrator.password = "root";
-            administrator.role = User.Role.ADMIN;
-            administrator.expirationDate = LocalDateTime.now().plusMonths(6);
+            administrator.setFIO("Shkurov Igor Olegovich");
+            administrator.setUsername("admin");
+            administrator.setPassword("root");
+            administrator.setRole(User.Role.ADMIN);
+            administrator.setExpirationDate(LocalDateTime.now().plusMonths(6));
 
             userDetailsService.saveUser(administrator);
 
             UserDTO user = new UserDTO();
-            user.FIO = "Pyatizbyantsev Ilya Andreevich";
-            user.username = "aboba";
-            user.password = "snusik";
-            user.role = User.Role.USER;
-            user.expirationDate = LocalDateTime.now().plusMonths(6);
+            user.setFIO("Pyatizbyantsev Ilya Andreevich");
+            user.setUsername("aboba");
+            user.setPassword("snusik");
+            user.setRole(User.Role.USER);
+            user.setExpirationDate(LocalDateTime.now().plusMonths(6));
 
             userDetailsService.saveUser(user);
         };
