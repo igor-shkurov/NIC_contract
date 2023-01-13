@@ -1,13 +1,15 @@
 package com.example.accountingsystem.controllers;
 
+import com.example.accountingsystem.entities.ExportableContract;
 import com.example.accountingsystem.entities.contract.ContractDTO;
 import com.example.accountingsystem.entities.contract.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin
@@ -22,39 +24,33 @@ public class ContractController {
         this.contractService = contractService;
     }
 
-    @GetMapping(path = "")
-    public List<ContractDTO> showContractsForUser(HttpServletResponse response) {
+    @GetMapping(path = "", produces = {"application/json"})
+    public ResponseEntity<List<ContractDTO>> showContractsForUser() {
         List<ContractDTO> list = contractService.getContractsForUser();
-        if (list == null) {
-            response.setStatus(404);
-        }
-        return list;
+        return new ResponseEntity<>(list, (list != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(path = "/contract_id={id}")
+    @GetMapping(path = "/contract_id={id}", produces = {"application/json"})
     public ResponseEntity<ContractDTO> showContractById(@PathVariable("id") Long id) {
         ContractDTO dto = contractService.getContractDtoById(id);
-        return new ResponseEntity<>(dto, (dto == null) ? HttpStatus.NOT_FOUND : HttpStatus.OK); // @todo: change all HttpServletResponse parameters to ResponseEntity<> return val
+        return new ResponseEntity<>(dto, (dto != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public void addContract(@RequestBody ContractDTO dto, HttpServletResponse response) {
-        if (!contractService.addContract(dto)) {
-            response.setStatus(403);
-        }
+    public ResponseEntity<Object> addContract(@RequestBody @Validated({ExportableContract.New.class}) ContractDTO dto) {
+        boolean status = contractService.addContract(dto);
+        return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public void updateContract(@RequestBody ContractDTO dto, HttpServletResponse response) {
-        if (!contractService.updateContract(dto)) {
-            response.setStatus(403);
-        }
+    public ResponseEntity<Object> updateContract(@RequestBody @Valid() ContractDTO dto) {
+        boolean status = contractService.updateContract(dto);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping(path = "/delete/contract_id={id}")
-    public void deleteContract(@PathVariable("id") Long id, HttpServletResponse response) {
-        if (!contractService.deleteContract(id)) {
-            response.setStatus(404);
-        }
+    public ResponseEntity<Object> deleteContract(@PathVariable("id") Long id) {
+        boolean status = contractService.deleteContract(id);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.FORBIDDEN);
     }
 }

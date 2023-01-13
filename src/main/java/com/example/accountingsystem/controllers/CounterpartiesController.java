@@ -24,23 +24,27 @@ public class CounterpartiesController {
         this.counterpartyService = counterpartyService;
     }
 
-    @GetMapping(path = "")
-    public List<CounterpartyDTO> showCounterparties() {
-        return counterpartyService.getCounterparties();
+    @GetMapping(path = "", produces = {"application/json"})
+    public ResponseEntity<List<CounterpartyDTO>> showCounterparties() {
+        List<CounterpartyDTO> list = counterpartyService.getCounterparties();
+        return new ResponseEntity<>(list, (list != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public ResponseEntity<CounterpartyDTO> addCounterparty(@Valid @RequestBody CounterpartyDTO dto) {
-        return new ResponseEntity<>(counterpartyService.addCounterparty(dto), HttpStatus.CREATED);
+    public ResponseEntity<Object> addCounterparty(@RequestBody @Valid CounterpartyDTO dto) {
+        boolean status = counterpartyService.addCounterparty(dto);
+        return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public void updateCounterparty(@RequestBody CounterpartyDTO counterpartyContract, HttpServletResponse response) {
-        counterpartyService.updateCounterparty(counterpartyContract);
+    public ResponseEntity<Object> updateCounterparty(@RequestBody CounterpartyDTO dto) {
+        boolean status = counterpartyService.updateCounterparty(dto);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping(path = "/delete/counterparty_id={id}")
-    public void deleteCounterparty(@PathVariable Long id, HttpServletResponse response) {
-        counterpartyService.deleteCounterparty(id);
+    public ResponseEntity<Object> deleteCounterparty(@PathVariable Long id) {
+        boolean status = counterpartyService.deleteCounterparty(id);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.FORBIDDEN);
     }
 }

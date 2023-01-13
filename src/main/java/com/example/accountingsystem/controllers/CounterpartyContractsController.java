@@ -3,6 +3,8 @@ package com.example.accountingsystem.controllers;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractDTO;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,33 +22,27 @@ public class CounterpartyContractsController {
         this.counterpartyContractService = counterpartyContractService;
     }
 
-    @GetMapping(path = "/contract_id={id}")
-    public List<CounterpartyContractDTO> showContractsById(@PathVariable("id") String pathId, HttpServletResponse response) {
-        List<CounterpartyContractDTO> list = counterpartyContractService.getCounterpartyContractsByContractId(Long.parseLong(pathId));
-        if (list == null) {
-            response.setStatus(404);
-        }
-        return list;
+    @GetMapping(path = "/contract_id={id}", produces = {"application/json"})
+    public ResponseEntity<List<CounterpartyContractDTO>> showContractsById(@PathVariable("id") Long id) {
+        List<CounterpartyContractDTO> list = counterpartyContractService.getCounterpartyContractsByContractId(id);
+        return new ResponseEntity<>(list, (list != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public void addContract(@RequestBody CounterpartyContractDTO dto, HttpServletResponse response) {
-        if (counterpartyContractService.addCounterpartyContract(dto)) {
-            response.setStatus(403);
-        }
+    public ResponseEntity<Object> addContract(@RequestBody CounterpartyContractDTO dto) {
+        boolean status = counterpartyContractService.addCounterpartyContract(dto);
+        return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public void updateContract(@RequestBody CounterpartyContractDTO dto, HttpServletResponse response) {
-        if (!counterpartyContractService.updateContract(dto)) {
-            response.setStatus(403);
-        }
+    public ResponseEntity<Object> updateContract(@RequestBody CounterpartyContractDTO dto) {
+        boolean status = counterpartyContractService.updateContract(dto);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping(path = "/delete/contract_id={id}")
-    public void deleteContract(@PathVariable Long id, HttpServletResponse response) {
-        if (!counterpartyContractService.deleteContract(id)) {
-            response.setStatus(404);
-        }
+    public ResponseEntity<Object> deleteContract(@PathVariable Long id) {
+        boolean status = counterpartyContractService.deleteContract(id);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.FORBIDDEN);
     }
 }

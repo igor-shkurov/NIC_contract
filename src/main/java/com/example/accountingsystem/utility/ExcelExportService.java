@@ -1,16 +1,17 @@
 package com.example.accountingsystem.utility;
 
 import com.example.accountingsystem.entities.ExportableContract;
-import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.contract.ContractDTO;
 import com.example.accountingsystem.entities.contract.ContractService;
 import com.example.accountingsystem.entities.counterparty.CounterpartyService;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractDTO;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
-import com.example.accountingsystem.entities.stage.Stage;
 import com.example.accountingsystem.entities.stage.StageDTO;
 import com.example.accountingsystem.entities.stage.StageService;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,7 +147,7 @@ public class ExcelExportService {
             cell.setCellValue(str);
 
             cell = row.createCell(7);
-            cell.setCellValue(contract.sum);
+            cell.setCellValue(contract.sum.floatValue());
 
             cell = row.createCell(8);
             Cell cellCounterparty = row.createCell(9);
@@ -191,19 +192,19 @@ public class ExcelExportService {
             cell.setCellValue(stage.name);
 
             cell = row.createCell(6);
-            cell.setCellValue(stage.sum);
+            cell.setCellValue(stage.sum.floatValue());
 
             cell = row.createCell(7);
-            cell.setCellValue(stage.salary);
+            cell.setCellValue(stage.salary.floatValue());
 
             cell = row.createCell(8);
-            cell.setCellValue(stage.credit);
+            cell.setCellValue(stage.credit.floatValue());
 
             cell = row.createCell(9);
-            cell.setCellValue(stage.approxSalary);
+            cell.setCellValue(stage.approxSalary.floatValue());
 
             cell = row.createCell(10);
-            cell.setCellValue(stage.approxCredit);
+            cell.setCellValue(stage.approxCredit.floatValue());
 
             setRowAlignment(row);
         }

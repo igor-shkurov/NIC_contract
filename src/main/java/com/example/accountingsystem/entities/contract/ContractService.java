@@ -44,7 +44,7 @@ public class ContractService {
 
     public boolean addContract(ContractDTO dto) {
         User currentUser = userDetailsService.getCurrentUser();
-        if (dto.userId != currentUser.getId() && currentUser.getRole() != User.Role.ADMIN) {
+        if (!Objects.equals(dto.userId, currentUser.getId()) && currentUser.getRole() != User.Role.ADMIN) {
             return false;
         }
         Contract contract = mapper.DTOtoContract(dto);
@@ -55,11 +55,12 @@ public class ContractService {
     }
 
     public ContractDTO getContractDtoById(long id) {
+        User currentUser = userDetailsService.getCurrentUser();
         Optional<Contract> opt = contractRepo.findById(id);
         ContractDTO dto = null;
         if (opt.isPresent()) {
             Contract contract = opt.get();
-            if (!Objects.equals(contract.getAssociatedUser().getId(), userDetailsService.getCurrentUser().getId())) {
+            if (!Objects.equals(contract.getAssociatedUser().getId(), userDetailsService.getCurrentUser().getId()) && currentUser.getRole() != User.Role.ADMIN ) {
                 return null;
             }
             dto = mapper.contractContractToDTO(contract);
@@ -92,7 +93,7 @@ public class ContractService {
         Contract contractToBeUpdated = getContractById(id);
 
         if (currentUser.getRole() != User.Role.ADMIN) {
-            if (dto.userId != contractToBeUpdated.getAssociatedUser().getId() || dto.userId != currentUser.getId()) {
+            if (!Objects.equals(dto.userId, contractToBeUpdated.getAssociatedUser().getId()) || !Objects.equals(dto.userId, currentUser.getId())) {
                 return false;
             }
         }

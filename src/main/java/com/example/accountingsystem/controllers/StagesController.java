@@ -3,6 +3,8 @@ package com.example.accountingsystem.controllers;
 import com.example.accountingsystem.entities.stage.StageDTO;
 import com.example.accountingsystem.entities.stage.StageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,33 +21,27 @@ public class StagesController {
         this.stageService = stageService;
     }
 
-    @GetMapping(path = "/{id}")
-    public List<StageDTO> showStageById(@PathVariable("id") String id, HttpServletResponse response) {
-        List<StageDTO> list = stageService.getStagesByContractId(Long.parseLong(id));
-        if (list == null) {
-            response.setStatus(404);
-        }
-        return list;
+    @GetMapping(path = "/stage_id={id}", produces = {"application/json"})
+    public ResponseEntity<List<StageDTO>> showStageById(@PathVariable("id") Long id) {
+        List<StageDTO> list = stageService.getStagesByContractId(id);
+        return new ResponseEntity<>(list, (list != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public void addContract(@RequestBody StageDTO dto, HttpServletResponse response) {
-        if (!stageService.addStage(dto)) {
-            response.setStatus(403);
-        }
+    public ResponseEntity<Object> addContract(@RequestBody StageDTO dto) {
+        boolean status = stageService.addStage(dto);
+        return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public void updateStage(@RequestBody StageDTO dto, HttpServletResponse response) {
-        if (!stageService.updateStage(dto)) {
-            response.setStatus(403);
-        }
+    public ResponseEntity<Object> updateStage(@RequestBody StageDTO dto) {
+        boolean status = stageService.updateStage(dto);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping(path = "/delete/stage_id={id}", consumes = {"application/json"})
-    public void deleteStage(@PathVariable Long id, HttpServletResponse response) {
-        if (!stageService.deleteStage(id)) {
-            response.setStatus(404);
-        }
+    @DeleteMapping(path = "/delete/stage_id={id}")
+    public ResponseEntity<Object> deleteStage(@PathVariable Long id) {
+        boolean status = stageService.deleteStage(id);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.FORBIDDEN);
     }
 }

@@ -1,28 +1,24 @@
 package com.example.accountingsystem.entities.counterparty;
 
-import org.springframework.validation.*;
-
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class CounterpartyDTO {
     @Null
     private Long id;
-    @NotEmpty
-    @Size(min = 2)
+    @NotBlank
+    @Size(min = 3, max = 30)
     private String name;
+    @NotBlank
+    @Size(min = 5, max = 50)
     private String address;
+    @NotBlank
+    @Pattern(regexp="[\\d]{10}")
     private String inn;
 
     public CounterpartyDTO() {
-    }
-
-    public CounterpartyDTO(Long id, String name, String address, String inn) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.inn = inn;
     }
 
     public Long getId() {

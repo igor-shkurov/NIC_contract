@@ -3,6 +3,8 @@ package com.example.accountingsystem.controllers;
 import com.example.accountingsystem.entities.user.CustomUserDetailsService;
 import com.example.accountingsystem.entities.user.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,32 +22,27 @@ public class UsersController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "")
-    public List<UserDTO> showUsers(HttpServletResponse response) {
+    @GetMapping(path = "", produces = {"application/json"})
+    public ResponseEntity<List<UserDTO>> showUsers() {
         List<UserDTO> list = userService.getUsers();
-        if (list == null) {
-            response.setStatus(403);
-        }
-        return list;
+        return new ResponseEntity<>(list, (list != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping(path = "/add")
-    public void addUser(UserDTO dto, HttpServletResponse response) {
-        response.setStatus(userService.saveUser(dto) ? 200 : 409);
-
+    @PostMapping(path = "/add", consumes = {"application/json"})
+    public ResponseEntity<Object> addUser(UserDTO dto) {
+        boolean status = userService.saveUser(dto);
+        return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
     }
 
-    @PutMapping(path = "/update")
-    public void updateUser(UserDTO dto, HttpServletResponse response) {
-        if (!userService.updateUser(dto)) {
-            response.setStatus(403);
-        }
+    @PutMapping(path = "/update", consumes = {"application/json"})
+    public ResponseEntity<Object> updateUser(UserDTO dto) {
+        boolean status = userService.updateUser(dto);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping(path = "/delete/user_id={id}")
-    public void deleteUser(@PathVariable("id") Long id, HttpServletResponse response) {
-        if (!userService.deleteUser(id)) {
-            response.setStatus(404);
-        }
+    public ResponseEntity<Object> deleteUser(@PathVariable("id") Long id) {
+        boolean status = userService.deleteUser(id);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.FORBIDDEN);
     }
 }

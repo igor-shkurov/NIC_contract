@@ -4,6 +4,7 @@ import com.example.accountingsystem.entities.ContractType;
 import com.example.accountingsystem.entities.user.User;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -31,12 +32,12 @@ public class Contract {
     private User associatedUser;
 
     @Column(columnDefinition = "numeric(18,2)")
-    private float sum;
+    private BigDecimal sum;
 
     public Contract() {
     }
 
-    public Contract(String name, ContractType contractType, LocalDate approxBeginDate, LocalDate approxEndDate, LocalDate beginDate, LocalDate endDate, float sum) {
+    public Contract(String name, ContractType contractType, LocalDate approxBeginDate, LocalDate approxEndDate, LocalDate beginDate, LocalDate endDate, BigDecimal sum) {
         this.name = name;
         this.contractType = contractType;
         this.approxBeginDate = approxBeginDate;
@@ -102,11 +103,11 @@ public class Contract {
         this.endDate = endDate;
     }
 
-    public float getSum() {
+    public BigDecimal getSum() {
         return sum;
     }
 
-    public void setSum(float sum) {
+    public void setSum(BigDecimal sum) {
         this.sum = sum;
     }
 
