@@ -1,20 +1,15 @@
 package com.example.accountingsystem.controllers;
 
-
 import com.example.accountingsystem.entities.user.CustomUserDetailsService;
-import com.example.accountingsystem.entities.user.User;
 import com.example.accountingsystem.entities.user.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
-import java.util.List;
-@CrossOrigin
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
@@ -48,6 +43,5 @@ public class UsersController {
     public ResponseEntity<Object> deleteUser(@PathVariable("id") Long id) {
         boolean status = userService.deleteUser(id);
         return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.FORBIDDEN);
-
     }
 }

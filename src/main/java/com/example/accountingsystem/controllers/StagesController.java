@@ -1,7 +1,5 @@
 package com.example.accountingsystem.controllers;
 
-import com.example.accountingsystem.entities.contract.ContractService;
-import com.example.accountingsystem.entities.stage.Stage;
 import com.example.accountingsystem.entities.stage.StageDTO;
 import com.example.accountingsystem.entities.stage.StageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,22 +7,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-@CrossOrigin
+
 @RestController
 @RequestMapping("/api/stages")
 public class StagesController {
     private final StageService stageService;
-    private final ContractService contractService;
 
     @Autowired
-    public StagesController(StageService stageService, ContractService contractService) {
+    public StagesController(StageService stageService) {
         this.stageService = stageService;
-        this.contractService = contractService;
     }
-    
+
     @GetMapping(path = "/contract_id={id}", produces = {"application/json"})
     public ResponseEntity<List<StageDTO>> showStageById(@PathVariable("id") Long id) {
         List<StageDTO> list = stageService.getStagesByContractId(id);

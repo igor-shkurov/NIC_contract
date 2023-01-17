@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -28,18 +29,18 @@ public class ContractService {
         this.mapper = Mappers.getMapper(ContractMapper.class);
     }
 
-    public List<ContractDTO> getContractsForUser(long id) {
-        User user = userDetailsService.getUserById(id);
+    public List<ContractDTO> getContractsForUser() {
+        User user = userDetailsService.getCurrentUser();
         if (user == null) {
             return null;
         }
         if (user.getRole() == User.Role.ADMIN) {
             return mapper.toListOfDTO(contractRepo.findAll());
         }
-        List<Contract> entities = contractRepo.getContractByAssociatedUserId(id);
+        List<Contract> entities = contractRepo.getContractByAssociatedUserId(user.getId());
         return mapper.toListOfDTO(entities);
     }
-    
+
     public boolean addContract(ContractDTO dto) {
         User currentUser = userDetailsService.getCurrentUser();
         if (!Objects.equals(dto.getUserId(), currentUser.getId()) && currentUser.getRole() != User.Role.ADMIN) {
@@ -47,7 +48,9 @@ public class ContractService {
         }
         Contract contract = mapper.DTOtoContract(dto);
         contract.setAssociatedUser(userDetailsService.getCurrentUser());
+
         contractRepo.save(contract);
+        return true;
     }
 
     public ContractDTO getContractDtoById(long id) {
@@ -70,7 +73,14 @@ public class ContractService {
     }
 
     public List<ContractDTO> getContractsByGivenPeriod(LocalDate beginDate, LocalDate endDate) {
-        List<Contract> entities = contractRepo.getContractsByGivenPeriod(Date.valueOf(beginDate), Date.valueOf(endDate));
+        User currentUser = userDetailsService.getCurrentUser();
+        List<Contract> entities;
+        if (currentUser.getRole() == User.Role.ADMIN) {
+            entities = contractRepo.getContractsByGivenPeriod(Date.valueOf(beginDate), Date.valueOf(endDate));
+        }
+        else {
+            entities = contractRepo.getContractsByGivenPeriod(Date.valueOf(beginDate), Date.valueOf(endDate), currentUser.getId());
+        }
         return mapper.toListOfDTO(entities);
     }
 
@@ -86,6 +96,7 @@ public class ContractService {
                 return false;
             }
         }
+
         if (contractToBeUpdated != null) {
             try {
                 BeanUtils.copyProperties(contractToBeUpdated, updatingContract);
@@ -94,13 +105,25 @@ public class ContractService {
             }
             contractToBeUpdated.setId(id);
             contractRepo.save(contractToBeUpdated);
+            return true;
         }
         else {
-            contractRepo.save(updatingContract);
+            return false;
         }
     }
 
-    public void deleteContract(long id) {
-        contractRepo.deleteById(id);
+    public boolean deleteContract(long id) {
+        Optional<Contract> opt = contractRepo.findById(id);
+        User currentUser = userDetailsService.getCurrentUser();
+        if (opt.isPresent()) {
+            if (currentUser.getRole() != User.Role.ADMIN) {
+                if (!Objects.equals(opt.get().getAssociatedUser().getId(), currentUser.getId())) {
+                    return false;
+                }
+            }
+            contractRepo.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

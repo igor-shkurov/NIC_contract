@@ -266,7 +266,8 @@ export default {
           let response = await fetch(url, {
             method: 'PUT',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'
             },
             body: JSON.stringify(this.newObj)
           })

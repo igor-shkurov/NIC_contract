@@ -1,6 +1,5 @@
 package com.example.accountingsystem.entities.counterparty;
 
-import com.example.accountingsystem.entities.contract.Contract;
 import org.apache.commons.beanutils.BeanUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CounterpartyService {
@@ -58,7 +58,15 @@ public class CounterpartyService {
         }
     }
 
-    public void deleteCounterparty(long id) {
-        counterpartyRepo.deleteById(id);
+    public boolean deleteCounterparty(long id) {
+        Optional<Counterparty> opt = counterpartyRepo.findById(id);
+        if (opt.isPresent()) {
+            if (opt.get().getCounterpartyContracts().isEmpty()) {
+                return false;
+            }
+            counterpartyRepo.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

@@ -187,7 +187,7 @@ public class ExcelExportService {
 
             cell = row.createCell(4);
             cell.setCellValue(stage.getEndDate().toString());
-            
+
             cell = row.createCell(5);
             cell.setCellValue(stage.getName());
 
