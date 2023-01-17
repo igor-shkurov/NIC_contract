@@ -22,7 +22,7 @@ public class StagesController {
         this.stageService = stageService;
     }
 
-    @GetMapping(path = "/stage_id={id}", produces = {"application/json"})
+    @GetMapping(path = "/contract_id={id}", produces = {"application/json"})
     public ResponseEntity<List<StageDTO>> showStageById(@PathVariable("id") Long id) {
         List<StageDTO> list = stageService.getStagesByContractId(id);
         return new ResponseEntity<>(list, (list != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND);

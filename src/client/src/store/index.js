@@ -90,7 +90,8 @@ export default new Vuex.Store({
         },
         async loadContracts({commit}) {
             try {
-                let response = await fetch(`http://localhost:8080/api/contracts/user_id=1`)
+                let response = await fetch(`http://localhost:8080/api/contracts`, {
+                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'}});
                 if(response.ok){
                     const contracts = await response.json();
                     commit("SET_CONTRACTS", contracts)
@@ -105,7 +106,7 @@ export default new Vuex.Store({
         async loadStages({commit}, id) {
             try {
                 console.log('Передали айдишник договора для этапов: ', id)
-                let response = await fetch(`http://localhost:8080/api/stages/${id}`) //let response = await fetch(`https://jsonplaceholder.typicode.com/stages/${id}`)
+                let response = await fetch(`http://localhost:8080/api/stages/contract_id=${id}`) //let response = await fetch(`https://jsonplaceholder.typicode.com/stages/${id}`)
                 if(response.ok) {
                     const stages = await response.json();
                     commit("SET_STAGES", stages)
@@ -120,7 +121,7 @@ export default new Vuex.Store({
         async loadContractsCounterparty({commit}, id) {
             try {
                 console.log('Передали айдишник договора для договоров с контрагентами: ', id)
-                let response = await fetch(`http://localhost:8080/api/contract_counterparties/${id}`) //let response = await fetch(`https://jsonplaceholder.typicode.com/contracts_counterparty/${id}`)
+                let response = await fetch(`http://localhost:8080/api/contract_counterparties/contract_id=${id}`) //let response = await fetch(`https://jsonplaceholder.typicode.com/contracts_counterparty/${id}`)
                 if(response.ok) {
                     const contractsCounterparty = await response.json();
                     commit("SET_CONTRACTS_COUNTERPARTY", contractsCounterparty)
