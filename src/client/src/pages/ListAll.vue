@@ -23,7 +23,7 @@
         </table-template>
         <edit-modal
             v-if="this.isOpenModal"
-            @close="closeModalWindow"
+            @close="closeEditModal"
             :obj="this.openObj"
             :mode="this.mode"
             :cardKeys="this.cardKeys"
@@ -97,9 +97,10 @@ export default {
         this.openObj = this.arrData[ind]
         this.isOpenModal = true
       },
-      closeModalWindow() {
+      closeEditModal() {
         this.openObj = null
         this.isOpenModal = false
+        this.loadData()
       },
       getHeaders(headers){
         this.cardFields = headers.fieldsHeaders
@@ -128,26 +129,29 @@ export default {
         }
         this.arrData = data
         return data
+      },
+      loadData() {
+        switch (this.mode){
+          case 'contracts':
+            this.loadContracts()
+            break
+          case 'counterparties':
+            this.loadCounterparties()
+            break
+          case 'stages':
+            this.loadStages(this.inserting.openModalID)
+            break
+          case 'contractsCounterparty':
+            this.loadContractsCounterparty(this.inserting.openModalID)
+            break
+          case 'users':
+            this.loadUsers()
+            break
+        }
       }
     },
   created() {
-    switch (this.mode){
-      case 'contracts':
-        this.loadContracts()
-        break
-      case 'counterparties':
-        this.loadCounterparties()
-        break
-      case 'stages':
-        this.loadStages(this.inserting.openModalID)
-        break
-      case 'contractsCounterparty':
-        this.loadContractsCounterparty(this.inserting.openModalID)
-        break
-      case 'users':
-        this.loadUsers()
-        break
-    }
+    this.loadData()
   }
 }
 </script>

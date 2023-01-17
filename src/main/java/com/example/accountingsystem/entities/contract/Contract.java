@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Table
 public class Contract {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(columnDefinition = "varchar(30)")
     private String name;
@@ -23,12 +23,15 @@ public class Contract {
 
     private LocalDate approxBeginDate;
     @Column(columnDefinition = "date")
+    //@FutureOrPresent
     private LocalDate approxEndDate;
     @Column(columnDefinition = "date")
+    // @FutureOrPresent
     private LocalDate beginDate;
     @Column(columnDefinition = "date")
+    // @FutureOrPresent
     private LocalDate endDate;
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private User associatedUser;
 
     @Column(columnDefinition = "numeric(18,2)")

@@ -1,7 +1,12 @@
 package com.example.accountingsystem.controllers;
 
+import com.example.accountingsystem.entities.contract.ContractService;
+import com.example.accountingsystem.entities.counterparty.CounterpartyService;
+import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContract;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractDTO;
+import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractMapper;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-
 @CrossOrigin
 @RestController
 @RequestMapping("/api/contract_counterparties")

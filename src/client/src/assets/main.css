@@ -53,3 +53,10 @@ body::-webkit-scrollbar-thumb {
     box-shadow: inset 0px 0px 4px rgba(0,0,0,0.4);
 
 }
+.invalid-feedback {
+    color: goldenrod;
+    font-weight: 400;
+    font-size: 14px;
+    text-shadow: #000000 0 0.5px 3px;
+    text-align: end;
+}

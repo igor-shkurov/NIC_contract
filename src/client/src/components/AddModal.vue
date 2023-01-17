@@ -78,6 +78,7 @@
 
 <script>
 import {mapActions, mapGetters} from "vuex";
+import { validationMixin } from 'vuelidate'
 
 export default {
   name: "AddModal",
@@ -88,9 +89,9 @@ export default {
     cardFields: Array,
     cardHeader: String
   },
+  mixins: [validationMixin],
   data(){
     return {
-      isAllFieldsEntered: true,
       addForm: {}
     }
   },
@@ -118,14 +119,7 @@ export default {
   },
   methods: {
     async addObj() {
-      this.cardKeys.forEach(key => {
-        if (!(key in this.addForm) || !(this.addForm[key]) || !(typeof this.addForm[key] === 'string' && this.addForm[key].trim()))
-          this.isAllFieldsEntered = false
-        else
-          this.isAllFieldsEntered = true
-      })
-
-      if (this.isAllFieldsEntered) {
+      if (this.isValidForm()) {
         // валидация
         //отправляем новый объект
         console.log('Добавление...', this.addForm)
@@ -228,9 +222,14 @@ export default {
             break
         }
         this.$emit('close')
+      } else {
+        console.log('Введенные данные не прошли валидацию.')
       }
     },
     ...mapActions(['loadCounterparties'])
+  },
+  validations: {
+
   },
   created() {
     this.loadCounterparties()
@@ -384,13 +383,6 @@ button .add-modal-cancel-btn > img {
   background-color: #606060;
   transform: translateY(2px);
   box-shadow: 0 0 3px #282828 inset;
-}
-
-.add-modal-warning{
-  margin-bottom: 10px;
-  color: goldenrod;
-  font-weight: 400;
-  text-shadow: #000000 0 0.5px 3px;
 }
 
 

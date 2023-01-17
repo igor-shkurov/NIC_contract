@@ -132,9 +132,11 @@
 </template>
 
 <script>
+
 import {mapActions, mapGetters} from "vuex"
 import { validationMixin } from 'vuelidate'
 import { required } from 'vuelidate/lib/validators'
+
 export default {
   name: 'edit-modal',
   components: {
@@ -209,6 +211,7 @@ export default {
   },
   methods: {
     ...mapActions(['loadCounterparties']),
+
     async updateObj() {
       let url = ''
       let isValidForm = ''
@@ -284,6 +287,7 @@ export default {
         console.log('Введенные данные не прошли валидацию')
       }
     },
+
     async removeObj() {
       //fetch body: id
       console.log(`DELETE-request with new info about ${this.mode} object...`)

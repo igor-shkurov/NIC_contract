@@ -1,17 +1,19 @@
 package com.example.accountingsystem.controllers;
 
+import com.example.accountingsystem.entities.counterparty.Counterparty;
 import com.example.accountingsystem.entities.counterparty.CounterpartyDTO;
 import com.example.accountingsystem.entities.counterparty.CounterpartyService;
+import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-
 @CrossOrigin
 @RestController
 @RequestMapping("/api/counterparties")
@@ -22,6 +24,7 @@ public class CounterpartiesController {
     @Autowired
     public CounterpartiesController(CounterpartyService counterpartyService) {
         this.counterpartyService = counterpartyService;
+        HiddenHttpMethodFilter filter;
     }
 
     @GetMapping(path = "", produces = {"application/json"})
