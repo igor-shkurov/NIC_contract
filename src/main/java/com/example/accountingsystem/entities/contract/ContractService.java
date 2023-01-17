@@ -39,18 +39,27 @@ public class ContractService {
         List<Contract> entities = contractRepo.getContractByAssociatedUserId(id);
         return mapper.toListOfDTO(entities);
     }
-
-    public void addContract(ContractDTO dto) {
+    
+    public boolean addContract(ContractDTO dto) {
+        User currentUser = userDetailsService.getCurrentUser();
+        if (!Objects.equals(dto.getUserId(), currentUser.getId()) && currentUser.getRole() != User.Role.ADMIN) {
+            return false;
+        }
         Contract contract = mapper.DTOtoContract(dto);
         contract.setAssociatedUser(userDetailsService.getCurrentUser());
         contractRepo.save(contract);
     }
 
     public ContractDTO getContractDtoById(long id) {
+        User currentUser = userDetailsService.getCurrentUser();
         Optional<Contract> opt = contractRepo.findById(id);
         ContractDTO dto = null;
         if (opt.isPresent()) {
-            dto = mapper.contractContractToDTO(opt.get());
+            Contract contract = opt.get();
+            if (!Objects.equals(contract.getAssociatedUser().getId(), userDetailsService.getCurrentUser().getId()) && currentUser.getRole() != User.Role.ADMIN ) {
+                return null;
+            }
+            dto = mapper.contractContractToDTO(contract);
         }
         return dto;
     }
@@ -65,11 +74,18 @@ public class ContractService {
         return mapper.toListOfDTO(entities);
     }
 
-    public void updateContract(ContractDTO dto) {
-        long id = dto.id;
+    public boolean updateContract(ContractDTO dto) {
+        User currentUser = userDetailsService.getCurrentUser();
+        long id = dto.getId();
         Contract updatingContract = mapper.DTOtoContract(dto);
-        updatingContract.setAssociatedUser(userDetailsService.getUserById(dto.userId));
+        updatingContract.setAssociatedUser(userDetailsService.getUserById(dto.getUserId()));
         Contract contractToBeUpdated = getContractById(id);
+
+        if (currentUser.getRole() != User.Role.ADMIN) {
+            if (!Objects.equals(dto.getUserId(), contractToBeUpdated.getAssociatedUser().getId()) || !Objects.equals(dto.getUserId(), currentUser.getId())) {
+                return false;
+            }
+        }
         if (contractToBeUpdated != null) {
             try {
                 BeanUtils.copyProperties(contractToBeUpdated, updatingContract);

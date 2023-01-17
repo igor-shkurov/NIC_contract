@@ -70,8 +70,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         return mapper.toListOfDTO(entities);
     }
 
-    public void updateUser(UserDTO dto) {
-        long id = dto.id;
+    public boolean updateUser(UserDTO dto) {
+        User currentUser = getCurrentUser();
+        long id = dto.getId();
         User updatingUser = mapper.DTOtoUser(dto);
         User userToBeUpdated = getUserById(id);
         if (userToBeUpdated != null) {

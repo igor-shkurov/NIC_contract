@@ -31,10 +31,15 @@ public class CounterpartyContractService {
         return counterpartyContractRepo.findAll();
     }
 
-    public void addCounterpartyContract(CounterpartyContractDTO dto) {
+    public boolean addCounterpartyContract(CounterpartyContractDTO dto) {
+        User currentUser = userDetailsService.getCurrentUser();
+        Contract contract = contractService.getContractById(dto.getContractId());
+        if (!Objects.equals(contract.getAssociatedUser().getId(), currentUser.getId()) && currentUser.getRole() != User.Role.ADMIN) {
+            return false;
+        }
         CounterpartyContract counterpartyContract = mapper.DTOtoCounterpartyContract(dto);
-        counterpartyContract.setContract(contractService.getContractById(dto.contractId));
-        counterpartyContract.setCounterparty(counterpartyService.getCounterpartyById(dto.counterpartyId));
+        counterpartyContract.setContract(contract);
+        counterpartyContract.setCounterparty(counterpartyService.getCounterpartyById(dto.getCounterpartyId()));
         counterpartyContractRepo.save(counterpartyContract);
     }
 
@@ -48,11 +53,13 @@ public class CounterpartyContractService {
         return mapper.toListOfDTO(entities);
     }
 
-    public void updateContract(CounterpartyContractDTO dto) {
-        long id = dto.id;
+    public boolean updateContract(CounterpartyContractDTO dto) {
+        User currentUser = userDetailsService.getCurrentUser();
+        long id = dto.getId();
         CounterpartyContract updatingContract = mapper.DTOtoCounterpartyContract(dto);
-        updatingContract.setContract(contractService.getContractById(dto.contractId));
-        updatingContract.setCounterparty(counterpartyService.getCounterpartyById(dto.counterpartyId));
+        updatingContract.setContract(contractService.getContractById(dto.getContractId()));
+        updatingContract.setCounterparty(counterpartyService.getCounterpartyById(dto.getCounterpartyId()));
+
         CounterpartyContract contractToBeUpdated = getCounterpartyContractById(id);
         if (contractToBeUpdated != null) {
             try {

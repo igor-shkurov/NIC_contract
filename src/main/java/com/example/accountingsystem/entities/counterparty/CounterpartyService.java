@@ -30,8 +30,17 @@ public class CounterpartyService {
         return counterpartyRepo.findById(id).orElse(null);
     }
 
-    public void updateCounterparty(CounterpartyDTO dto) {
-        long id = dto.id;
+    public boolean addCounterparty(CounterpartyDTO dto) {
+        if (counterpartyRepo.existsCounterpartyByInn(dto.getInn())) {
+            return false;
+        }
+        Counterparty counterparty = mapper.DTOtoCounterparty(dto);
+        counterpartyRepo.save(counterparty);
+        return true;
+    }
+
+    public boolean updateCounterparty(CounterpartyDTO dto) {
+        long id = dto.getId();
         Counterparty updatingCp = mapper.DTOtoCounterparty(dto);
         Counterparty cpToBeUpdated = getCounterpartyById(id);
         if (cpToBeUpdated != null) {
@@ -42,9 +51,10 @@ public class CounterpartyService {
             }
             cpToBeUpdated.setId(id);
             counterpartyRepo.save(cpToBeUpdated);
+            return true;
         }
         else {
-            counterpartyRepo.save(updatingCp);
+            return false;
         }
     }
 
