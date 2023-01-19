@@ -37,7 +37,7 @@
               class="edit-modal-control-warning"
               v-if="editMode"
           >После изменений нажмите "Сохранить".</div>
-          <p class="invalid-feedback" v-if="!this.isValidForm">
+          <p class="invalid-feedback edit-modal" v-if="!this.isValidForm">
             Пожалуйста, введите все поля
           </p>
           <div
@@ -135,7 +135,7 @@
 
 import {mapActions, mapGetters} from "vuex"
 import { validationMixin } from 'vuelidate'
-import { required } from 'vuelidate/lib/validators'
+import { required, minLength, maxLength, numeric } from 'vuelidate/lib/validators'
 
 export default {
   name: 'edit-modal',
@@ -295,47 +295,47 @@ export default {
     },
   },
   validations: {
-    userForm: {
-      FIO: { required },
-      username : { required },
-      password : { required }
-    },
-    contractForm: {
-      name: { required },
-      contractType: { required },
-      approxBeginDate: { required },
-      approxEndDate: { required },
-      beginDate: { required },
-      endDate: {  required },
-      sum: { required }
-    },
-    contractCounterpartyForm: {
-      name: { required },
-      contractType: { required },
-      counterpartyId: { required },
-      sum: { required },
-      approxBeginDate: { required },
-      approxEndDate: { required },
-      beginDate: { required },
-      endDate: {  required }
-    },
-    counterpartyForm: {
-      name: { required },
-      address: { required },
-      inn: { required }
-    },
-    stageForm: {
-      name: { required },
-      approxBeginDate: { required },
-      approxEndDate: { required },
-      beginDate: { required },
-      endDate: { required },
-      sum: { required },
-      approxCredit: { required },
-      approxSalary: { required },
-      credit: { required },
-      salary: { required }
-    }
+      userForm: {
+        FIO: { required },
+        username : { required },
+        password : { required }
+      },
+      contractForm: {
+        name: { required },
+        contractType: { required },
+        approxBeginDate: { required },
+        approxEndDate: { required },
+        beginDate: { required },
+        endDate: {  required},
+        sum: { required }
+      },
+      contractCounterpartyForm: {
+        name: { required },
+        contractType: { required },
+        counterpartyId: { required },
+        sum: { required },
+        approxBeginDate: { required },
+        approxEndDate: { required },
+        beginDate: { required },
+        endDate: {  required }
+      },
+      counterpartyForm: {
+        name: { required },
+        address: { required },
+        inn: { required, minLength: minLength(10), maxLength: maxLength(10), numeric }
+      },
+      stageForm: {
+        name: { required },
+        approxBeginDate: { required },
+        approxEndDate: { required },
+        beginDate: { required },
+        endDate: { required },
+        sum: { required },
+        approxCredit: { required },
+        approxSalary: { required },
+        credit: { required },
+        salary: { required }
+      }
   },
   created() {
     this.loadCounterparties()
