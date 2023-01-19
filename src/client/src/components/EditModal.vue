@@ -37,7 +37,7 @@
               class="edit-modal-control-warning"
               v-if="editMode"
           >После изменений нажмите "Сохранить".</div>
-          <p class="invalid-feedback" v-if="!this.isValidForm">
+          <p class="invalid-feedback edit-modal" v-if="!this.isValidForm">
             Пожалуйста, введите все поля
           </p>
           <div
@@ -135,7 +135,7 @@
 
 import {mapActions, mapGetters} from "vuex"
 import { validationMixin } from 'vuelidate'
-import { required } from 'vuelidate/lib/validators'
+import { required, minLength, maxLength, numeric } from 'vuelidate/lib/validators'
 
 
 export default {
@@ -270,7 +270,8 @@ export default {
           let response = await fetch(url, {
             method: 'PUT',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'
             },
             body: JSON.stringify(this.newObj)
           })
@@ -309,7 +310,7 @@ export default {
         approxBeginDate: { required },
         approxEndDate: { required },
         beginDate: { required },
-        endDate: {  required },
+        endDate: {  required},
         sum: { required }
       },
       contractCounterpartyForm: {
@@ -325,7 +326,7 @@ export default {
       counterpartyForm: {
         name: { required },
         address: { required },
-        inn: { required }
+        inn: { required, minLength: minLength(10), maxLength: maxLength(10), numeric }
       },
       stageForm: {
         name: { required },

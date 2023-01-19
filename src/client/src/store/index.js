@@ -104,7 +104,9 @@ export default new Vuex.Store({
         },
         async loadStages({commit}, id) {
             try {
-                let response = await fetch(`http://localhost:8080/api/stages/${id}`) //let response = await fetch(`https://jsonplaceholder.typicode.com/stages/${id}`)
+                let response = await fetch(`http://localhost:8080/api/stages/contract_id=${id}`, {
+                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'}
+                });
                 if(response.ok) {
                     const stages = await response.json();
                     commit("SET_STAGES", stages)
@@ -118,7 +120,9 @@ export default new Vuex.Store({
         },
         async loadContractsCounterparty({commit}, id) {
             try {
-                let response = await fetch(`http://localhost:8080/api/contract_counterparties/${id}`) //let response = await fetch(`https://jsonplaceholder.typicode.com/contracts_counterparty/${id}`)
+                let response = await fetch(`http://localhost:8080/api/contract_counterparties/contract_id=${id}`, {
+                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'}
+                });
                 if(response.ok) {
                     const contractsCounterparty = await response.json();
                     commit("SET_CONTRACTS_COUNTERPARTY", contractsCounterparty)
@@ -132,7 +136,9 @@ export default new Vuex.Store({
         },
         async loadCounterparties({commit}) {
             try {
-                let response = await fetch(`http://localhost:8080/api/counterparties`) //let response = await fetch(`https://jsonplaceholder.typicode.com/counterparties`)
+                let response = await fetch(`http://localhost:8080/api/counterparties`, {
+                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'}
+                });
                 if(response.ok) {
                     const counterparties = await response.json();
                     commit("SET_COUNTERPARTIES", counterparties)
@@ -146,7 +152,7 @@ export default new Vuex.Store({
         },
         async loadUsers({commit}) {
             try {
-                let response = await fetch(`http://localhost:8080/api/users`) //let response = await fetch(`https://jsonplaceholder.typicode.com/users`)
+                let response = await fetch(`http://localhost:8080/api/users`)
                 if(response.ok) {
                     const users = await response.json();
                     commit("SET_USERS", users)

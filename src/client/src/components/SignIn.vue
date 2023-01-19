@@ -12,7 +12,7 @@
               v-model.trim="form.login"
           >
         </div>
-        <p v-if="$v.form.login.$dirty && !$v.form.login.required" class="invalid-feedback">
+        <p v-if="$v.form.login.$dirty && !$v.form.login.required" class="invalid-feedback sign-in">
           Введите логин
         </p>
         <div class="form-element">
