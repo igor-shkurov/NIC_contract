@@ -1,16 +1,17 @@
 package com.example.accountingsystem.utility;
 
 import com.example.accountingsystem.entities.ExportableContract;
-import com.example.accountingsystem.entities.contract.Contract;
 import com.example.accountingsystem.entities.contract.ContractDTO;
 import com.example.accountingsystem.entities.contract.ContractService;
 import com.example.accountingsystem.entities.counterparty.CounterpartyService;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractDTO;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
-import com.example.accountingsystem.entities.stage.Stage;
 import com.example.accountingsystem.entities.stage.StageDTO;
 import com.example.accountingsystem.entities.stage.StageService;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,7 +103,7 @@ public class ExcelExportService {
         for (ExportableContract contract : list) {
             Row row = sheet.createRow(currentRow++);
 
-            long id = contract.id;
+            long id = contract.getId();
 
             CellStyle cellStyle = book.createCellStyle();
             cellStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -113,23 +114,23 @@ public class ExcelExportService {
             }
 
             cell = row.createCell(1);
-            cell.setCellValue(contract.name);
+            cell.setCellValue(contract.getName());
 
             cell = row.createCell(2);
-            cell.setCellValue(contract.approxBeginDate);
+            cell.setCellValue(contract.getApproxBeginDate().toString());
 
             cell = row.createCell(3);
-            cell.setCellValue(contract.approxEndDate);
+            cell.setCellValue(contract.getApproxEndDate().toString());
 
             cell = row.createCell(4);
-            cell.setCellValue(contract.beginDate);
+            cell.setCellValue(contract.getBeginDate().toString());
 
             cell = row.createCell(5);
-            cell.setCellValue(contract.endDate);
+            cell.setCellValue(contract.getEndDate().toString());
 
             cell = row.createCell(6);
             String str;
-            switch (contract.contractType) {
+            switch (contract.getContractType()) {
                 case SUPPLY:
                     str = "Поставка";
                     break;
@@ -146,7 +147,7 @@ public class ExcelExportService {
             cell.setCellValue(str);
 
             cell = row.createCell(7);
-            cell.setCellValue(contract.sum);
+            cell.setCellValue(contract.getSum().floatValue());
 
             cell = row.createCell(8);
             Cell cellCounterparty = row.createCell(9);
@@ -157,8 +158,8 @@ public class ExcelExportService {
                 writeTableRowsForContracts(counterpartyContractService.getCounterpartyContractsByContractId(id));
             }
             else {
-                cell.setCellValue(((CounterpartyContractDTO) contract).contractId);
-                long counterpartyId = ((CounterpartyContractDTO) contract).counterpartyId;
+                cell.setCellValue(((CounterpartyContractDTO) contract).getContractId());
+                long counterpartyId = ((CounterpartyContractDTO) contract).getCounterpartyId();
                 cellCounterparty.setCellValue(counterpartyService.getCounterpartyById(counterpartyId).getName());
             }
 
@@ -170,40 +171,40 @@ public class ExcelExportService {
         for (StageDTO stage : list) {
             Row row = sheet.createRow(currentRow++);
 
-            long id = stage.id;
+            long id = stage.getId();
 
             Cell cell = row.createCell(0);
             cell.setCellValue(id);
 
             cell = row.createCell(1);
-            cell.setCellValue(stage.approxBeginDate);
+            cell.setCellValue(stage.getApproxBeginDate().toString());
 
             cell = row.createCell(2);
-            cell.setCellValue(stage.approxEndDate);
+            cell.setCellValue(stage.getApproxEndDate().toString());
 
             cell = row.createCell(3);
-            cell.setCellValue(stage.beginDate);
+            cell.setCellValue(stage.getBeginDate().toString());
 
             cell = row.createCell(4);
-            cell.setCellValue(stage.endDate);
+            cell.setCellValue(stage.getEndDate().toString());
 
             cell = row.createCell(5);
-            cell.setCellValue(stage.name);
+            cell.setCellValue(stage.getName());
 
             cell = row.createCell(6);
-            cell.setCellValue(stage.sum);
+            cell.setCellValue(stage.getSum().floatValue());
 
             cell = row.createCell(7);
-            cell.setCellValue(stage.salary);
+            cell.setCellValue(stage.getSalary().floatValue());
 
             cell = row.createCell(8);
-            cell.setCellValue(stage.credit);
+            cell.setCellValue(stage.getCredit().floatValue());
 
             cell = row.createCell(9);
-            cell.setCellValue(stage.approxSalary);
+            cell.setCellValue(stage.getApproxSalary().floatValue());
 
             cell = row.createCell(10);
-            cell.setCellValue(stage.approxCredit);
+            cell.setCellValue(stage.getApproxCredit().floatValue());
 
             setRowAlignment(row);
         }

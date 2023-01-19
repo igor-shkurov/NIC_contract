@@ -9,8 +9,11 @@ import java.sql.Date;
 import java.util.List;
 
 @Repository
-public interface ContractRepo
-        extends JpaRepository<Contract, Long> {
+public interface ContractRepo extends JpaRepository<Contract, Long> {
+    @Query(value = "SELECT * FROM contract c WHERE c.begin_date>=:beginDate and c.end_date<=:endDate and c.associated_user_id=:userId ;",
+            nativeQuery = true)
+    List<Contract> getContractsByGivenPeriod(@Param("beginDate") Date beginDate, @Param("endDate") Date endDate, @Param("userId") long userId);
+
     @Query(value = "SELECT * FROM contract c WHERE c.begin_date>=:beginDate and c.end_date<=:endDate ;",
             nativeQuery = true)
     List<Contract> getContractsByGivenPeriod(@Param("beginDate") Date beginDate, @Param("endDate") Date endDate);

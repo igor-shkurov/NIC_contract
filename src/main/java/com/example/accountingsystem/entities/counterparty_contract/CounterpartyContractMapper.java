@@ -18,10 +18,10 @@ public interface CounterpartyContractMapper {
     List<CounterpartyContractDTO> toListOfDTO(List<CounterpartyContract> entities);
 
     default long fromContract(Contract contract) {
-        return contract == null ? null : contract.getId();
+        return (contract == null) ? null : contract.getId();
     }
 
     default long fromCounterparty(Counterparty cp) {
-        return cp == null ? null : cp.getId();
+        return (cp == null) ? null : cp.getId();
     }
 }

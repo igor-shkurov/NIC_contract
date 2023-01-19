@@ -49,7 +49,7 @@
                 :key="index"
             >
               <div class="fields-element__title">
-                  {{inputElemsHeaders[index]}}:
+                {{inputElemsHeaders[index]}}:
               </div>
               <div class="fields-element__value">
                 {{ $props.obj[key]}}
@@ -137,7 +137,6 @@ import {mapActions, mapGetters} from "vuex"
 import { validationMixin } from 'vuelidate'
 import { required, minLength, maxLength, numeric } from 'vuelidate/lib/validators'
 
-
 export default {
   name: 'edit-modal',
   components: {
@@ -163,7 +162,6 @@ export default {
       counterpartyForm: {},
       stageForm: {},
       isValidForm: true
-
     }
   },
   computed: {
@@ -219,7 +217,7 @@ export default {
       let isValidForm = ''
       switch (this.$props.mode) {
         case 'contracts':
-          url = `http://localhost:8080/api/contracts/${this.newObj.id}/update`
+          url = `http://localhost:8080/api/contracts/update`
           for (let key in this.newObj) {
             this.contractForm[key] = this.newObj[key];
           }
@@ -264,9 +262,7 @@ export default {
       if (isValidForm) {
         console.log('Валидация прошла успешно.')
         this.editMode = false
-
         try {
-
           let response = await fetch(url, {
             method: 'PUT',
             headers: {
@@ -373,188 +369,182 @@ export default {
 </script>
 
 <style>
-  .modal{
-    position: fixed;
-    display: block;
-    top: 10vh;
-    left:10vw;
-    width: 80%;
-    height: 80%;
-    background-color: #545453;
-    border: 1px solid #FFF;
-    border-radius: 6px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-  }
-
-  .edit-modal-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 77vh;
-    overflow-y:scroll;
-    overflow-x: hidden;
-    padding-bottom: 20px;
-
-  }
-  .edit-modal-header{
-    display: flex;
-    width: 100%;
-    justify-content: flex-end;
-    margin-right: 30px;
-    margin-top: 25px;
-  }
-  .edit-modal-header-text{
-    font-size: 22px;
-    font-weight: 600;
-    text-transform: uppercase;
-    text-shadow: 1px 2px 3px rgba(0,0,0,0.5);
-    text-align: center;
-    width: 100%;
-    justify-self: center;
-    margin-left: 5%;
-  }
-  .edit-modal-info{
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .edit-modal-info, .if-container {
-    width:70%;
-  }
-  .edit-modal-cancel-btn{
-    width: 30px;
-    height: 30px;
-    margin-top: -12px;
-    margin-right: 10px;
-    border: none;
-    position: fixed;
-  }
-  button .edit-modal-cancel-btn > img {
-    position: fixed;
-  }
-  .edit-modal-cancel-btn:hover{
-    transform: translate(0, -2px);
-  }
-  .edit-modal-cancel-btn:active{
-    transform: translate(1px, 0);
-  }
-  .edit-modal-content::-webkit-scrollbar {
-    width: 12px;               /* ширина scrollbar */
-  }
-  .edit-modal-content::-webkit-scrollbar-track {
-    background: inherit;        /* цвет дорожки */
-  }
-  .edit-modal-content::-webkit-scrollbar-thumb {
-    background-color: #484848;    /* цвет плашки */
-    border-radius: 20px;       /* закругления плашки */
-    border: 2px solid #282828;  /* padding вокруг плашки */
-    box-shadow: inset 0 0 4px rgba(0,0,0,0.4);
-  }
-  .edit-fields {
-    display: grid;
-    grid-row-gap: 10px;
-    margin: 10px 0 0 0;
-    width: 100%;
-  }
-  .edit-fields-element{
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    word-wrap: break-word;
-    width: 100%;
-  }
-  .fields-element__value:hover{
-    background-color: #606060;
-  }
-
-  .fields-element__title{
-    background-color: #ababab;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 4px solid #454545;
-    border-radius: 6px;
-    width: 20%;
-    padding: 5px 0;
-    font-weight: 600;
-    margin-right: 10px;
-    text-align: center;
-    text-shadow: 1px 0.5px 0 rgba(0,0,0,0.5);
-  }
-  .fields-element__value, .fields-element__edit {
-    background-color: #525252;
-    border: 4px solid #454545;
-    border-radius: 6px;
-    width: 80%;
-    padding: 5px 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .fields-element__edit{
-    width: 40%;
-    margin-left: 10px;
-    background-color: #A0A0A0;
-    color: inherit;
-    font: inherit;
-    font-weight: 600;
-  }
-
-  .fields-element__edit:hover {
-    background-color: #C0C0C0;
-  }
-
-  .edit-modal-controls, .edit-modal-header-container{
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-  }
-  .edit-modal-header-container{
-    line-height: 1;
-    margin-top: 20px;
-  }
-  .edit-modal-controls__button {
-    display: flex;
-    align-items: center;
-    font-size: 15px;
-    font-weight: 600;
-    background-color: #707070;
-    border: 2px solid #454545;
-    border-radius: 6px;
-    margin-left: 5px;
-    padding: 3px 10px;
-  }
-  .edit-modal-controls__button:hover{
-    transform: translateY(-2px);
-    background-color: #808080;
-  }
-  .edit-modal-controls__button:active{
-    transform: translateY(2px);
-    background-color: #606060;
-  }
-  .edit-modal-controls__button > img {
-    width: 30px;
-  }
-  .controls-button__header {
-    display: flex;
-    align-items: center;
-    margin-left: 3px;
-  }
-  .edit-modal-control-warning{
-    color: #bdbdbd;
-    align-self: flex-end;
-    margin-top: 5px;
-    text-align: right;
-  }
-   .save-button {
-    justify-self: center;
-   }
-   .save-button button {
-     border: none;
-     text-align: center;
-     font: inherit;
-     padding: 5px 10px;
-   }
-
+.modal{
+  position: fixed;
+  display: block;
+  top: 10vh;
+  left:10vw;
+  width: 80%;
+  height: 80%;
+  background-color: #545453;
+  border: 1px solid #FFF;
+  border-radius: 6px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+.edit-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 77vh;
+  overflow-y:scroll;
+  overflow-x: hidden;
+  padding-bottom: 20px;
+}
+.edit-modal-header{
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  margin-right: 30px;
+  margin-top: 25px;
+}
+.edit-modal-header-text{
+  font-size: 22px;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-shadow: 1px 2px 3px rgba(0,0,0,0.5);
+  text-align: center;
+  width: 100%;
+  justify-self: center;
+  margin-left: 5%;
+}
+.edit-modal-info{
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.edit-modal-info, .if-container {
+  width:70%;
+}
+.edit-modal-cancel-btn{
+  width: 30px;
+  height: 30px;
+  margin-top: -12px;
+  margin-right: 10px;
+  border: none;
+  position: fixed;
+}
+button .edit-modal-cancel-btn > img {
+  position: fixed;
+}
+.edit-modal-cancel-btn:hover{
+  transform: translate(0, -2px);
+}
+.edit-modal-cancel-btn:active{
+  transform: translate(1px, 0);
+}
+.edit-modal-content::-webkit-scrollbar {
+  width: 12px;               /* ширина scrollbar */
+}
+.edit-modal-content::-webkit-scrollbar-track {
+  background: inherit;        /* цвет дорожки */
+}
+.edit-modal-content::-webkit-scrollbar-thumb {
+  background-color: #484848;    /* цвет плашки */
+  border-radius: 20px;       /* закругления плашки */
+  border: 2px solid #282828;  /* padding вокруг плашки */
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.4);
+}
+.edit-fields {
+  display: grid;
+  grid-row-gap: 10px;
+  margin: 10px 0 0 0;
+  width: 100%;
+}
+.edit-fields-element{
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  word-wrap: break-word;
+  width: 100%;
+}
+.fields-element__value:hover{
+  background-color: #606060;
+}
+.fields-element__title{
+  background-color: #ababab;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid #454545;
+  border-radius: 6px;
+  width: 20%;
+  padding: 5px 0;
+  font-weight: 600;
+  margin-right: 10px;
+  text-align: center;
+  text-shadow: 1px 0.5px 0 rgba(0,0,0,0.5);
+}
+.fields-element__value, .fields-element__edit {
+  background-color: #525252;
+  border: 4px solid #454545;
+  border-radius: 6px;
+  width: 80%;
+  padding: 5px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fields-element__edit{
+  width: 40%;
+  margin-left: 10px;
+  background-color: #A0A0A0;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+}
+.fields-element__edit:hover {
+  background-color: #C0C0C0;
+}
+.edit-modal-controls, .edit-modal-header-container{
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+.edit-modal-header-container{
+  line-height: 1;
+  margin-top: 20px;
+}
+.edit-modal-controls__button {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 600;
+  background-color: #707070;
+  border: 2px solid #454545;
+  border-radius: 6px;
+  margin-left: 5px;
+  padding: 3px 10px;
+}
+.edit-modal-controls__button:hover{
+  transform: translateY(-2px);
+  background-color: #808080;
+}
+.edit-modal-controls__button:active{
+  transform: translateY(2px);
+  background-color: #606060;
+}
+.edit-modal-controls__button > img {
+  width: 30px;
+}
+.controls-button__header {
+  display: flex;
+  align-items: center;
+  margin-left: 3px;
+}
+.edit-modal-control-warning{
+  color: #bdbdbd;
+  align-self: flex-end;
+  margin-top: 5px;
+  text-align: right;
+}
+.save-button {
+  justify-self: center;
+}
+.save-button button {
+  border: none;
+  text-align: center;
+  font: inherit;
+  padding: 5px 10px;
+}
 </style>

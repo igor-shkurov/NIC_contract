@@ -4,14 +4,14 @@ import com.example.accountingsystem.entities.ContractType;
 import com.example.accountingsystem.entities.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.PositiveOrZero;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
 @Table
 public class Contract {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(columnDefinition = "varchar(30)")
     private String name;
@@ -23,25 +23,21 @@ public class Contract {
 
     private LocalDate approxBeginDate;
     @Column(columnDefinition = "date")
-    //@FutureOrPresent
     private LocalDate approxEndDate;
     @Column(columnDefinition = "date")
-    // @FutureOrPresent
     private LocalDate beginDate;
     @Column(columnDefinition = "date")
-    // @FutureOrPresent
     private LocalDate endDate;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private User associatedUser;
 
     @Column(columnDefinition = "numeric(18,2)")
-    @PositiveOrZero(message = "sum of contract should not be negative")
-    private float sum;
+    private BigDecimal sum;
 
     public Contract() {
     }
 
-    public Contract(String name, ContractType contractType, LocalDate approxBeginDate, LocalDate approxEndDate, LocalDate beginDate, LocalDate endDate, float sum) {
+    public Contract(String name, ContractType contractType, LocalDate approxBeginDate, LocalDate approxEndDate, LocalDate beginDate, LocalDate endDate, BigDecimal sum) {
         this.name = name;
         this.contractType = contractType;
         this.approxBeginDate = approxBeginDate;
@@ -107,11 +103,11 @@ public class Contract {
         this.endDate = endDate;
     }
 
-    public float getSum() {
+    public BigDecimal getSum() {
         return sum;
     }
 
-    public void setSum(float sum) {
+    public void setSum(BigDecimal sum) {
         this.sum = sum;
     }
 

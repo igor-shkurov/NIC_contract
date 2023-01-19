@@ -1,17 +1,15 @@
 package com.example.accountingsystem.controllers;
 
-
 import com.example.accountingsystem.entities.user.CustomUserDetailsService;
-import com.example.accountingsystem.entities.user.User;
 import com.example.accountingsystem.entities.user.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-
+import javax.validation.Valid;
 import java.util.List;
-@CrossOrigin
+
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
@@ -23,32 +21,27 @@ public class UsersController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "")
-    public List<UserDTO> showUsers(HttpServletResponse response) {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        return userService.getUsers();
+    @GetMapping(path = "", produces = {"application/json"})
+    public ResponseEntity<List<UserDTO>> showUsers() {
+        List<UserDTO> list = userService.getUsers();
+        return new ResponseEntity<>(list, (list != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
-//    @GetMapping(path = "/current")
-//    public UserDTO showMe(HttpServletResponse response) {
-//        response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-//        return userService.getCurrentUser();
-//    }
-
-    @PostMapping(path = "")
-    public void addUser(HttpServletResponse response, UserDTO dto) {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        userService.saveUser(dto);
+    @PostMapping(path = "/add", consumes = {"application/json"})
+    public ResponseEntity<Object> addUser(@RequestBody @Valid UserDTO dto) {
+        boolean status = userService.saveUser(dto);
+        return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
     }
 
-    @PutMapping(path = "/update")
-    public void updateUser(HttpServletResponse response, UserDTO dto) {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8081");
-        userService.saveUser(dto);
+    @PutMapping(path = "/update", consumes = {"application/json"})
+    public ResponseEntity<Object> updateUser(@RequestBody @Valid UserDTO dto) {
+        boolean status = userService.updateUser(dto);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping(path = "/delete")
-    public void deleteUser(HttpServletResponse response, @RequestParam long id) {
-        userService.deleteUser(id);
+    @DeleteMapping(path = "/delete/user_id={id}")
+    public ResponseEntity<Object> deleteUser(@PathVariable("id") Long id) {
+        boolean status = userService.deleteUser(id);
+        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.FORBIDDEN);
     }
 }

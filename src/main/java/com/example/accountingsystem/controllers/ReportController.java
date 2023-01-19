@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
-@CrossOrigin
+
 @RestController
 @RequestMapping("/api/reports")
 public class ReportController {
@@ -34,9 +34,8 @@ public class ReportController {
         excelExportService.exportContractsByGivenPeriod(response, LocalDate.parse(beginDate), LocalDate.parse(endDate));
     }
 
-    @GetMapping(path = "/{contractId}")
-    public void getStagesExcel(HttpServletResponse response, @PathVariable String contractId) throws FileNotFoundException {
-        Long id = Long.parseLong(contractId);
+    @GetMapping(path = "/contract_id={id}")
+    public void getStagesExcel(HttpServletResponse response, @PathVariable Long id) throws FileNotFoundException {
         if (contractService.getContractById(id) == null) {
             throw new FileNotFoundException("Can not create a file for this contract: No contract with such id");
         }

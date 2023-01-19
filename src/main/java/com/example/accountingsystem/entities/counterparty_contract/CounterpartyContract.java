@@ -6,7 +6,6 @@ import com.example.accountingsystem.entities.counterparty.Counterparty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.*;
-import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 
 @Entity
@@ -14,7 +13,7 @@ import java.time.LocalDate;
 @JsonPropertyOrder({"id", "name", "contractType", "counterparty", "sum", "approxBeginDate", "approxEndDate", "beginDate", "endDate"})
 public class CounterpartyContract {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(columnDefinition = "varchar(30)")
     private String name;
@@ -31,13 +30,12 @@ public class CounterpartyContract {
     private LocalDate endDate;
 
     @Column(columnDefinition = "numeric(18,2)")
-    @PositiveOrZero(message = "sum of contract should not be negative")
     private float sum;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private Contract contract;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private Counterparty counterparty;
 
     public Long getId() {

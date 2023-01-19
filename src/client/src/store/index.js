@@ -90,7 +90,9 @@ export default new Vuex.Store({
         },
         async loadContracts({commit}) {
             try {
-                let response = await fetch(`http://localhost:8080/api/contracts/user_id=1`)
+                let response = await fetch(`http://localhost:8080/api/contracts`, {
+                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'}
+                });
                 if(response.ok){
                     const contracts = await response.json();
                     commit("SET_CONTRACTS", contracts)

@@ -1,6 +1,5 @@
 package com.example.accountingsystem.entities.stage;
 
-import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContract;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
