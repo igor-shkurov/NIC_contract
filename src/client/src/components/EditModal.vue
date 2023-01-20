@@ -225,7 +225,7 @@ export default {
           isValidForm = !this.$v.contractForm.$error
           break
         case 'counterparties':
-          url = `http://localhost:8080/api/counterparties/${this.newObj.id}/update`
+          url = `http://localhost:8080/api/counterparties/update`
           for (let key in this.newObj) {
             this.counterpartyForm[key] = this.newObj[key];
           }
@@ -233,7 +233,7 @@ export default {
           isValidForm = !this.$v.counterpartyForm.$error
           break
         case 'stages':
-          url = `http://localhost:8080/api/stages/${this.newObj.id}/update`
+          url = `http://localhost:8080/api/stages/update`
           for (let key in this.newObj) {
             this.stageForm[key] = this.newObj[key];
           }
@@ -241,7 +241,7 @@ export default {
           isValidForm = !this.$v.stageForm.$error
           break
         case 'contractsCounterparty':
-          url = `http://localhost:8080/api/contract_counterparties/${this.newObj.id}/update`
+          url = `http://localhost:8080/api/contract_counterparties/update`
           for (let key in this.newObj) {
             this.contractCounterpartyForm[key] = this.newObj[key];
           }
@@ -249,7 +249,7 @@ export default {
           isValidForm = !this.$v.contractCounterpartyForm.$error
           break
         case 'users':
-          url = `http://localhost:8080/api/users/${this.newObj.id}/update`
+          url = `http://localhost:8080/api/users/update`
           for (let key in this.newObj) {
             this.userForm[key] = this.newObj[key];
           }
@@ -267,7 +267,7 @@ export default {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'
+              'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'
             },
             body: JSON.stringify(this.newObj)
           })
@@ -277,7 +277,7 @@ export default {
             console.log('response.ok')
           } else {
             alert("Ошибка HTTP: " + response.status);
-            console.log('response NOT ok')
+            console.log('Ошибка HTTP-запроса')
           }
         } catch (error) {
           console.error(error)

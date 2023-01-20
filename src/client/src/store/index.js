@@ -91,10 +91,11 @@ export default new Vuex.Store({
         async loadContracts({commit}) {
             try {
                 let response = await fetch(`http://localhost:8080/api/contracts`, {
-                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'}
+                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'}
                 });
                 if(response.ok){
                     const contracts = await response.json();
+                    console.log("CONTRACTS:\n", contracts)
                     commit("SET_CONTRACTS", contracts)
                     console.log('Договоры загружены успешно.')
                 } else {
@@ -107,7 +108,7 @@ export default new Vuex.Store({
         async loadStages({commit}, id) {
             try {
                 let response = await fetch(`http://localhost:8080/api/stages/contract_id=${id}`, {
-                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'}
+                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'}
                 });
                 if(response.ok) {
                     const stages = await response.json();
@@ -123,7 +124,7 @@ export default new Vuex.Store({
         async loadContractsCounterparty({commit}, id) {
             try {
                 let response = await fetch(`http://localhost:8080/api/contract_counterparties/contract_id=${id}`, {
-                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'}
+                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'}
                 });
                 if(response.ok) {
                     const contractsCounterparty = await response.json();
@@ -139,10 +140,11 @@ export default new Vuex.Store({
         async loadCounterparties({commit}) {
             try {
                 let response = await fetch(`http://localhost:8080/api/counterparties`, {
-                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYm9iYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjIyNzM5MDg3OTV9.P3PFoaCpiBcDQfDGKNdkl3PDL0yDCYpw8xGSnv84zHQ'}
+                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'}
                 });
                 if(response.ok) {
                     const counterparties = await response.json();
+                    console.log("Контрагенты:\n", counterparties)
                     commit("SET_COUNTERPARTIES", counterparties)
                     console.log(`Перечень контрагентов успешно загружен.`)
                 } else {
@@ -154,7 +156,9 @@ export default new Vuex.Store({
         },
         async loadUsers({commit}) {
             try {
-                let response = await fetch(`http://localhost:8080/api/users`)
+                let response = await fetch(`http://localhost:8080/api/users`, {
+                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'}
+                })
                 if(response.ok) {
                     const users = await response.json();
                     commit("SET_USERS", users)
