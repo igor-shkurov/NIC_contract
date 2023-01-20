@@ -63,23 +63,27 @@ export default {
     async signIn() {
       if(this.isValidForm()){
         try {
-          let res = await fetch('https://jsonplaceholder.typicode.com/users'/*, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            login: this.form.login,
-            password: this.form.password
-          })
-        }*/)
+          let res = await fetch('http://localhost:8080/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: JSON.stringify({
+              login: this.form.login,
+              password: this.form.password
+            })
+        })
           if(res.ok){
+            //console.log(res)
+            //const token = await res.json()
+            //console.log(token)
             console.log('???-request with the check of the user...')
+            //console.log(token)
+            alert("!")
             console.log('Авторизация прошла успешно')
             window.location.href='http://localhost:8081/contracts'
           } else {
-            alert("Ошибка HTTP / Ошибка входа...?: " + res.status);
+            alert("Неверный юзер: " + res.status);
           }
         } catch (error) {
           console.error(error)
