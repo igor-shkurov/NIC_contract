@@ -63,25 +63,36 @@ export default {
     async signIn() {
       if(this.isValidForm()){
         try {
+
+          var details = {
+            'username': this.form.login,
+            'password': this.form.password
+          };
+          // я просто взял готовый вариант, может, можно красивей сделать это
+          // параметры передаются в боди пост запросом, но каким-то специфическим образом
+          var formBody = [];
+          for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+          }
+          formBody = formBody.join("&");
+
           let res = await fetch('http://localhost:8080/login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: JSON.stringify({
-              login: this.form.login,
-              password: this.form.password
-            })
-        })
+
+            body: formBody
+          })
           if(res.ok){
-            //console.log(res)
-            //const token = await res.json()
-            //console.log(token)
+            console.log(await res.json()); /// тут токены (ура)
             console.log('???-request with the check of the user...')
             //console.log(token)
             alert("!")
             console.log('Авторизация прошла успешно')
-            window.location.href='http://localhost:8081/contracts'
+            // window.location.href='http://localhost:8081/contracts'
           } else {
             alert("Неверный юзер: " + res.status);
           }
