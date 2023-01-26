@@ -95,7 +95,6 @@ export default new Vuex.Store({
                 });
                 if(response.ok){
                     const contracts = await response.json();
-                    console.log("CONTRACTS:\n", contracts)
                     commit("SET_CONTRACTS", contracts)
                     console.log('Договоры загружены успешно.')
                 } else {
