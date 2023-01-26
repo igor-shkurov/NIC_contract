@@ -83,8 +83,8 @@ export default {
           if(res.ok){
             console.log(await res.json()); /// тут токены (ура)
             console.log('Авторизация прошла успешно')
-            window.location.href='http://localhost:8081/contracts'
-            //await this.$router.push({name: 'contractsList'});
+            //window.location.href='http://localhost:8081/contracts'
+            await this.$router.push({name: 'contractsList'});
           } else {
             alert("Неверный юзер: " + res.status);
           }
