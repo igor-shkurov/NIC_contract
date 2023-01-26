@@ -9,10 +9,10 @@
               id="login"
               class="form-element__field"
               placeholder="Login"
-              v-model.trim="form.login"
+              v-model.trim="form.username"
           >
         </div>
-        <p v-if="$v.form.login.$dirty && !$v.form.login.required" class="invalid-feedback sign-in">
+        <p v-if="$v.form.username.$dirty && !$v.form.username.required" class="invalid-feedback sign-in">
           Введите логин
         </p>
         <div class="form-element">
@@ -49,7 +49,7 @@ export default {
     return {
       mode: 'signIn',
       form: {
-        login: '',
+        username: '',
         password: ''
       },
       errors: []
@@ -64,35 +64,27 @@ export default {
       if(this.isValidForm()){
         try {
 
-          var details = {
-            'username': this.form.login,
-            'password': this.form.password
-          };
-          // я просто взял готовый вариант, может, можно красивей сделать это
-          // параметры передаются в боди пост запросом, но каким-то специфическим образом
-          var formBody = [];
-          for (var property in details) {
-            var encodedKey = encodeURIComponent(property);
-            var encodedValue = encodeURIComponent(details[property]);
-            formBody.push(encodedKey + "=" + encodedValue);
-          }
-          formBody = formBody.join("&");
+          let formBody = [];
+
+          for (let property in this.form) {
+            let encodedKey = encodeURIComponent(property);
+            let encodedValue = encodeURIComponent(this.form[property]);
+            formBody.push(encodedKey + "=" + encodedValue);             // конкретно в таком формате должны прийти данные с username и password на сервер для аутентификации
+          }                                                             // в другом формате аутентификация не срабатывала
+          formBody = formBody.join("&");                                //
 
           let res = await fetch('http://localhost:8080/login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
-
             body: formBody
           })
           if(res.ok){
             console.log(await res.json()); /// тут токены (ура)
-            console.log('???-request with the check of the user...')
-            //console.log(token)
-            alert("!")
             console.log('Авторизация прошла успешно')
-            // window.location.href='http://localhost:8081/contracts'
+            window.location.href='http://localhost:8081/contracts'
+            //await this.$router.push({name: 'contractsList'});
           } else {
             alert("Неверный юзер: " + res.status);
           }
@@ -106,7 +98,7 @@ export default {
   },
   validations: {
     form: {
-      login: { required},
+      username: { required},
       password: { required }
     }
   }
