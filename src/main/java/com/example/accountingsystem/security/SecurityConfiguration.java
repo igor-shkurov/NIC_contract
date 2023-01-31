@@ -1,7 +1,5 @@
 package com.example.accountingsystem.security;
 
-import com.example.accountingsystem.security.jwt.CustomAuthenticationFilter;
-import com.example.accountingsystem.security.jwt.CustomAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
