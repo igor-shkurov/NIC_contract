@@ -38,7 +38,7 @@
                   v-model="addForm['counterparty']"
               >
                 <option
-                    v-for="(counterparty, index) in this.counterparties"
+                    v-for="(counterparty, index) in this.$store.getCounterparties"
                     :key="index"
                     :value="counterparty.id">
                   {{ counterparty.name}}
@@ -63,7 +63,7 @@
             </div>
           <div
               class="add-modal-warning"
-              v-if="!isAllFieldsEntered"
+              v-if="!this.isAllFieldsEntered"
           >
             Пожалуйста, введите все поля
           </div>
@@ -77,29 +77,32 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
+/*import {mapActions, mapGetters} from "vuex";*/
 import { validationMixin } from 'vuelidate'
 
 export default {
   name: "AddModal",
   props: {
     mode: String,
-    id: Number,
+    id: Number,   // null, если добавление не во вложенный список, т.к. id договора, у которого добавляется этап
     cardKeys: Array,
     cardFields: Array,
-    cardHeader: String
+    cardHeader: String,
+    listLength: Number
   },
   mixins: [validationMixin],
   data(){
     return {
-      addForm: {}
+      addForm: {},
+      isAllFieldsEntered: true,
+      isValidForm: true
     }
   },
   computed: {
-    ...mapGetters(['getCounterparties']),
+    /*...mapGetters(['getCounterparties']),
     counterparties(){
       return this.getCounterparties
-    },
+    },*/
     inputElemsKeys(){
       let arr = []
       this.$props.cardKeys.forEach(key => {
@@ -119,30 +122,32 @@ export default {
   },
   methods: {
     async addObj() {
-      if (this.isValidForm()) {
+      if (this.isValidForm) {
         // валидация
         //отправляем новый объект
+        this.addForm['userId'] = 1;
         console.log('Добавление...', this.addForm)
         switch (this.$props.mode) {
           case 'contracts':
-            /*try {
-              let response = await fetch(`http://localhost:8080/api/contracts`, {
+            try {
+              let response = await fetch(`http://localhost:8080/api/contracts/add`, {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json;charset=utf-8',
-                  'Access-Control-Allow-Origin': '*'
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0',
                 },
                 body: JSON.stringify(this.addForm)
               })
               if(response.ok) {
                 console.log(`Договор добавлен`)
+                this.$emit('close', true)
               } else {
                 alert("Ошибка HTTP в добавлении договора: " + response.status);
+                this.$emit('close', false)
               }
             } catch(error) {
               console.error(error)
-            }*/
-            //console.log('ID: ', this.id)
+            }
             break
           case 'counterparties':
             /*try {
@@ -199,7 +204,7 @@ export default {
             } catch(error) {
               console.error(error)
             }*/
-            console.log('ID: ', this.id)
+            /*console.log('ID: ', this.id)*/
             break
           case 'users':
             /*try {
@@ -225,14 +230,14 @@ export default {
       } else {
         console.log('Введенные данные не прошли валидацию.')
       }
-    },
-    ...mapActions(['loadCounterparties'])
+    }/*,
+    ...mapActions(['loadCounterparties'])*/
   },
   validations: {
 
   },
   created() {
-    this.loadCounterparties()
+    /*this.loadCounterparties()*/
     this.newObj = {}
   }
 }

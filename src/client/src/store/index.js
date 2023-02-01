@@ -143,7 +143,6 @@ export default new Vuex.Store({
                 });
                 if(response.ok) {
                     const counterparties = await response.json();
-                    console.log("Контрагенты:\n", counterparties)
                     commit("SET_COUNTERPARTIES", counterparties)
                     console.log(`Перечень контрагентов успешно загружен.`)
                 } else {

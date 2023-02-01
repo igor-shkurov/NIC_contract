@@ -21,7 +21,7 @@
                 v-for="(key, index) in headers.keysElemData"
                 :key="index"
             >
-              {{ elemData[key] }}
+              {{ returnElemDataByKey(elemData, key) }} <!-- ф-ция нужна для проверки, если нужно выдать контрагента, то выдавать его название, а не id -->
             </td>
           </tr>
       </tbody>
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+
 export default {
   name: "TableTemplate.vue",
   data() {
@@ -77,6 +78,15 @@ export default {
       }
       return { fieldsHeaders: headers, cardHeader: cardHeader, keysElemData: keysElemData}
     },
+    returnElemDataByKey(obj, key){
+      if(key === 'counterpartyId'){
+        let counterparties = this.$store.getters.getCounterparties
+        let id = obj[key]
+        console.log(id)
+        return counterparties.find((elem)=>elem.id === id)
+      }
+      return obj[key]
+    }
   },
   created() {
     this.headers = this.getHeaders()

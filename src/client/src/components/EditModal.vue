@@ -76,7 +76,7 @@
                   v-if="editMode"
               >
                 <option
-                    v-for="(counterparty, index) in this.counterparties"
+                    v-for="(counterparty, index) in this.$store.getCounterparties"
                     :key="index"
                     :value="counterparty.id">
                   {{ counterparty.name}}
@@ -133,7 +133,7 @@
 
 <script>
 
-import {mapActions, mapGetters} from "vuex"
+/*import {mapGetters} from "vuex"*/
 import { validationMixin } from 'vuelidate'
 import { required, minLength, maxLength, numeric } from 'vuelidate/lib/validators'
 
@@ -165,10 +165,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getCounterparties']),
+    /*...mapGetters(['getCounterparties']),
     counterparties(){
       return this.getCounterparties
-    },
+    },*/
     inputElemsKeys(){
       let arr = []
       this.$props.cardKeys.forEach(key => {
@@ -210,7 +210,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['loadCounterparties']),
+    /*...mapActions(['loadCounterparties']),*/
 
     async updateObj() {
       let url = ''
@@ -273,15 +273,14 @@ export default {
           })
           if (response.ok) {
             console.log(`Объект  ${this.mode} успешно отредактирован и сохранен. PUT-request отправлен. Изменения загружены в БД.`)
+            console.log(this.newObj)
             this.$emit('close')
-            console.log('response.ok')
           } else {
             alert("Ошибка HTTP: " + response.status);
             console.log('Ошибка HTTP-запроса')
           }
         } catch (error) {
           console.error(error)
-          console.log('ERROR FETCH')
           this.$emit('close')
         }
       } else {
@@ -338,7 +337,7 @@ export default {
       }
   },
   created() {
-    this.loadCounterparties()
+    /*this.loadCounterparties()*/
     let clone = {};
     //глубокое копирование
     for (let key in this.obj) {
