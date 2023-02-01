@@ -10,12 +10,10 @@ import javax.annotation.PreDestroy;
 public class AccountingSystemApplication {
 
     public static void main(String[] args) {
-        LoginHistoryRecorder.initConnection();
         SpringApplication.run(AccountingSystemApplication.class, args);
     }
 
     @PreDestroy
     public void onExit() {
-        LoginHistoryRecorder.closeConnection();
     }
 }

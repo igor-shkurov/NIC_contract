@@ -4,10 +4,12 @@ import com.example.accountingsystem.entities.ExportableContract;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 public class ContractDTO extends ExportableContract {
-    @NotNull(groups = {New.class, Modify.class})
-    @Min(value = 0, groups = {New.class, Modify.class})
+    @Null(groups = {New.class})
+    @NotNull(groups = {Modify.class})
+    @Min(value = 0, groups = {Modify.class})
     private Long userId;
 
     public Long getUserId() {

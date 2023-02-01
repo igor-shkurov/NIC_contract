@@ -4,26 +4,24 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.accountingsystem.entities.user.User;
 import com.example.accountingsystem.security.jwt.JWTUtils;
-import com.example.accountingsystem.utility.LoginHistoryRecorder;
+import com.example.accountingsystem.utility.LoginRecord;
+import com.example.accountingsystem.utility.LoginRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.example.accountingsystem.security.jwt.AlgorithmBuilder.algorithmInstance;
@@ -33,9 +31,11 @@ import static com.example.accountingsystem.security.jwt.JWTUtils.JWT_REFRESH_DUR
 @Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+    private final LoginRepository loginRepo;
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, LoginRepository loginRepo) {
         this.authenticationManager = authenticationManager;
+        this.loginRepo = loginRepo;
     }
 
     @Override
@@ -49,7 +49,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         User user = (User) authentication.getPrincipal();
-        LoginHistoryRecorder.record(user);
+//        LoginHistoryRecorder.record(user);
+        loginRepo.save(LoginRecord.construct(user));
         Algorithm algorithm = algorithmInstance;
         String access_token = JWT.create()
                 .withSubject(user.getUsername())
