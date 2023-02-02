@@ -289,8 +289,41 @@ export default {
     },
 
     async removeObj() {
-      //fetch body: id
-      console.log(`DELETE-request with new info about ${this.mode} object...`)
+      let url =''
+      switch (this.$props.mode) {
+        case 'contracts':
+          url = `http://localhost:8080/api/contracts/delete/contract_id=${this.obj['id']}`
+          break
+        case 'counterparties':
+          url = `http://localhost:8080/api/counterparties/delete/counterparty_id=${this.obj['id']}`
+          break
+        case 'stages':
+          url = `http://localhost:8080/api/stages/delete/stage_id=${this.obj['id']}`
+          break
+        case 'contractsCounterparty':
+          url = `http://localhost:8080/api/contract_counterparties/delete/contract_id=${this.obj['id']}`
+          break
+        case 'users':
+          url = `http://localhost:8080/api/users/delete/user_id=${this.obj['id']}`
+          break
+      }
+      try {
+        let response = await fetch(url, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0',
+          }
+        })
+        if(response.ok) {
+          console.log(`Объект ${this.mode} с id ${this.obj['id']} успешно удален.`)
+          this.$emit('close', true)
+        } else {
+          alert("Ошибка HTTP в удалении договора: " + response.status);
+          this.$emit('close', false)
+        }
+      } catch(error) {
+        console.error(error)
+      }
     },
   },
   validations: {
