@@ -35,13 +35,13 @@ public class ContractController {
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public ResponseEntity<Object> addContract(@RequestBody @Validated({ExportableContract.New.class}) ContractDTO dto) {
+    public ResponseEntity<Object> addContract(@RequestBody @Validated({ContractDTO.New.class}) ContractDTO dto) {
         boolean status = contractService.addContract(dto);
         return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public ResponseEntity<Object> updateContract(@RequestBody @Validated({ExportableContract.Modify.class}) ContractDTO dto) {
+    public ResponseEntity<Object> updateContract(@RequestBody @Validated({ContractDTO.Modify.class}) ContractDTO dto) {
         boolean status = contractService.updateContract(dto);
         return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
     }

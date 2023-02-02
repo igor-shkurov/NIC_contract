@@ -1,5 +1,7 @@
 package com.example.accountingsystem.entities.stage;
 
+import com.example.accountingsystem.entities.ExportableContract;
+
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -9,10 +11,12 @@ public class StageDTO {
     public interface Modify {}
 
     @Null(groups = {New.class})
+    @NotNull(groups = {Modify.class})
+    @Min(value = 0, groups = {Modify.class})
     private Long id;
 
     @NotBlank(groups = {New.class, Modify.class})
-    @Size(min = 2, max = 30, groups = {New.class, Modify.class})
+    @Size(min = 3, max = 30, groups = {New.class, Modify.class})
     private String name;
 
     private LocalDate approxBeginDate;

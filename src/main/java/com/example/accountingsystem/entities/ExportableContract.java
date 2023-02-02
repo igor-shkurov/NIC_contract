@@ -8,7 +8,9 @@ public abstract class ExportableContract {
     public interface New {}
     public interface Modify {}
 
-    @Null(groups = New.class)
+    @Null(groups = {New.class})
+    @NotNull(groups = {Modify.class})
+    @Min(value = 0, groups = {Modify.class})
     private Long id;
 
     @NotEmpty(groups = {New.class, Modify.class})

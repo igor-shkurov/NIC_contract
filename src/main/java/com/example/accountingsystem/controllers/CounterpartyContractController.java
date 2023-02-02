@@ -1,23 +1,26 @@
 package com.example.accountingsystem.controllers;
 
+import com.example.accountingsystem.entities.ExportableContract;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractDTO;
 import com.example.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
+import org.apache.poi.ss.formula.functions.Count;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/contract_counterparties")
-public class CounterpartyContractsController {
+@RequestMapping("/api/counterparty_contracts")
+public class CounterpartyContractController {
 
     private final CounterpartyContractService counterpartyContractService;
 
     @Autowired
-    public CounterpartyContractsController(CounterpartyContractService counterpartyContractService) {
+    public CounterpartyContractController(CounterpartyContractService counterpartyContractService) {
         this.counterpartyContractService = counterpartyContractService;
     }
 
@@ -28,13 +31,13 @@ public class CounterpartyContractsController {
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public ResponseEntity<Object> addContract(@RequestBody @Valid CounterpartyContractDTO dto) {
+    public ResponseEntity<Object> addContract(@RequestBody @Validated({CounterpartyContractDTO.New.class}) CounterpartyContractDTO dto) {
         boolean status = counterpartyContractService.addCounterpartyContract(dto);
         return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public ResponseEntity<Object> updateContract(@RequestBody @Valid  CounterpartyContractDTO dto) {
+    public ResponseEntity<Object> updateContract(@RequestBody @Validated(CounterpartyContractDTO.Modify.class)  CounterpartyContractDTO dto) {
         boolean status = counterpartyContractService.updateContract(dto);
         return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
     }

@@ -1,15 +1,16 @@
 package com.example.accountingsystem.entities.counterparty;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import com.example.accountingsystem.entities.ExportableContract;
+
+import javax.validation.constraints.*;
 
 public class CounterpartyDTO {
     public interface New {}
     public interface Modify {}
 
     @Null(groups = {New.class})
+    @NotNull(groups = {Modify.class})
+    @Min(value = 1, groups = {Modify.class})
     private Long id;
 
     @NotBlank(groups = {New.class, Modify.class})

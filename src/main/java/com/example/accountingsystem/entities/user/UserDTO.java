@@ -1,19 +1,20 @@
 package com.example.accountingsystem.entities.user;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 public class UserDTO {
     public interface New {}
     public interface Modify {}
 
+
     @Null(groups = {New.class})
+    @NotNull(groups = {Modify.class})
+    @Min(value = 1, groups = {Modify.class})
     private long id;
 
     @NotBlank(groups = {New.class, Modify.class})
-    @Size(min = 4, max = 40, groups = {New.class, Modify.class})
+    @Size(min = 5, max = 50, groups = {New.class, Modify.class})
     private String FIO;
 
     @NotBlank(groups = {New.class, Modify.class})
@@ -24,7 +25,9 @@ public class UserDTO {
     @Size(min = 3, max = 50, groups = {New.class, Modify.class})
     private String password;
 
+    @Null(groups = {New.class, Modify.class})
     private LocalDateTime expirationDate;
+    @Null(groups = {New.class, Modify.class})
     private User.Role role;
 
     public long getId() {
