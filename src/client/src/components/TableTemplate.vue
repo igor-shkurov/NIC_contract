@@ -85,6 +85,16 @@ export default {
         console.log(id)
         return counterparties.find((elem)=>elem.id === id).name
       }
+      if(key === 'contractType'){
+        switch (obj[key]){
+          case 'WORK':
+            return 'Работы'
+          case 'SUPPLY':
+            return 'Поставка'
+          case 'PURCHASE':
+            return 'Закупка'
+        }
+      }
       return obj[key]
     }
   },
