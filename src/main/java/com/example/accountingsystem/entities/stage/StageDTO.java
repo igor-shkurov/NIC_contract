@@ -24,27 +24,22 @@ public class StageDTO {
     private LocalDate beginDate;
     private LocalDate endDate;
 
-    @NotEmpty(groups = {New.class, Modify.class})
     @DecimalMin(value = "0.0", groups = {New.class, Modify.class})
     private BigDecimal sum;
 
-    @NotEmpty(groups = {New.class, Modify.class})
     @DecimalMin(value = "0.0", groups = {New.class, Modify.class})
     private BigDecimal approxSalary;
 
-    @NotEmpty(groups = {New.class, Modify.class})
     @DecimalMin(value = "0.0", groups = {New.class, Modify.class})
     private BigDecimal approxCredit;
 
-    @NotEmpty(groups = {New.class, Modify.class})
     @DecimalMin(value = "0.0", groups = {New.class, Modify.class})
     private BigDecimal salary;
 
-    @NotEmpty(groups = {New.class, Modify.class})
     @DecimalMin(value = "0.0",groups = {New.class, Modify.class})
     private BigDecimal credit;
 
-    @NotEmpty(groups = {New.class, Modify.class})
+    @NotNull(groups = {New.class, Modify.class})
     @Min(value = 0, groups = {New.class, Modify.class})
     private long contractId;
 
