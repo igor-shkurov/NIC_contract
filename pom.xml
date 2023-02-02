@@ -139,7 +139,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.example.accountingsystem.AccountingSystemApplication</mainClass>
+                            <mainClass>nic.task.accountingsystem.AccountingSystemApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

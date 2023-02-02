@@ -1,4 +1,5 @@
 # Спецификация для полей запросов на эндпоинты:
+
 ## 1) Контракт (Contract):
 * ### Добавление (POST: "http:/localhost:8080/api/contracts/add"):
     * **id** - отсутствует 
@@ -89,7 +90,7 @@
   * **password** - от 3 до 50 символов
   * **expirationDate** - отсутствует 
   * **role** - отсутствует
-* ### Изменение (PUT: "http:/localhost:8080/api/users/update"):
+* ### Изменение (PUT: "http:/localhost:8080/api/users/"):
   * **id** - отсутствует
   * **FIO** - от 5 до 50 символов
   * **username** - от 3 до 50 символов
