@@ -83,7 +83,7 @@ export default {
         let counterparties = this.$store.getters.getCounterparties
         let id = obj[key]
         console.log(id)
-        return counterparties.find((elem)=>elem.id === id)
+        return counterparties.find((elem)=>elem.id === id).name
       }
       return obj[key]
     }

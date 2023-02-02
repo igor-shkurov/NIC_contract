@@ -35,13 +35,13 @@
               <div class="fields-element__title">Организация-контрагент</div>
               <select
                   class="fields-element__edit select-element"
-                  v-model="addForm['counterparty']"
+                  v-model="addForm['counterpartyId']"
               >
                 <option
-                    v-for="(counterparty, index) in this.$store.getCounterparties"
+                    v-for="(counterparty, index) in this.counterparties"
                     :key="index"
                     :value="counterparty.id">
-                  {{ counterparty.name}}
+                  {{counterparty.name}}
                 </option>
               </select>
             </div>
@@ -77,7 +77,7 @@
 </template>
 
 <script>
-/*import {mapActions, mapGetters} from "vuex";*/
+import { mapActions, mapGetters} from "vuex";
 import { validationMixin } from 'vuelidate'
 
 export default {
@@ -99,14 +99,14 @@ export default {
     }
   },
   computed: {
-    /*...mapGetters(['getCounterparties']),
+    ...mapGetters(['getCounterparties']),
     counterparties(){
       return this.getCounterparties
-    },*/
+    },
     inputElemsKeys(){
       let arr = []
       this.$props.cardKeys.forEach(key => {
-        if (key !== 'contractType' && key !== 'counterparty')
+        if (key !== 'contractType' && key !== 'counterpartyId')
           arr.push(key)
       })
       return arr
@@ -125,119 +125,59 @@ export default {
       if (this.isValidForm) {
         // валидация
         //отправляем новый объект
-        this.addForm['userId'] = 1;
+        this.addForm['userId'] = 6;
         console.log('Добавление...', this.addForm)
+        let url = ''
         switch (this.$props.mode) {
           case 'contracts':
-            try {
-              let response = await fetch(`http://localhost:8080/api/contracts/add`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0',
-                },
-                body: JSON.stringify(this.addForm)
-              })
-              if(response.ok) {
-                console.log(`Договор добавлен`)
-                this.$emit('close', true)
-              } else {
-                alert("Ошибка HTTP в добавлении договора: " + response.status);
-                this.$emit('close', false)
-              }
-            } catch(error) {
-              console.error(error)
-            }
+            url = `http://localhost:8080/api/contracts/add`
             break
           case 'counterparties':
-            /*try {
-              let response = await fetch(`http://localhost:8080/api/counterparties`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json;charset=utf-8'
-                },
-                body: JSON.stringify(this.addForm)
-              })
-              if(response.ok) {
-                console.log(`Контрагент добавлен`)
-              } else {
-                alert("Ошибка HTTP в добавлении контрагента: " + response.status);
-              }
-            } catch(error) {
-              console.error(error)
-            }*/
-            //console.log('ID: ', this.id)
+            url = `http://localhost:8080/api/counterparties/add`
             break
           case 'stages':
-            /*try {
-              let response = await fetch(`http://localhost:8080/api/stages/${this.id}`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json;charset=utf-8'
-                },
-                body: JSON.stringify(this.addForm)
-              })
-              if(response.ok) {
-                console.log(`Этап добавлен`)
-              } else {
-                alert("Ошибка HTTP в добавлении этапа: " + response.status);
-              }
-            } catch(error) {
-              console.error(error)
-            }*/
-            console.log('ID: ', this.id)
+            url = url = `http://localhost:8080/api/stages/add`
+            this.addForm['contractId']=this.id
             break
           case 'contractsCounterparty':
-            /*try {
-              let response = await fetch(`http://localhost:8080/api/contract_counterparties/${id}`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json;charset=utf-8'
-                },
-                body: JSON.stringify(this.addForm)
-              })
-              if(response.ok) {
-                console.log(`Договор добавлен`)
-              } else {
-                alert("Ошибка HTTP в добавлении договора с контрагентом: " + response.status);
-              }
-            } catch(error) {
-              console.error(error)
-            }*/
-            /*console.log('ID: ', this.id)*/
+            url = `http://localhost:8080/api/contract_counterparties/add`
+            this.addForm['contractId']=this.id
             break
           case 'users':
-            /*try {
-              let response = await fetch(`http://localhost:8080/api/users`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json;charset=utf-8'
-                },
-                body: JSON.stringify(this.addForm)
-              })
-              if(response.ok) {
-                console.log(`Договор добавлен`)
-              } else {
-                alert("Ошибка HTTP в добавлении пользователя: " + response.status);
-              }
-            } catch(error) {
-              console.error(error)
-            }*/
-            //console.log('ID: ', this.id)
+            url = `http://localhost:8080/api/users/add`
             break
+        }
+        try {
+          let response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0',
+            },
+            body: JSON.stringify(this.addForm)
+          })
+          if(response.ok) {
+            console.log(`Добавление в ${this.$props.mode}...`)
+            this.$emit('close', true)
+          } else {
+            alert("Ошибка HTTP в добавлении: " + response.status);
+            this.$emit('close', false)
+          }
+        } catch(error) {
+          console.error(error)
         }
         this.$emit('close')
       } else {
         console.log('Введенные данные не прошли валидацию.')
       }
-    }/*,
-    ...mapActions(['loadCounterparties'])*/
+    },
+    ...mapActions(['loadCounterparties'])
   },
   validations: {
 
   },
   created() {
-    /*this.loadCounterparties()*/
+    this.loadCounterparties()
     this.newObj = {}
   }
 }

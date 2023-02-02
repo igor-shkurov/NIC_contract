@@ -76,7 +76,7 @@
                   v-if="editMode"
               >
                 <option
-                    v-for="(counterparty, index) in this.$store.getCounterparties"
+                    v-for="(counterparty, index) in this.counterparties"
                     :key="index"
                     :value="counterparty.id">
                   {{ counterparty.name}}
@@ -133,7 +133,7 @@
 
 <script>
 
-/*import {mapGetters} from "vuex"*/
+import {mapGetters, mapActions} from "vuex"
 import { validationMixin } from 'vuelidate'
 import { required, minLength, maxLength, numeric } from 'vuelidate/lib/validators'
 
@@ -165,10 +165,10 @@ export default {
     }
   },
   computed: {
-    /*...mapGetters(['getCounterparties']),
+    ...mapGetters(['getCounterparties']),
     counterparties(){
       return this.getCounterparties
-    },*/
+    },
     inputElemsKeys(){
       let arr = []
       this.$props.cardKeys.forEach(key => {
@@ -210,7 +210,7 @@ export default {
     }
   },
   methods: {
-    /*...mapActions(['loadCounterparties']),*/
+    ...mapActions(['loadCounterparties']),
 
     async updateObj() {
       let url = ''
@@ -276,8 +276,7 @@ export default {
             console.log(this.newObj)
             this.$emit('close')
           } else {
-            alert("Ошибка HTTP: " + response.status);
-            console.log('Ошибка HTTP-запроса')
+            alert("Ошибка редактирования: " + response.status);
           }
         } catch (error) {
           console.error(error)
@@ -370,7 +369,7 @@ export default {
       }
   },
   created() {
-    /*this.loadCounterparties()*/
+    this.loadCounterparties()
     let clone = {};
     //глубокое копирование
     for (let key in this.obj) {
