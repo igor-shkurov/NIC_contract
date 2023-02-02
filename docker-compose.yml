@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  backend_server:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysqldb
+      - mongodb
+  frontend_server:
+    build: src/client
+    restart: always
+    ports:
+      - 8081:8081
+    depends_on:
+      - backend_server
+  mysqldb:
+    image: "mysql:8.0.25"
+    restart: always
+    volumes:
+      - ./mysql-volume:/var/lib/mysql
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_DATABASE: contract_db
+      MYSQL_USER: account
+      MYSQL_PASSWORD: contract
+      MYSQL_ROOT_PASSWORD: contract
+  mongodb:
+    image: "mongo"
+    restart: always
+    volumes:
+      - ./mongo-volume:/data/db
+    ports:
+      - 27018:27017
+    environment:
+      MONGO_INITDB_DATABASE: login_history
+      MONGO_INITDB_ROOT_USERNAME: account
+      MONGO_INITDB_ROOT_PASSWORD: contract
