@@ -122,7 +122,7 @@ export default new Vuex.Store({
         },
         async loadContractsCounterparty({commit}, id) {
             try {
-                let response = await fetch(`http://localhost:8080/api/contract_counterparties/contract_id=${id}`, {
+                let response = await fetch(`http://localhost:8080/api/counterparty_contracts/contract_id=${id}`, {
                     headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'}
                 });
                 if(response.ok) {

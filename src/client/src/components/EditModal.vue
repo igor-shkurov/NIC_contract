@@ -241,7 +241,7 @@ export default {
           isValidForm = !this.$v.stageForm.$error
           break
         case 'contractsCounterparty':
-          url = `http://localhost:8080/api/contract_counterparties/update`
+          url = `http://localhost:8080/api/counterparty_contracts/update`
           for (let key in this.newObj) {
             this.contractCounterpartyForm[key] = this.newObj[key];
           }
@@ -300,7 +300,7 @@ export default {
           url = `http://localhost:8080/api/stages/delete/stage_id=${this.obj['id']}`
           break
         case 'contractsCounterparty':
-          url = `http://localhost:8080/api/contract_counterparties/delete/contract_id=${this.obj['id']}`
+          url = `http://localhost:8080/api/counterparty_contracts/delete/contract_id=${this.obj['id']}`
           break
         case 'users':
           url = `http://localhost:8080/api/users/delete/user_id=${this.obj['id']}`

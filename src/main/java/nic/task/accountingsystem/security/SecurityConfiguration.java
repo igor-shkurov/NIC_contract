@@ -1,6 +1,6 @@
 package nic.task.accountingsystem.security;
 
-import nic.task.accountingsystem.utility.LoginRepository;
+//import nic.task.accountingsystem.utility.LoginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,12 +27,12 @@ import java.util.Arrays;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
-    private final LoginRepository loginRepo;
+//    private final LoginRepository loginRepo;
 
     @Autowired
-    public SecurityConfiguration(UserDetailsService userDetailsService, LoginRepository loginRepo) {
+    public SecurityConfiguration(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
-        this.loginRepo = loginRepo;
+//        this.loginRepo = loginRepo;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), loginRepo);
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
 
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

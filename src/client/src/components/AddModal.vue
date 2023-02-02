@@ -140,7 +140,7 @@ export default {
             this.addForm['contractId']=this.id
             break
           case 'contractsCounterparty':
-            url = `http://localhost:8080/api/contract_counterparties/add`
+            url = `http://localhost:8080/api/counterparty_contracts/add`
             this.addForm['contractId']=this.id
             break
           case 'users':
