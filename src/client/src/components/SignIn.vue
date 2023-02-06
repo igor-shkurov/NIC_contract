@@ -12,9 +12,9 @@
               v-model.trim="form.username"
           >
         </div>
-        <p v-if="$v.form.username.$dirty && !$v.form.username.required" class="invalid-feedback sign-in">
+        <span v-if="$v.form.username.$dirty && !$v.form.username.required">
           Введите логин
-        </p>
+        </span>
         <div class="form-element">
           <label for="password" class="form-element__label">Пароль:</label>
           <input
@@ -24,9 +24,9 @@
               v-model="form.password"
           >
         </div>
-        <p v-if="$v.form.password.$dirty && !$v.form.password.required" class="invalid-feedback">
+        <span v-if="$v.form.password.$dirty && !$v.form.password.required">
           Введите пароль
-        </p>
+        </span>
         <div class="form-element buttonSubmit">
           <button
               type="submit"

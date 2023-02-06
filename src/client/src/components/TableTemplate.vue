@@ -82,7 +82,6 @@ export default {
       if(key === 'counterpartyId'){
         let counterparties = this.$store.getters.getCounterparties
         let id = obj[key]
-        console.log(id)
         return counterparties.find((elem)=>elem.id === id).name
       }
       if(key === 'contractType'){
