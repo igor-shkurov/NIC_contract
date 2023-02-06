@@ -12,7 +12,10 @@ export default new Vuex.Store({
         users: [],
         firstReport: [],
         secondReport: [],
-        cardHeader: []
+        cardHeader: [],
+        accessToken: '',
+        refreshToken: '',
+        isAuthorized: ''
     },
     getters: {
         getContracts(state) {
@@ -38,6 +41,15 @@ export default new Vuex.Store({
         },
         getCardHeader(state) {
             return state.cardHeader
+        },
+        getAccessToken(state) {
+            return state.accessToken
+        },
+        getRefreshToken(state) {
+            return state.refreshToken
+        },
+        checkAuthorized(state) {
+            return state.isAuthorized
         }
     },
     mutations: {
@@ -64,6 +76,15 @@ export default new Vuex.Store({
         },
         SET_CARD_HEADER(state, payload) {
             state.cardHeader = payload
+        },
+        SET_AUTHORIZED(state, payload) {
+            state.isAuthorized = payload
+        },
+        SET_ACCESS_TOKEN(state, payload) {
+            state.accessToken = payload
+        },
+        SET_REFRESH_TOKEN(state, payload) {
+            state.refreshToken = payload
         }
     },
     actions: {
@@ -91,7 +112,7 @@ export default new Vuex.Store({
         async loadContracts({commit}) {
             try {
                 let response = await fetch(`http://localhost:8080/api/contracts`, {
-                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'}
+                    headers: {'Authorization': this.state.accessToken}
                 });
                 if(response.ok){
                     const contracts = await response.json();
@@ -107,7 +128,7 @@ export default new Vuex.Store({
         async loadStages({commit}, id) {
             try {
                 let response = await fetch(`http://localhost:8080/api/stages/contract_id=${id}`, {
-                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'}
+                    headers: {'Authorization': this.state.accessToken}
                 });
                 if(response.ok) {
                     const stages = await response.json();
@@ -123,7 +144,7 @@ export default new Vuex.Store({
         async loadContractsCounterparty({commit}, id) {
             try {
                 let response = await fetch(`http://localhost:8080/api/counterparty_contracts/contract_id=${id}`, {
-                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'}
+                    headers: {'Authorization': this.state.accessToken}
                 });
                 if(response.ok) {
                     const contractsCounterparty = await response.json();
@@ -139,7 +160,7 @@ export default new Vuex.Store({
         async loadCounterparties({commit}) {
             try {
                 let response = await fetch(`http://localhost:8080/api/counterparties`, {
-                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'}
+                    headers: {'Authorization': this.state.accessToken}
                 });
                 if(response.ok) {
                     const counterparties = await response.json();
@@ -155,7 +176,7 @@ export default new Vuex.Store({
         async loadUsers({commit}) {
             try {
                 let response = await fetch(`http://localhost:8080/api/users`, {
-                    headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'}
+                    headers: {'Authorization': this.state.accessToken}
                 })
                 if(response.ok) {
                     const users = await response.json();
@@ -211,6 +232,32 @@ export default new Vuex.Store({
                 }
             } catch(error) {
                 console.error(error)
+            }
+        },
+        async login({commit}, formBody) {
+            try {
+                let res = await fetch('http://localhost:8080/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
+                })
+                if(res.ok){
+                    let obj = await res.json()  // тут токены
+                    console.log(obj)
+                    commit('SET_ACCESS_TOKEN', `Bearer ${obj['access_token']}`)
+                    commit('SET_REFRESH_TOKEN', obj['refresh_token'])
+                    commit('SET_AUTHORIZED', true)
+                    console.log('Авторизация прошла успешно')
+                } else {
+                    alert("Неверный юзер: " + res.status);
+                    commit('SET_AUTHORIZED', false)
+                    console.log('Авторизация не прошла')
+                }
+            } catch (error) {
+                console.error(error)
+                commit('SET_AUTHORIZED', false)
             }
         }
     }
