@@ -12,9 +12,9 @@
               v-model.trim="form.username"
           >
         </div>
-        <p v-if="$v.form.username.$dirty && !$v.form.username.required" class="invalid-feedback sign-in">
+        <span v-if="$v.form.username.$dirty && !$v.form.username.required">
           Введите логин
-        </p>
+        </span>
         <div class="form-element">
           <label for="password" class="form-element__label">Пароль:</label>
           <input
@@ -24,9 +24,9 @@
               v-model="form.password"
           >
         </div>
-        <p v-if="$v.form.password.$dirty && !$v.form.password.required" class="invalid-feedback">
+        <span v-if="$v.form.password.$dirty && !$v.form.password.required">
           Введите пароль
-        </p>
+        </span>
         <div class="form-element buttonSubmit">
           <button
               type="submit"
@@ -43,6 +43,7 @@
 <script>
 import { validationMixin } from 'vuelidate'
 import { required } from 'vuelidate/lib/validators'
+import {mapActions, mapGetters} from "vuex";
 export default {
   mixins: [validationMixin],
   data() {
@@ -55,42 +56,39 @@ export default {
       errors: []
     }
   },
+  computed: {
+    ...mapGetters(['checkAuthorized', 'getAccessToken', 'getRefreshToken']),
+    accessToken() {
+      return this.getAccessToken
+    },
+    refreshToken(){
+      return this.getRefreshToken
+    },
+    isAuthorized(){
+      return this.checkAuthorized
+    }
+  },
   methods: {
+    ...mapActions(['login']),
     isValidForm() {
       this.$v.form.$touch()
       return !this.$v.form.$error
     },
+
     async signIn() {
       if(this.isValidForm()){
-        try {
+        let formBody = [];
 
-          let formBody = [];
+        for (let property in this.form) {
+          let encodedKey = encodeURIComponent(property);
+          let encodedValue = encodeURIComponent(this.form[property]);
+          formBody.push(encodedKey + "=" + encodedValue);             // конкретно в таком формате должны прийти данные с username и password на сервер для аутентификации
+        }                                                             // в другом формате аутентификация не срабатывала
+        formBody = formBody.join("&");                                //
+        await this.login(formBody)
+        if(this.isAuthorized)
+          await this.$router.push({name: 'contractsList'});
 
-          for (let property in this.form) {
-            let encodedKey = encodeURIComponent(property);
-            let encodedValue = encodeURIComponent(this.form[property]);
-            formBody.push(encodedKey + "=" + encodedValue);             // конкретно в таком формате должны прийти данные с username и password на сервер для аутентификации
-          }                                                             // в другом формате аутентификация не срабатывала
-          formBody = formBody.join("&");                                //
-
-          let res = await fetch('http://localhost:8080/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formBody
-          })
-          if(res.ok){
-            console.log(await res.json()); /// тут токены (ура)
-            console.log('Авторизация прошла успешно')
-            //window.location.href='http://localhost:8081/contracts'
-            await this.$router.push({name: 'contractsList'});
-          } else {
-            alert("Неверный юзер: " + res.status);
-          }
-        } catch (error) {
-          console.error(error)
-        }
       } else {
         console.log('Введенные данные не прошли валидацию.')
       }

@@ -33,33 +33,35 @@
               <div class="controls-button__header">Удалить</div>
             </button>
           </div>
+
           <div
               class="edit-modal-control-warning"
               v-if="editMode"
           >После изменений нажмите "Сохранить".</div>
-          <p class="invalid-feedback edit-modal" v-if="!this.isValidForm">
-            Пожалуйста, введите все поля
-          </p>
-          <div
-              class="edit-fields"
-          >
+
+          <div id="validation-message"></div>
+
+          <div class="edit-fields">
             <div
-                class="edit-fields-element"
+                class="edit-fields-block"
                 v-for="(key, index) in inputElemsKeys"
                 :key="index"
             >
-              <div class="fields-element__title">
-                {{inputElemsHeaders[index]}}:
+
+              <div class="edit-fields-element">
+                <div class="fields-element__title">
+                  {{inputElemsHeaders[index]}}:
+                </div>
+                <div class="fields-element__value">
+                  {{ $props.obj[key]}}
+                </div>
+                <input
+                    :type="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')? 'date' : 'text'"
+                    class="fields-element__edit"
+                    v-if="editMode"
+                    v-model="newObj[key]"
+                >
               </div>
-              <div class="fields-element__value">
-                {{ $props.obj[key]}}
-              </div>
-              <input
-                  :type="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')? 'date' : 'text'"
-                  class="fields-element__edit"
-                  v-if="editMode"
-                  v-model="newObj[key]"
-              >
             </div>
 
             <div
@@ -133,9 +135,9 @@
 
 <script>
 
-import {mapActions, mapGetters} from "vuex"
+import {mapGetters, mapActions} from "vuex"
 import { validationMixin } from 'vuelidate'
-import { required, minLength, maxLength, numeric } from 'vuelidate/lib/validators'
+import { required, minLength, maxLength, numeric, minValue, alpha } from 'vuelidate/lib/validators'
 
 export default {
   name: 'edit-modal',
@@ -213,53 +215,41 @@ export default {
     ...mapActions(['loadCounterparties']),
 
     async updateObj() {
+
+      this.$v.$touch()
+
       let url = ''
-      let isValidForm = ''
       switch (this.$props.mode) {
         case 'contracts':
           url = `http://localhost:8080/api/contracts/update`
-          for (let key in this.newObj) {
-            this.contractForm[key] = this.newObj[key];
-          }
-          this.$v.contractForm.$touch()
-          isValidForm = !this.$v.contractForm.$error
           break
         case 'counterparties':
           url = `http://localhost:8080/api/counterparties/update`
           for (let key in this.newObj) {
             this.counterpartyForm[key] = this.newObj[key];
           }
-          this.$v.counterpartyForm.$touch()
-          isValidForm = !this.$v.counterpartyForm.$error
           break
         case 'stages':
           url = `http://localhost:8080/api/stages/update`
-          for (let key in this.newObj) {
-            this.stageForm[key] = this.newObj[key];
-          }
-          this.$v.stageForm.$touch()
-          isValidForm = !this.$v.stageForm.$error
           break
         case 'contractsCounterparty':
-          url = `http://localhost:8080/api/contract_counterparties/update`
-          for (let key in this.newObj) {
-            this.contractCounterpartyForm[key] = this.newObj[key];
-          }
-          this.$v.contractCounterpartyForm.$touch()
-          isValidForm = !this.$v.contractCounterpartyForm.$error
+          url = `http://localhost:8080/api/counterparty_contracts/update`
           break
         case 'users':
           url = `http://localhost:8080/api/users/update`
-          for (let key in this.newObj) {
-            this.userForm[key] = this.newObj[key];
-          }
-          this.$v.userForm.$touch()
-          isValidForm = !this.$v.userForm.$error
           break
       }
-      console.log(this.$v)
-      this.isValidForm = isValidForm
-      if (isValidForm) {
+      let msgElem = document.getElementById('validation-message')
+      msgElem.innerHTML=''
+      let validMsg = this.checkValidation()
+      if(validMsg) {
+        const msg = document.createElement('span')
+        msg.innerHTML = validMsg
+        msgElem.appendChild(msg)
+      }
+
+
+      if(this.isValidForm){
         console.log('Валидация прошла успешно.')
         this.editMode = false
         try {
@@ -273,15 +263,13 @@ export default {
           })
           if (response.ok) {
             console.log(`Объект  ${this.mode} успешно отредактирован и сохранен. PUT-request отправлен. Изменения загружены в БД.`)
+            console.log(this.newObj)
             this.$emit('close')
-            console.log('response.ok')
           } else {
-            alert("Ошибка HTTP: " + response.status);
-            console.log('Ошибка HTTP-запроса')
+            alert("Ошибка редактирования: " + response.status);
           }
         } catch (error) {
           console.error(error)
-          console.log('ERROR FETCH')
           this.$emit('close')
         }
       } else {
@@ -289,52 +277,179 @@ export default {
       }
     },
 
+    checkValidation() {
+      let s = ''
+      let form;
+      switch (this.$props.mode) {
+        case 'contracts':
+          form = this.$v.contractForm
+          if (form.name.$invalid) {
+            this.isValidForm = false
+            s = 'Название договора должно содержать от 3 до 30 символов(букв, цифр и символов).'
+          } else if (form.sum.$invalid) {
+            this.isValidForm = false
+            s = 'Сумма договора должна быть числом, больше нуля.'
+          } else if (form.$error) {
+            this.isValidForm = false
+            s = 'Пожалуйста, введите все поля.'
+          } else this.isValidForm = true
+          break
+        case 'counterparties':
+          form = this.$v.counterpartyForm
+          if (form.name.$invalid) {
+            this.isValidForm = false
+            s = 'Название организации-контрагента должно содержать от 3 до 30 символов(букв, цифр и символов).'
+          } else if (form.address.$invalid) {
+            this.isValidForm = false
+            s = 'Адрес организации-контрагента должен содержать от 5 до 50 символов(букв, цифр и символов).'
+          } else if (form.inn.$invalid) {
+            this.isValidForm = false
+            s = 'ИНН организации-контрагента должен содержать 10 цифр.'
+          } else if (form.$error) {
+            this.isValidForm = false
+            s = 'Пожалуйста, введите все поля.'
+          } else this.isValidForm = true
+          break
+        case 'stages':
+          form = this.$v.stageForm
+          if (form.name.$invalid) {
+            this.isValidForm = false
+            s = 'Название этапа должно содержать от 3 до 30 символов(букв, цифр и символов).'
+          } else if (form.sum.$invalid) {
+            this.isValidForm = false
+            s = 'Сумма этапа должна быть числом, больше нуля.'
+          } else if (form.approxSalary.$invalid) {
+            this.isValidForm = false
+            s = 'Плановые расходы этапа на зарплату должны быть числом, больше нуля.'
+          } else if (form.approxCredit.$invalid) {
+            this.isValidForm = false
+            s = 'Плановые расходы этапа на материалы должны быть числом, больше нуля.'
+          }else if(form.credit.$invalid){
+            this.isValidForm = false
+            s = 'Фактические расходы этапа на материалы должны быть числом, больше нуля.'
+          } else if(form.salary.$invalid){
+            this.isValidForm = false
+            s = 'Фактические расходы этапа на зарплату должны быть числом, больше нуля.'
+          } else if (form.$error){
+            this.isValidForm = false
+            s = 'Пожалуйста, введите все поля.'
+          } else this.isValidForm = true
+          break
+
+        case 'users':
+          form = this.$v.userForm
+          if (form.FIO.$invalid) {
+            this.isValidForm = false
+            s = 'ФИО пользователя должно содержать от 5 до 50 символов(букв, цифр и символов).'
+          } else if (form.username.$invalid) {
+            this.isValidForm = false
+            s = 'Имя пользователя(username) должно содержать от 3 до 50 символов(букв, цифр и символов).'
+          } else if (form.password.$invalid) {
+            this.isValidForm = false
+            s = 'Пароль пользователя должен содержать от 3 до 50 символов(букв, цифр и символов).'
+          } else if (form.$error) {
+            this.isValidForm = false
+            s = 'Пожалуйста, введите все поля.'
+          } else this.isValidForm = true
+          break
+
+        case 'contractsCounterparty':
+          form = this.$v.contractCounterpartyForm
+          if (form.name.$invalid) {
+            this.isValidForm = false
+            s = 'Название договора с контрагентом должно содержать от 3 до 30 символов(букв, цифр и символов).'
+          } else if (form.sum.$invalid) {
+            this.isValidForm = false
+            s = 'Сумма договора с контрагентом должна быть числом, больше нуля.'
+          } else if (form.$error) {
+            this.isValidForm = false
+            s = 'Пожалуйста, введите все поля.'
+          } else this.isValidForm = true
+          break
+      }
+      console.log('Сейчас буду возвращать s')
+      return s
+    },
+
     async removeObj() {
-      //fetch body: id
-      console.log(`DELETE-request with new info about ${this.mode} object...`)
+      let url =''
+      switch (this.$props.mode) {
+        case 'contracts':
+          url = `http://localhost:8080/api/contracts/delete/contract_id=${this.obj['id']}`
+          break
+        case 'counterparties':
+          url = `http://localhost:8080/api/counterparties/delete/counterparty_id=${this.obj['id']}`
+          break
+        case 'stages':
+          url = `http://localhost:8080/api/stages/delete/stage_id=${this.obj['id']}`
+          break
+        case 'contractsCounterparty':
+          url = `http://localhost:8080/api/counterparty_contracts/delete/contract_id=${this.obj['id']}`
+          break
+        case 'users':
+          url = `http://localhost:8080/api/users/delete/user_id=${this.obj['id']}`
+          break
+      }
+      try {
+        let response = await fetch(url, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0',
+          }
+        })
+        if(response.ok) {
+          console.log(`Объект ${this.mode} с id ${this.obj['id']} успешно удален.`)
+          this.$emit('close', true)
+        } else {
+          alert("Ошибка HTTP в удалении договора: " + response.status);
+          this.$emit('close', false)
+        }
+      } catch(error) {
+        console.error(error)
+      }
     },
   },
   validations: {
       userForm: {
-        FIO: { required },
-        username : { required },
-        password : { required }
+        FIO: { required, minLength: minLength(5), maxLength: maxLength(50), alpha },
+        username : { required , minLength: minLength(3), maxLength: maxLength(50)},
+        password : { required, minLength: minLength(3), maxLength: maxLength(50) }
       },
       contractForm: {
-        name: { required },
+        name: { required, minLength: minLength(3), maxLength: maxLength(30)},
         contractType: { required },
         approxBeginDate: { required },
         approxEndDate: { required },
         beginDate: { required },
         endDate: {  required},
-        sum: { required }
+        sum: { required, minValue: minValue(0), numeric }
       },
       contractCounterpartyForm: {
-        name: { required },
+        name: { required, minLength: minLength(3), maxLength: maxLength(30) },
         contractType: { required },
         counterpartyId: { required },
-        sum: { required },
+        sum: { required, minValue: minValue(0), numeric },
         approxBeginDate: { required },
         approxEndDate: { required },
         beginDate: { required },
         endDate: {  required }
       },
       counterpartyForm: {
-        name: { required },
-        address: { required },
+        name: { required, minLength: minLength(3), maxLength: maxLength(30) },
+        address: { required, minLength: minLength(5), maxLength: maxLength(50) },
         inn: { required, minLength: minLength(10), maxLength: maxLength(10), numeric }
       },
       stageForm: {
-        name: { required },
+        name: { required, minLength: minLength(3), maxLength: maxLength(30) },
         approxBeginDate: { required },
         approxEndDate: { required },
         beginDate: { required },
         endDate: { required },
-        sum: { required },
-        approxCredit: { required },
-        approxSalary: { required },
-        credit: { required },
-        salary: { required }
+        sum: { required, minValue: minValue(0), numeric },
+        approxCredit: { required, minValue: minValue(0), numeric },
+        approxSalary: { required, minValue: minValue(0), numeric },
+        credit: { required, minValue: minValue(0), numeric },
+        salary: { required, minValue: minValue(0), numeric }
       }
   },
   created() {
@@ -450,6 +565,10 @@ button .edit-modal-cancel-btn > img {
   grid-row-gap: 10px;
   margin: 10px 0 0 0;
   width: 100%;
+}
+.edit-fields-block{
+  width: 100%;
+  text-align: end;
 }
 .edit-fields-element{
   display: flex;
