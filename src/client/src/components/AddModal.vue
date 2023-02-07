@@ -87,8 +87,7 @@ export default {
     id: Number,   // null, если добавление не во вложенный список, т.к. id договора, у которого добавляется этап
     cardKeys: Array,
     cardFields: Array,
-    cardHeader: String,
-    listLength: Number
+    cardHeader: String
   },
   mixins: [validationMixin],
   data(){
@@ -123,10 +122,7 @@ export default {
   methods: {
     async addObj() {
       if (this.isValidForm) {
-        // валидация
-        //отправляем новый объект
-        this.addForm['userId'] = 6;
-        console.log('Добавление...', this.addForm)
+        console.log('Добавляемый объект', this.addForm)
         let url = ''
         switch (this.$props.mode) {
           case 'contracts':
@@ -152,21 +148,20 @@ export default {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0',
+              'Authorization': this.$store.getters.getAccessToken,
             },
             body: JSON.stringify(this.addForm)
           })
           if(response.ok) {
             console.log(`Добавление в ${this.$props.mode}...`)
-            this.$emit('close', true)
+            this.$emit('close')
           } else {
             alert("Ошибка HTTP в добавлении: " + response.status);
-            this.$emit('close', false)
           }
+          this.$emit('close')
         } catch(error) {
           console.error(error)
         }
-        this.$emit('close')
       } else {
         console.log('Введенные данные не прошли валидацию.')
       }
