@@ -39,7 +39,6 @@
           :cardKeys="this.cardKeys"
           :cardFields="this.cardFields"
           :cardHeader="this.cardHeader"
-          :listLength="this.listLength"
         >
         </add-modal>
       </div>
@@ -103,10 +102,7 @@ export default {
         this.isOpenModal = false
         this.loadData()
       },
-      closeAddModal(wasAddition){
-        if(wasAddition)
-          this.listLength++
-
+      closeAddModal(){
         this.isOpenAddModal = false;
         this.loadData()
       },
@@ -136,7 +132,6 @@ export default {
             break
         }
         this.arrData = data
-        this.listLength = data.length
         return data
       },
       loadData() {

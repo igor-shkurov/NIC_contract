@@ -243,7 +243,7 @@ export default new Vuex.Store({
                     },
                     body: formBody
                 })
-                if(res.ok){
+                if (res.ok) {
                     let obj = await res.json()  // тут токены
                     console.log(obj)
                     commit('SET_ACCESS_TOKEN', `Bearer ${obj['access_token']}`)

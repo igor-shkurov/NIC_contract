@@ -225,9 +225,6 @@ export default {
           break
         case 'counterparties':
           url = `http://localhost:8080/api/counterparties/update`
-          for (let key in this.newObj) {
-            this.counterpartyForm[key] = this.newObj[key];
-          }
           break
         case 'stages':
           url = `http://localhost:8080/api/stages/update`
@@ -257,13 +254,12 @@ export default {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0'
+              'Authorization': this.$store.getters.getAccessToken
             },
             body: JSON.stringify(this.newObj)
           })
           if (response.ok) {
-            console.log(`Объект  ${this.mode} успешно отредактирован и сохранен. PUT-request отправлен. Изменения загружены в БД.`)
-            console.log(this.newObj)
+            console.log(`Объект  ${this.mode} успешно отредактирован и сохранен.`)
             this.$emit('close')
           } else {
             alert("Ошибка редактирования: " + response.status);
@@ -367,7 +363,6 @@ export default {
           } else this.isValidForm = true
           break
       }
-      console.log('Сейчас буду возвращать s')
       return s
     },
 
@@ -394,7 +389,7 @@ export default {
         let response = await fetch(url, {
           method: 'DELETE',
           headers: {
-            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoyMjc0MTI1OTM0fQ.EWkdapw8URtlQjGgnW40mmJY0_DoVKh6djU3yg6NpL0',
+            'Authorization': this.$store.getters.getAccessToken,
           }
         })
         if(response.ok) {
