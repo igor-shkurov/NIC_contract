@@ -8,6 +8,7 @@
           </button>
         </div>
         <div class="add-modal-header-text">Добавление {{ this.cardHeader }}</div>
+        <div id="validation-message"></div>
 
         <div class="add-modal-info">
           <div class="add-fields">
@@ -45,11 +46,13 @@
                 </option>
               </select>
             </div>
+
             <div
                 class="add-fields-element"
                 v-if="mode === 'contracts' || mode === 'contractsCounterparty'"
             >
               <div class="fields-element__title">Тип договора</div>
+
                 <select
                     class="fields-element__edit select-element"
                     v-model="addForm['contractType']"
@@ -58,14 +61,8 @@
                   <option value="SUPPLY">Поставка</option>
                   <option value="WORK">Работы</option>
                 </select>
-              </div>
-
             </div>
-          <div
-              class="add-modal-warning"
-              v-if="!this.isAllFieldsEntered"
-          >
-            Пожалуйста, введите все поля
+
           </div>
           <button class="add-button" @click="addObj">
             <div class="controls-button__header"> Добавить</div>
@@ -78,23 +75,26 @@
 
 <script>
 import { mapActions, mapGetters} from "vuex";
-import { validationMixin } from 'vuelidate'
+import {checkValid} from "@/mixins/validation";
 
 export default {
   name: "AddModal",
   props: {
     mode: String,
-    id: Number,   // null, если добавление не во вложенный список, т.к. id договора, у которого добавляется этап
+    id: Number,   // id договора, у которого добавляется этап. null, если добавление не во вложенный список
     cardKeys: Array,
     cardFields: Array,
     cardHeader: String
   },
-  mixins: [validationMixin],
+  mixins: [checkValid],
   data(){
     return {
       addForm: {},
-      isAllFieldsEntered: true,
-      isValidForm: true
+      userForm: {},
+      contractForm: {},
+      contractCounterpartyForm: {},
+      counterpartyForm: {},
+      stageForm: {}
     }
   },
   computed: {
@@ -121,28 +121,32 @@ export default {
   },
   methods: {
     async addObj() {
+
+      console.log('Добавляемый объект', this.addForm)
+      let url = ''
+      switch (this.$props.mode) {
+        case 'contracts':
+          url = `http://localhost:8080/api/contracts/add`
+          break
+        case 'counterparties':
+          url = `http://localhost:8080/api/counterparties/add`
+          break
+        case 'stages':
+          url = url = `http://localhost:8080/api/stages/add`
+          this.addForm['contractId']=this.id
+          break
+        case 'contractsCounterparty':
+          url = `http://localhost:8080/api/counterparty_contracts/add`
+          this.addForm['contractId']=this.id
+          break
+        case 'users':
+          url = `http://localhost:8080/api/users/add`
+          break
+      }
+
+      this.validation()
+
       if (this.isValidForm) {
-        console.log('Добавляемый объект', this.addForm)
-        let url = ''
-        switch (this.$props.mode) {
-          case 'contracts':
-            url = `http://localhost:8080/api/contracts/add`
-            break
-          case 'counterparties':
-            url = `http://localhost:8080/api/counterparties/add`
-            break
-          case 'stages':
-            url = url = `http://localhost:8080/api/stages/add`
-            this.addForm['contractId']=this.id
-            break
-          case 'contractsCounterparty':
-            url = `http://localhost:8080/api/counterparty_contracts/add`
-            this.addForm['contractId']=this.id
-            break
-          case 'users':
-            url = `http://localhost:8080/api/users/add`
-            break
-        }
         try {
           let response = await fetch(url, {
             method: 'POST',
@@ -168,12 +172,27 @@ export default {
     },
     ...mapActions(['loadCounterparties'])
   },
-  validations: {
-
-  },
   created() {
     this.loadCounterparties()
-    this.newObj = {}
+  },
+  updated() {
+    switch (this.$props.mode) {
+      case 'contracts':
+        this.contractForm = this.addForm
+        break
+      case 'counterparties':
+        this.counterpartyForm = this.addForm
+        break
+      case 'stages':
+        this.stageForm = this.addForm
+        break
+      case 'contractsCounterparty':
+        this.contractCounterpartyForm  = this.addForm
+        break
+      case 'users':
+        this.userForm = this.addForm
+        break
+    }
   }
 }
 </script>
