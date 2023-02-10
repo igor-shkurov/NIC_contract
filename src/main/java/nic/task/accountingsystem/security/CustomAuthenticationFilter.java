@@ -5,9 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import nic.task.accountingsystem.entities.user.User;
 import nic.task.accountingsystem.security.jwt.JWTUtils;
 import nic.task.accountingsystem.utility.LoginRecord;
-//import nic.task.accountingsystem.utility.LoginRepository;
-import lombok.extern.slf4j.Slf4j;
 import nic.task.accountingsystem.security.jwt.AlgorithmBuilder;
+import nic.task.accountingsystem.utility.LoginRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,14 +22,13 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-//    private final LoginRepository loginRepo;
+    private final LoginRepository loginRepo;
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, LoginRepository loginRepo) {
         this.authenticationManager = authenticationManager;
-//        this.loginRepo = loginRepo;
+        this.loginRepo = loginRepo;
     }
 
     @Override
@@ -44,7 +42,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         User user = (User) authentication.getPrincipal();
-//        loginRepo.save(LoginRecord.construct(user));
+        loginRepo.save(LoginRecord.construct(user));
         Algorithm algorithm = AlgorithmBuilder.algorithmInstance;
         String access_token = JWT.create()
                 .withSubject(user.getUsername())

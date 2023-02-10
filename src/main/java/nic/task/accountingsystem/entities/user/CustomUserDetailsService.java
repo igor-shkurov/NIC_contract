@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +19,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserDetailsRepo userDetailsRepo;
 
@@ -30,14 +30,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.mapper = Mappers.getMapper(UserMapper.class);
     }
 
-    public boolean saveUser(UserDTO dto) {
+    public HttpStatus saveUser(UserDTO dto) {
         User user = mapper.DTOtoUser(dto);
          if (userDetailsRepo.findUserByUsername(user.getUsername()) != null)   {
-             return false;
+             return HttpStatus.CONFLICT;
          }
          else {
              userDetailsRepo.save(user);
-             return true;
+             return HttpStatus.CREATED;
          }
     }
 
@@ -65,26 +65,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public List<UserDTO> getUsers() {
-        User currentUser = getCurrentUser();
-
-        if (currentUser.getRole() != User.Role.ADMIN) {
-            return null;
-        }
         List<User> entities = userDetailsRepo.findAll();
         return mapper.toListOfDTO(entities);
     }
 
-    public boolean updateUser(UserDTO dto) {
-        User currentUser = getCurrentUser();
+    public HttpStatus updateUser(UserDTO dto) {
         long id = dto.getId();
         User updatingUser = mapper.DTOtoUser(dto);
         User userToBeUpdated = getUserById(id);
-
-        if (!Objects.equals(updatingUser.getId(), currentUser.getId()) ||
-                !Objects.equals(userToBeUpdated.getId(), currentUser.getId())
-                && currentUser.getRole() != User.Role.ADMIN) {
-            return false;
-        }
 
         if (userToBeUpdated != null) {
             try {
@@ -94,21 +82,24 @@ public class CustomUserDetailsService implements UserDetailsService {
             }
             userToBeUpdated.setId(id);
             userDetailsRepo.save(userToBeUpdated);
-            return true;
+            return HttpStatus.OK;
         }
         else {
-            return false;
+            return HttpStatus.NOT_FOUND;
         }
     }
 
-    public boolean deleteUser(long id) {
+    public HttpStatus deleteUser(long id) {
         User currentUser = getCurrentUser();
         if (userDetailsRepo.findById(id).isPresent()) {
-            if (currentUser.getRole() == User.Role.ADMIN && currentUser.getId() != id) {
+            if (currentUser.getId() != id) {
                 userDetailsRepo.deleteById(id);
-                return true;
+                return HttpStatus.OK;
+            }
+            else {
+                return HttpStatus.CONFLICT;
             }
         }
-        return false;
+        return HttpStatus.NOT_FOUND;
     }
 }

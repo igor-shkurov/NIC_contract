@@ -1,6 +1,6 @@
 package nic.task.accountingsystem.security;
 
-//import nic.task.accountingsystem.utility.LoginRepository;
+import nic.task.accountingsystem.utility.LoginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,12 +27,12 @@ import java.util.Arrays;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
-//    private final LoginRepository loginRepo;
+    private final LoginRepository loginRepo;
 
     @Autowired
-    public SecurityConfiguration(UserDetailsService userDetailsService) {
+    public SecurityConfiguration(UserDetailsService userDetailsService, LoginRepository loginRepo) {
         this.userDetailsService = userDetailsService;
-//        this.loginRepo = loginRepo;
+        this.loginRepo = loginRepo;
     }
 
     @Override
@@ -42,14 +42,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), loginRepo);
 
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/login", "/token/refresh").permitAll();
+        http.authorizeRequests().antMatchers("/login", "/token/refresh",
+                "/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/webjars/**").permitAll();
         http.authorizeRequests().antMatchers("/api/reports/**").hasRole("ADMIN")
                 .antMatchers("/api/counterparties").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/api/counterparties/**").hasRole("ADMIN")
+                .antMatchers("/api/users/**", "/api/users").hasRole("ADMIN")
                 .antMatchers("/api/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated();
         http.formLogin();

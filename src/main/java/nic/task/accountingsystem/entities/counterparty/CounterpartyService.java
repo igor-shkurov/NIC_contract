@@ -1,8 +1,11 @@
 package nic.task.accountingsystem.entities.counterparty;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.math3.util.Pair;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.server.Http2;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -21,25 +24,25 @@ public class CounterpartyService {
         mapper = Mappers.getMapper(CounterpartyMapper.class);
     }
 
-    public List<CounterpartyDTO> getCounterparties() {
+    public Pair<List<CounterpartyDTO>, HttpStatus> getCounterparties() {
         List<Counterparty> entities = counterpartyRepo.findAll();
-        return mapper.toListOfDTO(entities);
+        return new Pair<>(mapper.toListOfDTO(entities), HttpStatus.OK);
     }
 
     public Counterparty getCounterpartyById(long id) {
         return counterpartyRepo.findById(id).orElse(null);
     }
 
-    public boolean addCounterparty(CounterpartyDTO dto) {
+    public HttpStatus addCounterparty(CounterpartyDTO dto) {
         if (counterpartyRepo.existsCounterpartyByInn(dto.getInn())) {
-            return false;
+            return HttpStatus.CONFLICT;
         }
         Counterparty counterparty = mapper.DTOtoCounterparty(dto);
         counterpartyRepo.save(counterparty);
-        return true;
+        return HttpStatus.CREATED;
     }
 
-    public boolean updateCounterparty(CounterpartyDTO dto) {
+    public HttpStatus updateCounterparty(CounterpartyDTO dto) {
         long id = dto.getId();
         Counterparty updatingCp = mapper.DTOtoCounterparty(dto);
         Counterparty cpToBeUpdated = getCounterpartyById(id);
@@ -51,22 +54,22 @@ public class CounterpartyService {
             }
             cpToBeUpdated.setId(id);
             counterpartyRepo.save(cpToBeUpdated);
-            return true;
+            return HttpStatus.OK;
         }
         else {
-            return false;
+            return HttpStatus.NOT_FOUND;
         }
     }
 
-    public boolean deleteCounterparty(long id) {
+    public HttpStatus deleteCounterparty(long id) {
         Optional<Counterparty> opt = counterpartyRepo.findById(id);
         if (opt.isPresent()) {
             if (opt.get().getCounterpartyContracts().isEmpty()) {
-                return false;
+                return HttpStatus.CONFLICT;
             }
             counterpartyRepo.deleteById(id);
-            return true;
+            return HttpStatus.OK;
         }
-        return false;
+        return HttpStatus.NOT_FOUND;
     }
 }

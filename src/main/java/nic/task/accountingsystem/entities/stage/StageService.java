@@ -5,8 +5,10 @@ import nic.task.accountingsystem.entities.contract.ContractService;
 import nic.task.accountingsystem.entities.user.CustomUserDetailsService;
 import nic.task.accountingsystem.entities.user.User;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.math3.util.Pair;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -30,32 +32,38 @@ public class StageService {
         mapper = Mappers.getMapper(StageMapper.class);
     }
 
-    public boolean addStage(StageDTO dto) {
+    public HttpStatus addStage(StageDTO dto) {
         User currentUser = userDetailsService.getCurrentUser();
         Contract contract = contractService.getContractById(dto.getContractId());
+        if (contract == null) {
+            return HttpStatus.NOT_FOUND;
+        }
         if (!Objects.equals(contract.getAssociatedUser().getId(), currentUser.getId()) && currentUser.getRole() != User.Role.ADMIN) {
-            return false;
+            return HttpStatus.FORBIDDEN;
         }
         Stage entity = mapper.DTOtoStage(dto);
         entity.setContract(contractService.getContractById(dto.getContractId()));
 
         stageRepo.save(entity);
-        return true;
+        return HttpStatus.CREATED;
     }
 
     public Stage getStageById(long id) { return stageRepo.findById(id).orElse(null); }
 
-    public List<StageDTO> getStagesByContractId(long id) {
+    public Pair<List<StageDTO>, HttpStatus> getStagesByContractId(long id) {
         User currentUser = userDetailsService.getCurrentUser();
         Contract contract = contractService.getContractById(id);
-        List<Stage> entities = null;
-        if (Objects.equals(currentUser.getId(), contract.getAssociatedUser().getId()) || currentUser.getRole() == User.Role.ADMIN) {
-            entities = stageRepo.getStagesByContractId(id);
+        if (contract == null) {
+            return new Pair<>(null, HttpStatus.NOT_FOUND);
         }
-        return mapper.toListOfDTO(entities);
+        if (!Objects.equals(currentUser.getId(), contract.getAssociatedUser().getId()) && currentUser.getRole() != User.Role.ADMIN) {
+            return new Pair<>(null, HttpStatus.FORBIDDEN);
+        }
+        List<Stage> list = stageRepo.getStagesByContractId(id);
+        return new Pair<>(mapper.toListOfDTO(list), HttpStatus.OK);
     }
 
-    public boolean updateStage(StageDTO dto) {
+    public HttpStatus updateStage(StageDTO dto) {
         User currentUser = userDetailsService.getCurrentUser();
         long id = dto.getId();
         Stage updatingStage = mapper.DTOtoStage(dto);
@@ -67,7 +75,7 @@ public class StageService {
             !Objects.equals(updatingStage.getContract().getAssociatedUser().getId(), currentUser.getId()) &&
                 currentUser.getRole() != User.Role.ADMIN)
         {
-            return false;
+            return HttpStatus.FORBIDDEN;
         }
 
         if (stageToBeUpdated != null) {
@@ -78,25 +86,25 @@ public class StageService {
             }
             stageToBeUpdated.setId(id);
             stageRepo.save(stageToBeUpdated);
-            return true;
+            return HttpStatus.OK;
         }
         else {
-            return false;
+            return HttpStatus.NOT_FOUND;
         }
     }
 
-    public boolean deleteStage(long id) {
+    public HttpStatus deleteStage(long id) {
         Optional<Stage> opt = stageRepo.findById(id);
         User currentUser = userDetailsService.getCurrentUser();
         if (opt.isPresent()) {
             if (currentUser.getRole() != User.Role.ADMIN) {
                 if (!Objects.equals(opt.get().getContract().getAssociatedUser().getId(), currentUser.getId())) {
-                    return false;
+                    return HttpStatus.FORBIDDEN;
                 }
             }
             stageRepo.deleteById(id);
-            return true;
+            return HttpStatus.OK;
         }
-        return false;
+        return HttpStatus.NOT_FOUND;
     }
 }

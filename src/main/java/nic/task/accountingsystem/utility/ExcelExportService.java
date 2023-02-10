@@ -1,6 +1,6 @@
 package nic.task.accountingsystem.utility;
 
-import nic.task.accountingsystem.entities.ExportableContract;
+import nic.task.accountingsystem.entities.ExportableContractDTO;
 import nic.task.accountingsystem.entities.contract.ContractDTO;
 import nic.task.accountingsystem.entities.contract.ContractService;
 import nic.task.accountingsystem.entities.counterparty.CounterpartyService;
@@ -44,7 +44,7 @@ public class ExcelExportService {
     }
 
     public void writeHeaderRow(Class<?> cl) {
-        if (cl != StageDTO.class && cl != ExportableContract.class) {
+        if (cl != StageDTO.class && cl != ExportableContractDTO.class) {
             throw new IllegalArgumentException(cl + " class passed, but Contract/CounterpartyContract/Stage class expected");
         }
         Row row = sheet.createRow(0);
@@ -70,7 +70,7 @@ public class ExcelExportService {
         cell = row.createCell(6);
         cell.setCellValue("Сумма");
 
-        if (ExportableContract.class.isAssignableFrom(cl)) {
+        if (ExportableContractDTO.class.isAssignableFrom(cl)) {
             cell = row.createCell(7);
             cell.setCellValue("Тип договора");
 
@@ -99,8 +99,8 @@ public class ExcelExportService {
         setRowAlignment(row);
     }
 
-    private void writeTableRowsForContracts(List<? extends ExportableContract> list) {
-        for (ExportableContract contract : list) {
+    private void writeTableRowsForContracts(List<? extends ExportableContractDTO> list) {
+        for (ExportableContractDTO contract : list) {
             Row row = sheet.createRow(currentRow++);
 
             long id = contract.getId();
@@ -155,7 +155,7 @@ public class ExcelExportService {
             if (contract.getClass() == ContractDTO.class) {
                 cell.setCellValue("Основной");
                 cellCounterparty.setCellValue("-");
-                writeTableRowsForContracts(counterpartyContractService.getCounterpartyContractsByContractId(id));
+                writeTableRowsForContracts(counterpartyContractService.getCounterpartyContractsByContractId(id).getFirst());
             }
             else {
                 cell.setCellValue(((CounterpartyContractDTO) contract).getContractId());
@@ -236,7 +236,7 @@ public class ExcelExportService {
         sheet = book.createSheet("Contracts");
 
         List<ContractDTO> contracts = contractService.getContractsByGivenPeriod(beginDate, endDate);
-        writeHeaderRow(ExportableContract.class);
+        writeHeaderRow(ExportableContractDTO.class);
         writeTableRowsForContracts(contracts);
 
         exportBook(response);
@@ -246,7 +246,7 @@ public class ExcelExportService {
         book = new XSSFWorkbook();
         sheet = book.createSheet("Stages");
 
-        List<StageDTO> stages = stageService.getStagesByContractId(id);
+        List<StageDTO> stages = stageService.getStagesByContractId(id).getFirst();
         writeHeaderRow(StageDTO.class);
         writeTableRowsForStages(stages);
 
