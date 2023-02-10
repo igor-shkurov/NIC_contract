@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static nic.task.accountingsystem.security.jwt.AlgorithmBuilder.algorithmInstance;
 import static nic.task.accountingsystem.security.jwt.JWTUtils.JWT_ACCESS_DURATION;
+import static nic.task.accountingsystem.security.jwt.JWTUtils.writeExceptionToJSON;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
@@ -56,7 +57,7 @@ public class TokenController {
             }
         }
         else {
-            throw new RuntimeException("Refresh token is missing");
+            JWTUtils.writeExceptionToJSON(response, new RuntimeException("Token is missing"));
         }
     }
 }
