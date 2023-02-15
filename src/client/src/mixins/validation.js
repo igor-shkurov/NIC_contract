@@ -71,6 +71,7 @@ export const checkValid = {
                 msgElem.appendChild(msg)
             }
             else {
+
                 console.log('Введенные данные для получения отчета прошли валидацию.')
             }
         },
@@ -163,6 +164,7 @@ export const checkValid = {
                         s = 'Пожалуйста, введите все поля.'
                     } else this.isValidForm = true
                     break
+
 
                 case 'reports':
                     console.log("i'm here")
