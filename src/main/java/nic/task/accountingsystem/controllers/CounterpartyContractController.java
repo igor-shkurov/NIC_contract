@@ -2,6 +2,7 @@ package nic.task.accountingsystem.controllers;
 
 import nic.task.accountingsystem.entities.counterparty_contract.CounterpartyContractDTO;
 import nic.task.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
+import org.apache.commons.math3.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,25 +24,22 @@ public class CounterpartyContractController {
 
     @GetMapping(path = "/contract_id={id}", produces = {"application/json"})
     public ResponseEntity<List<CounterpartyContractDTO>> showContractsById(@PathVariable("id") Long id) {
-        List<CounterpartyContractDTO> list = counterpartyContractService.getCounterpartyContractsByContractId(id);
-        return new ResponseEntity<>(list, (list != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+        Pair<List<CounterpartyContractDTO>, HttpStatus> pair = counterpartyContractService.getCounterpartyContractsByContractId(id);
+        return new ResponseEntity<>(pair.getFirst(), pair.getSecond());
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
     public ResponseEntity<Object> addContract(@RequestBody @Validated({CounterpartyContractDTO.New.class}) CounterpartyContractDTO dto) {
-        boolean status = counterpartyContractService.addCounterpartyContract(dto);
-        return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(counterpartyContractService.addCounterpartyContract(dto));
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
     public ResponseEntity<Object> updateContract(@RequestBody @Validated(CounterpartyContractDTO.Modify.class)  CounterpartyContractDTO dto) {
-        boolean status = counterpartyContractService.updateContract(dto);
-        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(counterpartyContractService.updateContract(dto));
     }
 
     @DeleteMapping(path = "/delete/contract_id={id}")
     public ResponseEntity<Object> deleteContract(@PathVariable Long id) {
-        boolean status = counterpartyContractService.deleteContract(id);
-        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(counterpartyContractService.deleteContract(id));
     }
 }

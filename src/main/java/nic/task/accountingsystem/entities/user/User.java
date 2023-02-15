@@ -2,6 +2,7 @@ package nic.task.accountingsystem.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import nic.task.accountingsystem.entities.contract.Contract;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table
@@ -27,12 +29,15 @@ public class User implements UserDetails {
     @Column(columnDefinition = "datetime")
     private LocalDateTime expirationDate;
 
-    public enum Role { // @todo: Подумать как лучше можно хранить роли (или и так норм)
+    public enum Role {
         USER, ADMIN;
     }
 
     @Enumerated(EnumType.STRING)
     public Role role;
+
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "associatedUser")
+    List<Contract> contracts;
 
     public User() {
     }
@@ -118,5 +123,13 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public List<Contract> getContracts() {
+        return contracts;
+    }
+
+    public void setContracts(List<Contract> contracts) {
+        this.contracts = contracts;
     }
 }

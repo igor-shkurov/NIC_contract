@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 @Entity
 @Table
-@JsonPropertyOrder({"id", "name", "approxBeginDate", "approxEndDate", "beginDate", "endDate", "sum", "approxSalary", "approxCredit", "salary", "credit"})
 public class Stage {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

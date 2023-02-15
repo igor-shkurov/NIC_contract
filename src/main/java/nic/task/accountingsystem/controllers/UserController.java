@@ -29,19 +29,16 @@ public class UserController {
 
     @PostMapping(path = "/add", consumes = {"application/json"})
     public ResponseEntity<Object> addUser(@RequestBody @Valid UserDTO dto) {
-        boolean status = userService.saveUser(dto);
-        return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(userService.saveUser(dto));
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
     public ResponseEntity<Object> updateUser(@RequestBody @Valid UserDTO dto) {
-        boolean status = userService.updateUser(dto);
-        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(userService.updateUser(dto));
     }
 
     @DeleteMapping(path = "/delete/user_id={id}")
     public ResponseEntity<Object> deleteUser(@PathVariable("id") Long id) {
-        boolean status = userService.deleteUser(id);
-        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(userService.deleteUser(id));
     }
 }
