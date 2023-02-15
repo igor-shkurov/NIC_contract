@@ -1,10 +1,10 @@
 package nic.task.accountingsystem.entities.counterparty_contract;
 
-import nic.task.accountingsystem.entities.ExportableContract;
+import nic.task.accountingsystem.entities.ExportableContractDTO;
 
 import javax.validation.constraints.Min;
 
-public class CounterpartyContractDTO extends ExportableContract {
+public class CounterpartyContractDTO extends ExportableContractDTO {
     @Min(value = 0, groups = {New.class, Modify.class})
     private Long counterpartyId;
 

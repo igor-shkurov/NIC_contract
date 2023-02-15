@@ -2,6 +2,7 @@ package nic.task.accountingsystem.controllers;
 
 import nic.task.accountingsystem.entities.counterparty.CounterpartyDTO;
 import nic.task.accountingsystem.entities.counterparty.CounterpartyService;
+import org.apache.commons.math3.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,25 +25,22 @@ public class CounterpartyController {
 
     @GetMapping(path = "", produces = {"application/json"})
     public ResponseEntity<List<CounterpartyDTO>> showCounterparties() {
-        List<CounterpartyDTO> list = counterpartyService.getCounterparties();
-        return new ResponseEntity<>(list, (list != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+        Pair<List<CounterpartyDTO>, HttpStatus> pair = counterpartyService.getCounterparties();
+        return new ResponseEntity<>(pair.getFirst(), pair.getSecond());
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
     public ResponseEntity<Object> addCounterparty(@RequestBody @Validated({CounterpartyDTO.New.class}) CounterpartyDTO dto) {
-        boolean status = counterpartyService.addCounterparty(dto);
-        return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(counterpartyService.addCounterparty(dto));
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
     public ResponseEntity<Object> updateCounterparty(@RequestBody @Validated({CounterpartyDTO.Modify.class}) CounterpartyDTO dto) {
-        boolean status = counterpartyService.updateCounterparty(dto);
-        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(counterpartyService.updateCounterparty(dto));
     }
 
     @DeleteMapping(path = "/delete/counterparty_id={id}")
     public ResponseEntity<Object> deleteCounterparty(@PathVariable Long id) {
-        boolean status = counterpartyService.deleteCounterparty(id);
-        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(counterpartyService.deleteCounterparty(id));
     }
 }

@@ -10,7 +10,6 @@ import java.time.LocalDate;
 
 @Entity
 @Table
-@JsonPropertyOrder({"id", "name", "contractType", "counterparty", "sum", "approxBeginDate", "approxEndDate", "beginDate", "endDate"})
 public class CounterpartyContract {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

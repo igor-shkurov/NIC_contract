@@ -8,13 +8,6 @@ services:
     depends_on:
       - mysqldb
       - mongodb
-  frontend_server:
-    build: src/client
-    restart: always
-    ports:
-      - 8081:8081
-    depends_on:
-      - backend_server
   mysqldb:
     image: "mysql:8.0.25"
     restart: always
@@ -27,6 +20,7 @@ services:
       MYSQL_USER: account
       MYSQL_PASSWORD: contract
       MYSQL_ROOT_PASSWORD: contract
+    cap_add: [ SYS_NICE ]
   mongodb:
     image: "mongo"
     restart: always

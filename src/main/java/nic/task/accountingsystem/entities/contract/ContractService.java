@@ -3,8 +3,10 @@ package nic.task.accountingsystem.entities.contract;
 import nic.task.accountingsystem.entities.user.CustomUserDetailsService;
 import nic.task.accountingsystem.entities.user.User;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.math3.util.Pair;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -29,42 +31,39 @@ public class ContractService {
         this.mapper = Mappers.getMapper(ContractMapper.class);
     }
 
-    public List<ContractDTO> getContractsForUser() {
+    public Pair<List<ContractDTO>, HttpStatus> getContractsForUser() {
         User user = userDetailsService.getCurrentUser();
-        if (user == null) {
-            return null;
-        }
         if (user.getRole() == User.Role.ADMIN) {
-            return mapper.toListOfDTO(contractRepo.findAll());
+            return new Pair<>(mapper.toListOfDTO(contractRepo.findAll()), HttpStatus.OK);
         }
-        List<Contract> entities = contractRepo.getContractByAssociatedUserId(user.getId());
-        return mapper.toListOfDTO(entities);
+        List<Contract> entities = contractRepo.getContractsByAssociatedUserId(user.getId());
+        return new Pair<>(mapper.toListOfDTO(entities), HttpStatus.OK);
     }
 
-    public boolean addContract(ContractDTO dto) {
+    public HttpStatus addContract(ContractDTO dto) {
         User currentUser = userDetailsService.getCurrentUser();
         if (!Objects.equals(dto.getUserId(), currentUser.getId()) && currentUser.getRole() != User.Role.ADMIN) {
-            return false;
+            return HttpStatus.UNAUTHORIZED;
         }
         Contract contract = mapper.DTOtoContract(dto);
         contract.setAssociatedUser(userDetailsService.getCurrentUser());
 
         contractRepo.save(contract);
-        return true;
+        return HttpStatus.CREATED;
     }
 
-    public ContractDTO getContractDtoById(long id) {
+    public Pair<ContractDTO, HttpStatus> getContractDtoById(long id) {
         User currentUser = userDetailsService.getCurrentUser();
         Optional<Contract> opt = contractRepo.findById(id);
-        ContractDTO dto = null;
         if (opt.isPresent()) {
             Contract contract = opt.get();
             if (!Objects.equals(contract.getAssociatedUser().getId(), userDetailsService.getCurrentUser().getId()) && currentUser.getRole() != User.Role.ADMIN ) {
-                return null;
+                return new Pair<>(null, HttpStatus.FORBIDDEN);
             }
-            dto = mapper.contractContractToDTO(contract);
+            ContractDTO dto = mapper.contractContractToDTO(contract);
+            return new Pair<>(dto, HttpStatus.OK);
         }
-        return dto;
+        return new Pair<>( null, HttpStatus.NOT_FOUND);
     }
 
     public Contract getContractById(long id) {
@@ -84,7 +83,7 @@ public class ContractService {
         return mapper.toListOfDTO(entities);
     }
 
-    public boolean updateContract(ContractDTO dto) {
+    public HttpStatus updateContract(ContractDTO dto) {
         User currentUser = userDetailsService.getCurrentUser();
         long id = dto.getId();
         Contract updatingContract = mapper.DTOtoContract(dto);
@@ -93,7 +92,7 @@ public class ContractService {
 
         if (currentUser.getRole() != User.Role.ADMIN) {
             if (!Objects.equals(dto.getUserId(), contractToBeUpdated.getAssociatedUser().getId()) || !Objects.equals(dto.getUserId(), currentUser.getId())) {
-                return false;
+                return HttpStatus.FORBIDDEN;
             }
         }
 
@@ -105,25 +104,25 @@ public class ContractService {
             }
             contractToBeUpdated.setId(id);
             contractRepo.save(contractToBeUpdated);
-            return true;
+            return HttpStatus.OK;
         }
         else {
-            return false;
+            return HttpStatus.NOT_FOUND;
         }
     }
 
-    public boolean deleteContract(long id) {
+    public HttpStatus deleteContract(long id) {
         Optional<Contract> opt = contractRepo.findById(id);
         User currentUser = userDetailsService.getCurrentUser();
         if (opt.isPresent()) {
             if (currentUser.getRole() != User.Role.ADMIN) {
                 if (!Objects.equals(opt.get().getAssociatedUser().getId(), currentUser.getId())) {
-                    return false;
+                    return HttpStatus.FORBIDDEN;
                 }
             }
             contractRepo.deleteById(id);
-            return true;
+            return HttpStatus.OK;
         }
-        return false;
+        return HttpStatus.NOT_FOUND;
     }
 }

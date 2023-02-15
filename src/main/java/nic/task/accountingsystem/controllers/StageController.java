@@ -2,6 +2,7 @@ package nic.task.accountingsystem.controllers;
 
 import nic.task.accountingsystem.entities.stage.StageDTO;
 import nic.task.accountingsystem.entities.stage.StageService;
+import org.apache.commons.math3.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,25 +23,22 @@ public class StageController {
 
     @GetMapping(path = "/contract_id={id}", produces = {"application/json"})
     public ResponseEntity<List<StageDTO>> showStageById(@PathVariable("id") Long id) {
-        List<StageDTO> list = stageService.getStagesByContractId(id);
-        return new ResponseEntity<>(list, (list != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+        Pair<List<StageDTO>, HttpStatus> pair = stageService.getStagesByContractId(id);
+        return new ResponseEntity<>(pair.getFirst(), pair.getSecond());
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
     public ResponseEntity<Object> addContract(@RequestBody @Validated({StageDTO.New.class}) StageDTO dto) {
-        boolean status = stageService.addStage(dto);
-        return new ResponseEntity<>(status ? HttpStatus.CREATED : HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(stageService.addStage(dto));
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
     public ResponseEntity<Object> updateStage(@RequestBody @Validated({StageDTO.Modify.class}) StageDTO dto) {
-        boolean status = stageService.updateStage(dto);
-        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(stageService.updateStage(dto));
     }
 
     @DeleteMapping(path = "/delete/stage_id={id}")
     public ResponseEntity<Object> deleteStage(@PathVariable Long id) {
-        boolean status = stageService.deleteStage(id);
-        return new ResponseEntity<>(status ? HttpStatus.ACCEPTED : HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(stageService.deleteStage(id));
     }
 }

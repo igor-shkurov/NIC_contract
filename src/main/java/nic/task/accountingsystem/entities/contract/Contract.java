@@ -1,11 +1,14 @@
 package nic.task.accountingsystem.entities.contract;
 
 import nic.task.accountingsystem.entities.ContractType;
+import nic.task.accountingsystem.entities.counterparty_contract.CounterpartyContract;
+import nic.task.accountingsystem.entities.stage.Stage;
 import nic.task.accountingsystem.entities.user.User;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table
@@ -28,11 +31,17 @@ public class Contract {
     private LocalDate beginDate;
     @Column(columnDefinition = "date")
     private LocalDate endDate;
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    private User associatedUser;
-
     @Column(columnDefinition = "numeric(18,2)")
     private BigDecimal sum;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User associatedUser;
+
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "contract")
+    private List<CounterpartyContract> counterpartyContracts;
+
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "contract")
+    private List<Stage> stages;
 
     public Contract() {
     }
@@ -117,5 +126,21 @@ public class Contract {
 
     public void setAssociatedUser(User associatedUser) {
         this.associatedUser = associatedUser;
+    }
+
+    public List<CounterpartyContract> getCounterpartyContracts() {
+        return counterpartyContracts;
+    }
+
+    public void setCounterpartyContracts(List<CounterpartyContract> counterpartyContracts) {
+        this.counterpartyContracts = counterpartyContracts;
+    }
+
+    public List<Stage> getStages() {
+        return stages;
+    }
+
+    public void setStages(List<Stage> stages) {
+        this.stages = stages;
     }
 }

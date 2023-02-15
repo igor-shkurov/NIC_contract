@@ -80,7 +80,8 @@ export default new VueRouter ({
                 {
                     path: '',
                     name: 'reportsList',
-                    component: ReportsPage
+                    component: ReportsPage,
+                    props: { mode: 'reports'}
                 }
             ]
         },

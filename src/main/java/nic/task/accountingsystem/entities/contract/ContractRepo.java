@@ -18,5 +18,5 @@ public interface ContractRepo extends JpaRepository<Contract, Long> {
             nativeQuery = true)
     List<Contract> getContractsByGivenPeriod(@Param("beginDate") Date beginDate, @Param("endDate") Date endDate);
 
-    List<Contract> getContractByAssociatedUserId(long id);
+    List<Contract> getContractsByAssociatedUserId(long id);
 }

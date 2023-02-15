@@ -4,7 +4,7 @@ import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public abstract class ExportableContract {
+public abstract class ExportableContractDTO {
     public interface New {}
     public interface Modify {}
 
