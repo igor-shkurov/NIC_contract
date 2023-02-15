@@ -8,6 +8,7 @@ import nic.task.accountingsystem.entities.counterparty_contract.CounterpartyCont
 import nic.task.accountingsystem.entities.counterparty_contract.CounterpartyContractService;
 import nic.task.accountingsystem.entities.stage.StageDTO;
 import nic.task.accountingsystem.entities.stage.StageService;
+import org.apache.commons.math3.util.Pair;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -15,6 +16,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletOutputStream;
@@ -246,7 +248,12 @@ public class ExcelExportService {
         book = new XSSFWorkbook();
         sheet = book.createSheet("Stages");
 
-        List<StageDTO> stages = stageService.getStagesByContractId(id).getFirst();
+        Pair<List<StageDTO>, HttpStatus> pair = stageService.getStagesByContractId(id);
+        if (pair.getSecond() != HttpStatus.OK) {
+            return;
+        }
+        List<StageDTO> stages = pair.getFirst();
+
         writeHeaderRow(StageDTO.class);
         writeTableRowsForStages(stages);
 

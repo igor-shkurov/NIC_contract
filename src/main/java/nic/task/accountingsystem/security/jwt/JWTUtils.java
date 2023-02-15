@@ -33,6 +33,7 @@ public class JWTUtils {
         response.setHeader("Error", errorMessage);
         response.setStatus(UNAUTHORIZED.value());
         Map<String, String> error = new HashMap<>();
+        exception.printStackTrace();
         error.put("error_message", errorMessage);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), error);
