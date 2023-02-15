@@ -242,7 +242,7 @@ export default {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': this.$store.getters.getAccessToken
+              'Authorization': localStorage.getItem('access_token')
             },
             body: JSON.stringify(this.newObj)
           })
@@ -284,7 +284,7 @@ export default {
         let response = await fetch(url, {
           method: 'DELETE',
           headers: {
-            'Authorization': this.$store.getters.getAccessToken,
+            'Authorization': localStorage.getItem('access_token')
           }
         })
         if(response.ok) {

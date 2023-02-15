@@ -152,7 +152,7 @@ export default {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': this.$store.getters.getAccessToken,
+              'Authorization': localStorage.getItem('access_token')
             },
             body: JSON.stringify(this.addForm)
           })
