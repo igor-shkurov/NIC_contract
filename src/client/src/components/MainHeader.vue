@@ -42,24 +42,23 @@
 
 <script>
 export default {
-  data() {
-    return {
-      auth: false
-    }
-  },
-  created() {
-    this.auth = localStorage.getItem('auth') !== null
-  },
+   data() {
+     return {}
+  //   return {
+  //     auth: false
+  //   }
+  // },
+  // created() {
+  //   this.auth = localStorage.getItem('auth') === null
+   },
   methods: {
-    changeUserState() {
-      if (this.auth) {
-        localStorage.removeItem('auth')
-        this.$router.push({ name: 'auth'})
-      } else {
-        localStorage.setItem('auth', true)
-        this.auth = true
+    logout() {
+
       }
-    }
+      // } else {
+      //   localStorage.setItem('auth', true)
+      //   this.auth = true
+      // }
   }
 
 }

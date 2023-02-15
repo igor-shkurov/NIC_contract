@@ -10,12 +10,11 @@ export default new Vuex.Store({
         counterparties: [],
         contractsCounterparty: [],
         users: [],
-        firstReport: [],
-        secondReport: [],
         cardHeader: [],
         accessToken: '',
         refreshToken: '',
-        isAuthorized: ''
+        isAuthorized: !!(localStorage.getItem('access_token')),
+        firstReport: ''
     },
     getters: {
         getContracts(state) {
@@ -33,14 +32,9 @@ export default new Vuex.Store({
         getUsers(state){
             return state.users
         },
-        getFirstReport(state) {
-            return state.firstReport
-        },
-        getSecondReport(state) {
-            return state.secondReport
-        },
         getCardHeader(state) {
             return state.cardHeader
+        //},
         },
         getAccessToken(state) {
             return state.accessToken
@@ -68,12 +62,6 @@ export default new Vuex.Store({
         SET_USERS(state, payload) {
             state.users = payload
         },
-        SET_FIRST_REPORT(state, payload) {
-            state.firstReport = payload
-        },
-        SET_SECOND_REPORT(state, payload) {
-            state.secondReport = payload
-        },
         SET_CARD_HEADER(state, payload) {
             state.cardHeader = payload
         },
@@ -85,6 +73,9 @@ export default new Vuex.Store({
         },
         SET_REFRESH_TOKEN(state, payload) {
             state.refreshToken = payload
+        },
+        SET_FIRST_REPORT(state, payload) {
+            state.firstReport = payload
         }
     },
     actions: {
@@ -112,7 +103,7 @@ export default new Vuex.Store({
         async loadContracts({commit}) {
             try {
                 let response = await fetch(`http://localhost:8080/api/contracts`, {
-                    headers: {'Authorization': this.state.accessToken}
+                    headers: {'Authorization': localStorage.getItem('access_token')}
                 });
                 if(response.ok){
                     const contracts = await response.json();
@@ -128,7 +119,7 @@ export default new Vuex.Store({
         async loadStages({commit}, id) {
             try {
                 let response = await fetch(`http://localhost:8080/api/stages/contract_id=${id}`, {
-                    headers: {'Authorization': this.state.accessToken}
+                    headers: {'Authorization': localStorage.getItem('access_token')}
                 });
                 if(response.ok) {
                     const stages = await response.json();
@@ -144,7 +135,7 @@ export default new Vuex.Store({
         async loadContractsCounterparty({commit}, id) {
             try {
                 let response = await fetch(`http://localhost:8080/api/counterparty_contracts/contract_id=${id}`, {
-                    headers: {'Authorization': this.state.accessToken}
+                    headers: {'Authorization': localStorage.getItem('access_token')}
                 });
                 if(response.ok) {
                     const contractsCounterparty = await response.json();
@@ -160,7 +151,7 @@ export default new Vuex.Store({
         async loadCounterparties({commit}) {
             try {
                 let response = await fetch(`http://localhost:8080/api/counterparties`, {
-                    headers: {'Authorization': this.state.accessToken}
+                    headers: {'Authorization': localStorage.getItem('access_token')}
                 });
                 if(response.ok) {
                     const counterparties = await response.json();
@@ -176,7 +167,7 @@ export default new Vuex.Store({
         async loadUsers({commit}) {
             try {
                 let response = await fetch(`http://localhost:8080/api/users`, {
-                    headers: {'Authorization': this.state.accessToken}
+                    headers: {'Authorization': localStorage.getItem('access_token')}
                 })
                 if(response.ok) {
                     const users = await response.json();
@@ -189,22 +180,33 @@ export default new Vuex.Store({
                 console.error(error)
             }
         },
-        async loadFirstReport({commit}, beginDate, endDate) {
+        async loadFirstReport({commit}, form) {
             try {
-                let response = await fetch(`https://jsonplaceholder.typicode.com/users`/*, { //`https://jsonplaceholder.typicode.com/api/dowload/report/1`
-                    method: 'GET',
+                let obj = {}
+                obj.beginDate = form.approxBeginDate
+                obj.endDate = form.approxEndDate
+                let response = await fetch(`http://localhost:8080/api/reports`, {
+                    method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json;charset=utf-8'
+                        'Content-Type': 'application/json',
+                        'Authorization': localStorage.getItem('access_token')
                     },
-                    body: JSON.stringify({
-                        approxBeginDate: beginDate,
-                        approxEndDate: endDate
-                    }
-                )}*/)
+                    body: JSON.stringify(obj)
+                })
                 if(response.ok) {
-                    const contracts = await response.json();
-                    commit("SET_FIRST_REPORT", contracts)
-                    console.log(`Договоры за плановый период ${beginDate}-${endDate}успешно загружены.`)
+                    let blob = await response.blob();
+                    let url = window.URL.createObjectURL(blob, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                    let a = document.createElement('a');
+                    a.href = url;
+                    a.download = "contracts.xlsx";
+                    a.innerHTML = 'Ссылка на скачивание отчета с договорами за указанный период.'
+                    const firstLinkBlock = document.getElementById('firstReportLink')
+                    firstLinkBlock.innerHTML=''
+                    firstLinkBlock.appendChild(a);
+
+                    commit("SET_FIRST_REPORT", '')
+                    console.log(`Договоры за плановый период ${form.approxBeginDate}-${form.approxEndDate} успешно загружены.`)
                 } else {
                     alert("Ошибка HTTP: " + response.status);
                 }
@@ -214,19 +216,26 @@ export default new Vuex.Store({
         },
         async loadSecondReport({commit}, id) {
             try {
-                let response = await fetch(`https://jsonplaceholder.typicode.com/users`/*, { //`https://jsonplaceholder.typicode.com/api/dowload/report/1`
+                let response = await fetch(`http://localhost:8080/api/reports/contract_id=${id}`, {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json;charset=utf-8'
-                    },
-                    body: JSON.stringify({
-                        id: id
+                        'Content-Type': 'application/json',
+                        'Authorization': `${localStorage.getItem('access_token')}`
                     }
-                )}*/)
+                })
                 if(response.ok) {
-                    const stages = await response.json();
-                    commit("SET_SECOND_REPORT", stages)
-                    console.log(`Этапы для договора ${id} успешно загружены.`)
+                    let blob = await response.blob();
+                    let url = window.URL.createObjectURL(blob, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                    let a = document.createElement('a');
+                    a.href = url;
+                    a.download = `stages${id}.xlsx`;
+                    a.innerHTML = 'Ссылка на скачивание отчета с этапами для выбранного договора.'
+                    const secondLinkBlock = document.getElementById('secondReportLink')
+                    secondLinkBlock.innerHTML=''
+                    secondLinkBlock.appendChild(a);
+
+                    commit("SET_SECOND_REPORT", '')
+                    console.log(`Этапы для договора с id ${id} успешно загружены.`)
                 } else {
                     alert("Ошибка HTTP: " + response.status);
                 }
@@ -246,17 +255,25 @@ export default new Vuex.Store({
                 if (res.ok) {
                     let obj = await res.json()  // тут токены
                     console.log(obj)
+                    localStorage.setItem('access_token', `Bearer ${obj['access_token']}`)
+                    localStorage.setItem('refresh_token', obj['refresh_token'])
+                    commit('SET_AUTHORIZED', true)
                     commit('SET_ACCESS_TOKEN', `Bearer ${obj['access_token']}`)
                     commit('SET_REFRESH_TOKEN', obj['refresh_token'])
+
                     commit('SET_AUTHORIZED', true)
                     console.log('Авторизация прошла успешно')
                 } else {
                     alert("Неверный юзер: " + res.status);
+                    localStorage.setItem('access_token', '')
+                    localStorage.setItem('refresh_token', '')
                     commit('SET_AUTHORIZED', false)
                     console.log('Авторизация не прошла')
                 }
             } catch (error) {
                 console.error(error)
+                localStorage.setItem('access_token', '')
+                localStorage.setItem('refresh_token', '')
                 commit('SET_AUTHORIZED', false)
             }
         }

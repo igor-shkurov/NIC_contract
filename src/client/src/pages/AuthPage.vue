@@ -13,6 +13,10 @@ export default {
   name: 'AuthPage',
   components: {
     SignIn
+  },
+  created() {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
   }
 }
 </script>

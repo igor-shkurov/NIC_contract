@@ -5,6 +5,8 @@
         <div class="reports-header">
           Отчёты
         </div>
+        <div id="validation-message"></div>
+
         <div class="reports-element-container">
           <div class="reports-element-header">
             1. Вывод всех договоров за задаваемый плановый период
@@ -16,7 +18,7 @@
                 <input
                     type="date"
                     id="approxBeginDate"
-                    v-model="form1.approxBeginDate"
+                    v-model="firstReportForm.approxBeginDate"
                 >
               </div>
               <div class="reports-element-form__field">
@@ -24,7 +26,7 @@
                 <input
                     type="date"
                     id="approxEndDate"
-                    v-model="form1.approxEndDate"
+                    v-model="firstReportForm.approxEndDate"
                 >
               </div>
               <div class="reports-element-form__button">
@@ -35,9 +37,8 @@
           </div>
           <div
               class="reports-element-link"
-              v-if="isFirstLinkGot"
+              id="firstReportLink"
           >
-            firstLink
           </div>
         </div>
         <div class="reports-element-container">
@@ -51,9 +52,11 @@
                 <select
                     id="chosenContract"
                     name="chosenContract"
-                    v-model="form2.idContract"
+                    v-model="secondReportForm.contractId"
                 >
-                  <option value="1" checked>Не выбрано</option>
+                  <option v-for="(contract, index) in contracts"
+                          :key="index"
+                          :value="contract.id">{{ contract.name}}</option>
                 </select>
               </div>
               <div class="reports-element-form__button">
@@ -63,9 +66,8 @@
           </div>
           <div
               class="reports-element-link"
-              v-if="isSecondLinkGot"
+              id="secondReportLink"
           >
-            secondLink
           </div>
         </div>
       </div>
@@ -75,6 +77,7 @@
 
 <script>
 import {mapActions, mapGetters} from "vuex";
+import {checkValid} from "@/mixins/validation";
 
 export default {
   name: "ReportsPage",
@@ -82,41 +85,48 @@ export default {
     return {
       isFirstLinkGot: false,
       isSecondLinkGot: false,
-      form1: {
+      firstReportForm: {
         approxBeginDate: null,
         approxEndDate: null
       },
-      form2: {
-        idContract: null
+      secondReportForm: {
+        contractId: null
       }
     }
   },
+  props: {
+    mode: String
+  },
   computed: {
-    ...mapGetters(['getFirstReport', "getStages"]),
-    getFirstReport() {
-      return this.getFirstReport
-    },
-    getSecondReport() {
-      return this.getSecondReport
+    ...mapGetters(['getContracts']),
+    contracts() {
+      return this.getContracts
     }
 
   },
+  mixins: [checkValid],
   methods: {
-    ...mapActions(['loadFirstReport', "loadSecondReport"]),
+    ...mapActions(['loadFirstReport', "loadSecondReport", 'loadContracts']),
     formSubmit(formNumber) {
-      switch(formNumber) {
-        case 1:
-          this.loadFirstReport(this.form1.approxBeginDate, this.form1.approxEndDate)
-          this.isFirstLinkGot = true
-          console.log('GET-request with dates for first report...')
-          break
-        case 2:
-          this.loadSecondReport(this.form2.idContract)
-          console.log('GET-request with contract for second report...')
-          this.isSecondLinkGot = true
-          break
+      this.formNumber = formNumber
+      this.validation()
+      if (this.isValidForm){
+        switch(formNumber) {
+          case 1:
+            this.loadFirstReport(this.firstReportForm)
+            break
+          case 2:
+            this.loadSecondReport(this.secondReportForm.contractId)
+            break
+        }
+      } else {
+        console.log('Данные для получения отчета не прошли валидацию.')
       }
     }
+  },
+  created(){
+    if (!this.contracts.length)
+      this.loadContracts()
   }
 }
 </script>
@@ -176,7 +186,21 @@ export default {
     font: inherit;
   }
   .reports-element-link {
-    border-top: solid #FFF 1px;
     margin-top: 20px;
   }
+
+  #validation-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .reports-element-link > a, .reports-element-link > a:hover {
+    color: goldenrod;
+    text-decoration: underline;
+    margin-top: 10px;
+    display: block;
+  }
+
 </style>

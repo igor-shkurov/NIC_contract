@@ -1,7 +1,6 @@
 import {alpha, maxLength, minLength, minValue, numeric, required} from "vuelidate/lib/validators";
 import {validationMixin} from "vuelidate";
 
-
 export const checkValid = {
     data() {
         return {
@@ -50,6 +49,13 @@ export const checkValid = {
             approxSalary: { required, minValue: minValue(0), numeric },
             credit: { required, minValue: minValue(0), numeric },
             salary: { required, minValue: minValue(0), numeric }
+        },
+        firstReportForm: {
+            approxBeginDate: { required},
+            approxEndDate: { required}
+        },
+        secondReportForm: {
+            contractId: {required}
         }
     },
     methods: {
@@ -65,7 +71,7 @@ export const checkValid = {
                 msgElem.appendChild(msg)
             }
             else {
-                console.log('не нашел ошибки валидационной')
+                console.log('Введенные данные для получения отчета прошли валидацию.')
             }
         },
         checkValidation() {
@@ -156,6 +162,26 @@ export const checkValid = {
                         this.isValidForm = false
                         s = 'Пожалуйста, введите все поля.'
                     } else this.isValidForm = true
+                    break
+
+                case 'reports':
+                    console.log("i'm here")
+                    if(this.formNumber === 1){
+                        form = this.$v.firstReportForm
+                        if (form.approxBeginDate.$invalid) {
+                            this.isValidForm = false
+                            s = 'Пожалуйста, для формирования отчета введите плановую дату начала действия договоров.'
+                        } else if (form.approxEndDate.$invalid) {
+                            this.isValidForm = false
+                            s = 'Пожалуйста, для формирования отчета введите плановую дату окончания действия договоров.'
+                        } else this.isValidForm = true
+                    } else if(this.formNumber === 2) {
+                        form = this.$v.secondReportForm
+                        if (form.contractId.$invalid) {
+                            this.isValidForm = false
+                            s = 'Пожалуйста, для формирования отчета с этапами выберите договор из списка.'
+                        } else this.isValidForm = true
+                    }
                     break
             }
             return s
