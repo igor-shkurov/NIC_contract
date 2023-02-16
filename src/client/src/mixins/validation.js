@@ -167,7 +167,6 @@ export const checkValid = {
 
 
                 case 'reports':
-                    console.log("i'm here")
                     if(this.formNumber === 1){
                         form = this.$v.firstReportForm
                         if (form.approxBeginDate.$invalid) {
