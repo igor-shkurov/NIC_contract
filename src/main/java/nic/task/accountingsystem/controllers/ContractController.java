@@ -1,5 +1,7 @@
 package nic.task.accountingsystem.controllers;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import nic.task.accountingsystem.entities.contract.ContractDTO;
 import nic.task.accountingsystem.entities.contract.ContractService;
 import org.apache.commons.math3.util.Pair;

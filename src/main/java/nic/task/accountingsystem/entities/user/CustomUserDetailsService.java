@@ -1,5 +1,6 @@
 package nic.task.accountingsystem.entities.user;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.mapstruct.factory.Mappers;
@@ -87,6 +88,21 @@ public class CustomUserDetailsService implements UserDetailsService {
         else {
             return HttpStatus.NOT_FOUND;
         }
+    }
+
+    public HttpStatus updatePassword(UserDTO dto) {
+        User user = getUserById(dto.getId());
+
+        if (user == null) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        UserDTO dtoToBeUpdated = mapper.userToDTO(user);
+
+        dtoToBeUpdated.setPassword(dto.getPassword());
+        userDetailsRepo.save(mapper.DTOtoUser(dtoToBeUpdated));
+
+        return HttpStatus.OK;
     }
 
     public HttpStatus deleteUser(long id) {
