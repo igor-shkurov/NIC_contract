@@ -72,9 +72,9 @@ export default {
           keysElemData = ['name','contractType','counterpartyId', 'sum', 'approxBeginDate','approxEndDate','beginDate', 'endDate']
           break
         case 'users':
-          headers = ['ФИО', 'Логин', 'Пароль']
+          headers = ['ФИО', 'Логин']
           cardHeader = 'пользователя'
-          keysElemData = ['fio', 'username', 'password']
+          keysElemData = ['fio', 'username']
       }
       return { fieldsHeaders: headers, cardHeader: cardHeader, keysElemData: keysElemData}
     },

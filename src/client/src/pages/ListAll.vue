@@ -232,9 +232,9 @@ export default {
   .bordered tr:last-child td:last-child {
     border-radius: 0 0 6px 0;
   }
-  th:nth-child(1) {
-    width: 17%;
-  }
+  /*th:nth-child(1) {*/
+  /*  width: 17%;*/
+  /*}*/
   .table-add-button {
     align-self: flex-end;
     display: flex;

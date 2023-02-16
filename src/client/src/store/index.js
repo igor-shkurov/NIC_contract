@@ -254,7 +254,6 @@ export default new Vuex.Store({
                 })
                 if (res.ok) {
                     let obj = await res.json()  // тут токены
-                    console.log(obj)
                     localStorage.setItem('access_token', `Bearer ${obj['access_token']}`)
                     localStorage.setItem('refresh_token', obj['refresh_token'])
                     commit('SET_AUTHORIZED', true)
