@@ -11,10 +11,7 @@ export default new Vuex.Store({
         contractsCounterparty: [],
         users: [],
         cardHeader: [],
-        accessToken: '',
-        refreshToken: '',
-        isAuthorized: !!(localStorage.getItem('access_token')),
-        firstReport: ''
+        isAuthorized: !!(localStorage.getItem('access_token'))
     },
     getters: {
         getContracts(state) {
@@ -34,13 +31,6 @@ export default new Vuex.Store({
         },
         getCardHeader(state) {
             return state.cardHeader
-        //},
-        },
-        getAccessToken(state) {
-            return state.accessToken
-        },
-        getRefreshToken(state) {
-            return state.refreshToken
         },
         checkAuthorized(state) {
             return state.isAuthorized
@@ -67,15 +57,6 @@ export default new Vuex.Store({
         },
         SET_AUTHORIZED(state, payload) {
             state.isAuthorized = payload
-        },
-        SET_ACCESS_TOKEN(state, payload) {
-            state.accessToken = payload
-        },
-        SET_REFRESH_TOKEN(state, payload) {
-            state.refreshToken = payload
-        },
-        SET_FIRST_REPORT(state, payload) {
-            state.firstReport = payload
         }
     },
     actions: {
