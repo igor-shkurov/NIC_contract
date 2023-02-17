@@ -32,8 +32,6 @@ public class Contract {
     private LocalDate beginDate;
     @Column(columnDefinition = "date")
     private LocalDate endDate;
-//    @Formula("if (select count(*) from stage s where contract_id = id) <> 0 )" +
-//            "(select sum(s.sum) from stage s where s.contract_id = id)")
     @Column(columnDefinition = "numeric(18,2)")
     private BigDecimal sum;
 

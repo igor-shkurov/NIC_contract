@@ -75,9 +75,9 @@ public class CustomUserDetailsService implements UserDetailsService {
             userToBeUpdated.setFIO(dto.getFIO());
             userToBeUpdated.setRole(dto.getRole());
 
-           userDetailsRepo.save(userToBeUpdated);
+            userDetailsRepo.save(userToBeUpdated);
 
-           return HttpStatus.OK;
+            return HttpStatus.OK;
         }
         else {
             return HttpStatus.NOT_FOUND;
