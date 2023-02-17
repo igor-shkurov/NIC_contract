@@ -2,7 +2,8 @@
 
 ### 1) Docker:
 На целевой платформе должен быть установлен **Docker**:
-* **Linux**: `sudo apt install docker`
+* **Linux**: `sudo apt install snapd`
+`sudo snap install docker`
 * **MacOS**: `brew install docker`
 * **Windows**: Процесс установки по ссылке - https://docs.docker.com/desktop/install/windows-install/
 ### 2) Запуск:
