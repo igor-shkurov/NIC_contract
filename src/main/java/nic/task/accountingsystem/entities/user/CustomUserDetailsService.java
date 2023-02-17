@@ -1,8 +1,5 @@
 package nic.task.accountingsystem.entities.user;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.BeanUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,9 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -31,15 +26,15 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.mapper = Mappers.getMapper(UserMapper.class);
     }
 
-    public HttpStatus saveUser(UserDTO dto) {
+    public HttpStatus saveUser(UserDTO dto, boolean isModify) {
         User user = mapper.DTOtoUser(dto);
-         if (userDetailsRepo.findUserByUsername(user.getUsername()) != null)   {
+        if (userDetailsRepo.findUserByUsername(user.getUsername()) != null && !isModify)   {
              return HttpStatus.CONFLICT;
-         }
-         else {
-             userDetailsRepo.save(user);
-             return HttpStatus.CREATED;
-         }
+        }
+        else {
+            userDetailsRepo.save(user);
+            return isModify ? HttpStatus.OK : HttpStatus.CREATED;
+        }
     }
 
     @Override
@@ -72,18 +67,17 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public HttpStatus updateUser(UserDTO dto) {
         long id = dto.getId();
-        User updatingUser = mapper.DTOtoUser(dto);
         User userToBeUpdated = getUserById(id);
 
         if (userToBeUpdated != null) {
-            try {
-                BeanUtils.copyProperties(userToBeUpdated, updatingUser);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            userToBeUpdated.setId(id);
-            userDetailsRepo.save(userToBeUpdated);
-            return HttpStatus.OK;
+            userToBeUpdated.setId(dto.getId());
+            userToBeUpdated.setUsername(dto.getUsername());
+            userToBeUpdated.setFIO(dto.getFIO());
+            userToBeUpdated.setRole(dto.getRole());
+
+           userDetailsRepo.save(userToBeUpdated);
+
+           return HttpStatus.OK;
         }
         else {
             return HttpStatus.NOT_FOUND;
@@ -91,18 +85,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public HttpStatus updatePassword(UserDTO dto) {
-        User user = getUserById(dto.getId());
+        long id = dto.getId();
+        UserDTO dtoToBeUpdated = mapper.userToDTO(getUserById(id));
 
-        if (user == null) {
+        if (dtoToBeUpdated == null) {
             return HttpStatus.NOT_FOUND;
         }
-
-        UserDTO dtoToBeUpdated = mapper.userToDTO(user);
-
+        dtoToBeUpdated.setId(id);
         dtoToBeUpdated.setPassword(dto.getPassword());
-        userDetailsRepo.save(mapper.DTOtoUser(dtoToBeUpdated));
-
-        return HttpStatus.OK;
+        return saveUser(dtoToBeUpdated, true);
     }
 
     public HttpStatus deleteUser(long id) {

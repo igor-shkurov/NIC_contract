@@ -64,7 +64,7 @@ public class CounterpartyService {
     public HttpStatus deleteCounterparty(long id) {
         Optional<Counterparty> opt = counterpartyRepo.findById(id);
         if (opt.isPresent()) {
-            if (opt.get().getCounterpartyContracts().isEmpty()) {
+            if (!opt.get().getCounterpartyContracts().isEmpty()) {
                 return HttpStatus.CONFLICT;
             }
             counterpartyRepo.deleteById(id);

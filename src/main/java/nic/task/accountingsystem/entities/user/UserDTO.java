@@ -1,6 +1,5 @@
 package nic.task.accountingsystem.entities.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.validation.constraints.*;
@@ -38,7 +37,9 @@ public class UserDTO {
     @Null(groups = {New.class, Modify.class, PasswordOnly.class})
     private LocalDateTime expirationDate;
 
-    @Null(groups = {New.class, Modify.class, PasswordOnly.class})
+
+    @Null(groups = {PasswordOnly.class})
+    @JsonView(PublicView.class)
     private User.Role role;
 
     public long getId() {

@@ -4,6 +4,7 @@ import nic.task.accountingsystem.entities.ContractType;
 import nic.task.accountingsystem.entities.counterparty_contract.CounterpartyContract;
 import nic.task.accountingsystem.entities.stage.Stage;
 import nic.task.accountingsystem.entities.user.User;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -31,6 +32,8 @@ public class Contract {
     private LocalDate beginDate;
     @Column(columnDefinition = "date")
     private LocalDate endDate;
+//    @Formula("if (select count(*) from stage s where contract_id = id) <> 0 )" +
+//            "(select sum(s.sum) from stage s where s.contract_id = id)")
     @Column(columnDefinition = "numeric(18,2)")
     private BigDecimal sum;
 

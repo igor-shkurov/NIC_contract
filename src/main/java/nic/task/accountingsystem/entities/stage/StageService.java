@@ -71,8 +71,8 @@ public class StageService {
 
         Stage stageToBeUpdated = getStageById(id);
 
-        if (!Objects.equals(stageToBeUpdated.getContract().getAssociatedUser().getId(), currentUser.getId()) ||
-            !Objects.equals(updatingStage.getContract().getAssociatedUser().getId(), currentUser.getId()) &&
+        if ((!Objects.equals(stageToBeUpdated.getContract().getAssociatedUser().getId(), currentUser.getId()) ||
+            !Objects.equals(updatingStage.getContract().getAssociatedUser().getId(), stageToBeUpdated.getContract().getAssociatedUser().getId())) &&
                 currentUser.getRole() != User.Role.ADMIN)
         {
             return HttpStatus.FORBIDDEN;

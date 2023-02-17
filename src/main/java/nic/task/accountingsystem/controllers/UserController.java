@@ -31,7 +31,7 @@ public class UserController {
 
     @PostMapping(path = "/add", consumes = {"application/json"})
     public ResponseEntity<Object> addUser(@RequestBody @Validated(UserDTO.New.class) UserDTO dto) {
-        return new ResponseEntity<>(userService.saveUser(dto));
+        return new ResponseEntity<>(userService.saveUser(dto, false));
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
