@@ -175,10 +175,6 @@ export default new Vuex.Store({
                     localStorage.setItem('access_token', `Bearer ${obj['access_token']}`)
                     localStorage.setItem('refresh_token', obj['refresh_token'])
                     commit('SET_AUTHORIZED', true)
-                    commit('SET_ACCESS_TOKEN', `Bearer ${obj['access_token']}`)
-                    commit('SET_REFRESH_TOKEN', obj['refresh_token'])
-
-                    commit('SET_AUTHORIZED', true)
                     console.log('Авторизация прошла успешно')
                 } else {
                     alert("Неверный юзер: " + res.status);

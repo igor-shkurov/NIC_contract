@@ -57,13 +57,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['checkAuthorized', 'getAccessToken', 'getRefreshToken']),
-    accessToken() {
-      return this.getAccessToken
-    },
-    refreshToken(){
-      return this.getRefreshToken
-    },
+    ...mapGetters(['checkAuthorized']),
     isAuthorized(){
       return this.checkAuthorized
     }

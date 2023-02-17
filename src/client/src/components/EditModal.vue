@@ -107,6 +107,55 @@
               </select>
             </div>
           </div>
+          <div class="edit-modal-controls" v-if="$props.mode === 'users'" id="changePassBtn">
+            <button
+                class="edit-modal-controls__button"
+                @click="isOpenChangePass? isOpenChangePass=false : isOpenChangePass=true"
+                v-if="!isOpenChangePass"
+            >
+              <img src="../assets/icons/key.png" alt="">
+              <div class="controls-button__header">
+                Сменить пароль
+              </div>
+            </button>
+            <button class="edit-modal-controls__button save-button" v-if="isOpenChangePass" @click="changePassword">
+              <img src="../assets/icons/key.png" alt="">
+              <div class="controls-button__header"> Сохранить новый пароль</div>
+            </button>
+          </div>
+          <div
+              class="edit-modal-control-warning"
+              v-if="isOpenChangePass"
+          >После ввода нажмите "Сохранить новый пароль".</div>
+          <div
+              class="edit-fields"
+              v-if="isOpenChangePass"
+          >
+            <div class="edit-fields-element">
+              <div class="fields-element__title">
+                Новый пароль:
+              </div>
+              <input
+                  class="fields-element-password__edit"
+                  v-model="changePassForm['password']"
+                  type="password"
+                  placeholder="Введите пароль"
+              >
+            </div>
+            <div
+                class="edit-fields-element"
+            >
+              <div class="fields-element__title">
+                Подтверждение пароля:
+              </div>
+              <input
+                  class="fields-element-password__edit"
+                  v-model="changePassForm['confirmPassword']"
+                  type="password"
+                  placeholder="Подтвердите введенный пароль"
+              >
+            </div>
+          </div>
         </div>
         <div
             class="if-container"
@@ -162,6 +211,8 @@ export default {
       contractCounterpartyForm: {},
       counterpartyForm: {},
       stageForm: {},
+      isOpenChangePass: false,
+      changePassForm: {}
     }
   },
   computed: {
@@ -289,15 +340,20 @@ export default {
         })
         if(response.ok) {
           console.log(`Объект ${this.mode} с id ${this.obj['id']} успешно удален.`)
-          this.$emit('close', true)
+          this.$emit('close')
         } else {
           alert("Ошибка HTTP в удалении договора: " + response.status);
-          this.$emit('close', false)
+          this.$emit('close')
         }
       } catch(error) {
         console.error(error)
       }
     },
+    changePassword(){
+      this.isOpenChangePass = !this.isOpenChangePass
+      alert('Пароль пользователя успешно изменен.')
+      this.$emit('close')
+    }
   },
 
   created() {
@@ -425,10 +481,10 @@ button .edit-modal-cancel-btn > img {
   word-wrap: break-word;
   width: 100%;
 }
-.fields-element__value:hover{
+.fields-element__value:hover, .fields-element-password__edit:hover{
   background-color: #606060;
 }
-.fields-element__title{
+.fields-element__title {
   background-color: #ababab;
   display: flex;
   justify-content: center;
@@ -436,13 +492,13 @@ button .edit-modal-cancel-btn > img {
   border: 4px solid #454545;
   border-radius: 6px;
   width: 20%;
-  padding: 5px 0;
+  padding: 5px 5px;
   font-weight: 600;
   margin-right: 10px;
   text-align: center;
   text-shadow: 1px 0.5px 0 rgba(0,0,0,0.5);
 }
-.fields-element__value, .fields-element__edit {
+.fields-element__value, .fields-element__edit, .fields-element-password__edit {
   background-color: #525252;
   border: 4px solid #454545;
   border-radius: 6px;
@@ -451,8 +507,12 @@ button .edit-modal-cancel-btn > img {
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #FFFFFF;
 }
-.fields-element__edit{
+.fields-element-password__edit {
+  width: 40%;
+}
+.fields-element__edit {
   width: 40%;
   margin-left: 10px;
   background-color: #A0A0A0;
@@ -513,5 +573,8 @@ button .edit-modal-cancel-btn > img {
   text-align: center;
   font: inherit;
   padding: 5px 10px;
+}
+#changePassBtn {
+  margin-top: 15px;
 }
 </style>

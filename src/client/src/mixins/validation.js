@@ -1,5 +1,7 @@
-import {alpha, maxLength, minLength, minValue, numeric, required} from "vuelidate/lib/validators";
+import {maxLength, minLength, minValue, numeric, required, helpers} from "vuelidate/lib/validators";
 import {validationMixin} from "vuelidate";
+
+const alphaWithoutWhitespaces = helpers.regex('alphaWithoutWhitespaces', /^[а-яА-ЯёЁa-zA-Z\s]*$/)
 
 export const checkValid = {
     data() {
@@ -10,9 +12,8 @@ export const checkValid = {
     mixins: [validationMixin],
     validations: {
         userForm: {
-            FIO: { required, minLength: minLength(5), maxLength: maxLength(50), alpha },
-            username : { required , minLength: minLength(3), maxLength: maxLength(50)},
-            password : { required, minLength: minLength(3), maxLength: maxLength(50) }
+            FIO: { required, minLength: minLength(5), maxLength: maxLength(50), alphaWithoutWhitespaces},
+            username : { required , minLength: minLength(3), maxLength: maxLength(50)}
         },
         contractForm: {
             name: { required, minLength: minLength(3), maxLength: maxLength(30)},
@@ -138,13 +139,10 @@ export const checkValid = {
                     form = this.$v.userForm
                     if (form.FIO.$invalid) {
                         this.isValidForm = false
-                        s = 'ФИО пользователя должно содержать от 5 до 50 символов(букв, цифр и символов).'
+                        s = 'ФИО пользователя должно содержать от 5 до 50 символов(только букв, латиницы/кириллицы).'
                     } else if (form.username.$invalid) {
                         this.isValidForm = false
                         s = 'Имя пользователя(username) должно содержать от 3 до 50 символов(букв, цифр и символов).'
-                    } else if (form.password.$invalid) {
-                        this.isValidForm = false
-                        s = 'Пароль пользователя должен содержать от 3 до 50 символов(букв, цифр и символов).'
                     } else if (form.$error) {
                         this.isValidForm = false
                         s = 'Пожалуйста, введите все поля.'

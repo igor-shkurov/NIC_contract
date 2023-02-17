@@ -74,7 +74,7 @@ export default {
         case 'users':
           headers = ['ФИО', 'Логин']
           cardHeader = 'пользователя'
-          keysElemData = ['fio', 'username']
+          keysElemData = ['FIO', 'username']
       }
       return { fieldsHeaders: headers, cardHeader: cardHeader, keysElemData: keysElemData}
     },
