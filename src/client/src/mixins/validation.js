@@ -57,6 +57,11 @@ export const checkValid = {
         },
         secondReportForm: {
             contractId: {required}
+        },
+        changePassForm: {
+            id: {},
+            password: {required, minLength: minLength(3), maxLength: maxLength(50)},
+            confirmPassword: {required}
         }
     },
     methods: {
@@ -184,6 +189,34 @@ export const checkValid = {
                     break
             }
             return s
+        },
+        checkChangePass() {
+            let s = ''
+            this.$v.changePassForm.$touch()
+            let msgElem = document.getElementById('changePass-validation-message')
+            msgElem.innerHTML=''
+
+            let form = this.$v.changePassForm
+            if (form.password.$invalid) {
+                this.isValidForm = false
+                s = 'Новый пароль должен содержать от 3 до 50 символов(букв, цифр и символов).'
+            } else if (form.$error) {
+                this.isValidForm = false
+                s = 'Пожалуйста, введите все поля.'
+            } else if (this.changePassForm.confirmPassword !== this.changePassForm.password) {
+                this.isValidForm = false
+                s = 'Подтвержденный пароль не совпадает с введенным выше'
+            } else this.isValidForm = true
+            let validMsg = s
+            console.log(s)
+            if(validMsg) {
+                const msg = document.createElement('span')
+                msg.innerHTML = validMsg
+                msgElem.appendChild(msg)
+            }
+            else {
+                console.log('Введенные данные для получения отчета прошли валидацию.')
+            }
         }
     }
 }

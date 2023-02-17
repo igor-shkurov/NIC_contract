@@ -127,6 +127,7 @@
               class="edit-modal-control-warning"
               v-if="isOpenChangePass"
           >После ввода нажмите "Сохранить новый пароль".</div>
+          <div id="changePass-validation-message"></div>
           <div
               class="edit-fields"
               v-if="isOpenChangePass"
@@ -349,14 +350,47 @@ export default {
         console.error(error)
       }
     },
-    changePassword(){
-      this.isOpenChangePass = !this.isOpenChangePass
-      alert('Пароль пользователя успешно изменен.')
-      this.$emit('close')
+    async changePassword(){
+      if(this.$props.mode === 'users') {  // доп защита
+
+        let url = 'http://localhost:8080/api/users/change_password'
+        this.checkChangePass()
+
+        if(this.isValidForm){
+          this.isOpenChangePass = !this.isOpenChangePass
+          console.log('Валидация прошла успешно.')
+          let obj = {
+            id: this.changePassForm.id,
+            password: this.changePassForm.password
+          }
+          try {
+            let response = await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('access_token')
+              },
+              body: JSON.stringify(obj)
+            })
+            if (response.ok) {
+              console.log(`Новый пароль для пользователя с id {${this.changePassForm['id']}} установлен.`)
+              this.$emit('close')
+            } else {
+              alert("Ошибка установки нового пароля: " + response.status);
+            }
+          } catch (error) {
+            console.error(error)
+            this.$emit('close')
+          }
+        } else {
+          console.log('Введенный пароль не прошел валидацию')
+        }
+      }
     }
   },
 
   created() {
+    this.changePassForm['id']=this.$props.obj['id']
     this.loadCounterparties()
     let clone = {};
     //глубокое копирование

@@ -28,14 +28,14 @@ public class SystemConfiguration {
 
             userDetailsService.saveUser(administrator, false);
 
-//            UserDTO user = new UserDTO();
-//            user.setFIO("Pyatizbyantsev Ilya Andreevich");
-//            user.setUsername("aboba");
-//            user.setPassword("snusik");
-//            user.setRole(User.Role.USER);
-//            user.setExpirationDate(LocalDateTime.now().plusMonths(6));
-//
-//            userDetailsService.saveUser(user, false);
+            UserDTO user = new UserDTO();
+            user.setFIO("Pyatizbyantsev Ilya Andreevich");
+            user.setUsername("aboba");
+            user.setPassword("snusik");
+            user.setRole(User.Role.USER);
+            user.setExpirationDate(LocalDateTime.now().plusMonths(6));
+
+            userDetailsService.saveUser(user, false);
         };
     }
 }
