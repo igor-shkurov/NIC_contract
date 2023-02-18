@@ -7,6 +7,7 @@ import ContractsPage from "@/pages/ContractsPage";
 import CounterpartiesPage from "@/pages/CounterpartiesPage";
 import UsersPage from "@/pages/UsersPage";
 import ReportsPage from "@/pages/ReportsPage";
+import Forbidden from "@/pages/Forbidden";
 
 export default new VueRouter ({
     mode: 'history',
@@ -65,12 +66,17 @@ export default new VueRouter ({
                     name: 'administrationList',
                     component: UsersPage,
                     props: { mode: 'users', inserting: {isInserted: false, openModalID: null}}
+                },
+                {
+                    path: '/error',
+                    name: 'administrationForbidden',
+                    component: Forbidden
                 }
             ]
         },
         {
             path: '/administration/*',
-            redirect: { name: 'administartionList', props: {mode: 'users', inserting: {isInserted: false, openModalID: null}}}
+            redirect: { name: 'administrationList', props: {mode: 'users', inserting: {isInserted: false, openModalID: null}}}
         },
         {
             path: '/reports',

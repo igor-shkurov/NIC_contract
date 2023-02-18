@@ -301,6 +301,8 @@ export default {
           if (response.ok) {
             console.log(`Объект  ${this.mode} успешно отредактирован и сохранен.`)
             this.$emit('close')
+          } else if(response.status === 403) {
+            alert('Для редактирования объекта нужны права администратора.')
           } else {
             alert("Ошибка редактирования: " + response.status);
           }
@@ -342,6 +344,8 @@ export default {
         if(response.ok) {
           console.log(`Объект ${this.mode} с id ${this.obj['id']} успешно удален.`)
           this.$emit('close')
+        } else if(response.status === 403) {
+          alert('Для удаления объекта нужны права администратора.')
         } else {
           alert("Ошибка HTTP в удалении договора: " + response.status);
           this.$emit('close')

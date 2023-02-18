@@ -159,6 +159,8 @@ export default {
           if(response.ok) {
             console.log(`Добавление в ${this.$props.mode}...`)
             this.$emit('close')
+          } else if(response.status === 403) {
+            alert('Для добавления объекта нужны права администратора.')
           } else {
             alert("Ошибка HTTP в добавлении: " + response.status);
           }

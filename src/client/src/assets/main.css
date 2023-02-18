@@ -8,7 +8,7 @@ body {
     font-family: 'Roboto', sans-serif;
     color: white;
 }
-a, a:hover, a:visited, button {
+a, a:hover, /*a:visited,*/ button {
     text-decoration: none;
     color: inherit;
     background-color: inherit;

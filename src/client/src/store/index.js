@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import router from '../router/index.js'
 
 Vue.use(Vuex)
 
@@ -57,6 +58,14 @@ export default new Vuex.Store({
         },
         SET_AUTHORIZED(state, payload) {
             state.isAuthorized = payload
+        },
+        UNAUTHORIZE(state) {
+            state.contracts = null
+            state.users = null
+            state.stages = null
+            state.counterparties = null
+            state.contractsCounterparty = null
+            state.isAuthorized = false
         }
     },
     actions: {
@@ -90,6 +99,8 @@ export default new Vuex.Store({
                     const contracts = await response.json();
                     commit("SET_CONTRACTS", contracts)
                     console.log('Договоры загружены успешно.')
+                } else if (response.status === 401) {
+                    await router.push({name: 'auth'})
                 } else {
                     console.log("Ошибка HTTP: " + response.status);
                 }
@@ -106,6 +117,8 @@ export default new Vuex.Store({
                     const stages = await response.json();
                     commit("SET_STAGES", stages)
                     console.log(`Этапы для договора №${id} загружены успешно.`)
+                } else if (response.status === 401) {
+                    await router.push({name: 'auth'})
                 } else {
                     alert("Ошибка HTTP: " + response.status);
                 }
@@ -122,6 +135,8 @@ export default new Vuex.Store({
                     const contractsCounterparty = await response.json();
                     commit("SET_CONTRACTS_COUNTERPARTY", contractsCounterparty)
                     console.log(`Договоры контрагентов для договора №${id} загружены успешно.`)
+                } else if (response.status === 401) {
+                    await router.push({name: 'auth'})
                 } else {
                     alert("Ошибка HTTP: " + response.status);
                 }
@@ -138,6 +153,8 @@ export default new Vuex.Store({
                     const counterparties = await response.json();
                     commit("SET_COUNTERPARTIES", counterparties)
                     console.log(`Перечень контрагентов успешно загружен.`)
+                } else if (response.status === 401) {
+                    await router.push({name: 'auth'})
                 } else {
                     alert("Ошибка HTTP: " + response.status);
                 }
@@ -154,6 +171,10 @@ export default new Vuex.Store({
                     const users = await response.json();
                     commit("SET_USERS", users)
                     console.log(`Пользователи успешно загружены.`)
+                } else if (response.status === 401) {
+                    await router.push({name: 'auth'})
+                } else if (response.status === 403) {
+                    await router.push({name: 'administrationForbidden'})
                 } else {
                     alert("Ошибка HTTP: " + response.status);
                 }
@@ -189,6 +210,9 @@ export default new Vuex.Store({
                 localStorage.setItem('refresh_token', '')
                 commit('SET_AUTHORIZED', false)
             }
+        },
+        logout({commit}){
+            commit('UNAUTHORIZE')
         }
     }
 })
