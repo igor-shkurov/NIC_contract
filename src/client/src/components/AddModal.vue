@@ -76,6 +76,7 @@
 <script>
 import { mapActions, mapGetters} from "vuex";
 import {checkValid} from "@/mixins/validation";
+import {inputElems} from "@/mixins/chooseInputFields";
 
 export default {
   name: "AddModal",
@@ -86,7 +87,7 @@ export default {
     cardFields: Array,
     cardHeader: String
   },
-  mixins: [checkValid],
+  mixins: [checkValid, inputElems],
   data(){
     return {
       addForm: {},
@@ -101,22 +102,6 @@ export default {
     ...mapGetters(['getCounterparties']),
     counterparties(){
       return this.getCounterparties
-    },
-    inputElemsKeys(){
-      let arr = []
-      this.$props.cardKeys.forEach(key => {
-        if (key !== 'contractType' && key !== 'counterpartyId')
-          arr.push(key)
-      })
-      return arr
-    },
-    inputElemsHeaders(){
-      let arr = []
-      this.$props.cardFields.forEach(header => {
-        if (header !== 'Тип договора' && header !== 'Организация-контрагент')
-          arr.push(header)
-      })
-      return arr
     }
   },
   methods: {
@@ -175,7 +160,8 @@ export default {
     ...mapActions(['loadCounterparties'])
   },
   created() {
-    this.loadCounterparties()
+    if(!this.counterparties)
+      this.loadCounterparties()
   },
   updated() {
     switch (this.$props.mode) {

@@ -187,6 +187,7 @@
 
 import {mapGetters, mapActions} from "vuex"
 import { checkValid} from "@/mixins/validation";
+import {inputElems} from "@/mixins/chooseInputFields";
 
 export default {
   name: 'edit-modal',
@@ -200,7 +201,7 @@ export default {
     cardFields: Array,
     cardHeader: String
   },
-  mixins: [checkValid],
+  mixins: [checkValid, inputElems],
   data() {
     return {
       editMode: false,
@@ -220,22 +221,6 @@ export default {
     ...mapGetters(['getCounterparties']),
     counterparties(){
       return this.getCounterparties
-    },
-    inputElemsKeys(){
-      let arr = []
-      this.$props.cardKeys.forEach(key => {
-        if (key !== 'contractType' && key !== 'counterpartyId')
-          arr.push(key)
-      })
-      return arr
-    },
-    inputElemsHeaders(){
-      let arr = []
-      this.$props.cardFields.forEach(header => {
-        if (header !== 'Тип договора' && header !== 'Организация-контрагент')
-          arr.push(header)
-      })
-      return arr
     },
     getCounterpartyName() {
       let counterparty = this.counterparties.find((counterparty) => {
@@ -395,7 +380,8 @@ export default {
 
   created() {
     this.changePassForm['id']=this.$props.obj['id']
-    this.loadCounterparties()
+    if(!this.counterparties)
+      this.loadCounterparties()
     let clone = {};
     //глубокое копирование
     for (let key in this.obj) {
