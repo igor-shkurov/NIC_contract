@@ -54,6 +54,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         return user;
     }
 
+    public HttpStatus isAdmin() {
+        return (getCurrentUser().getRole() == User.Role.ADMIN) ? HttpStatus.OK : HttpStatus.FORBIDDEN;
+    }
+
     public User getUserById(long id) {
         Optional<User> opt = userDetailsRepo.findById(id);
         return opt.orElse(null);
