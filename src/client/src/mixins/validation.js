@@ -258,7 +258,6 @@ export const checkValid = {
             else {
                 console.log('Введенные данные для получения отчета прошли валидацию.')
             }
-            console.log(this.addForm)
         }
     }
 }

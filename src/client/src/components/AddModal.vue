@@ -73,8 +73,8 @@
                   class="fields-element__edit"
                   v-model="addForm['role']"
               >
-                <option value=0>USER</option>
-                <option value=1>ADMIN</option>
+                <option value='USER'>USER</option>
+                <option value='ADMIN'>ADMIN</option>
               </select>
             </div>
             <div
