@@ -156,7 +156,10 @@ export default {
           break
       }
 
-      this.checkAddForm()
+      if(this.$props.mode === 'users')
+        this.checkAddForm()
+      else
+        this.validation()
 
       if (this.isValidForm) {
         try {

@@ -322,6 +322,7 @@ export default {
 
     async removeObj() {
       let url =''
+      let ans = true;
       switch (this.$props.mode) {
         case 'contracts':
           url = `http://localhost:8080/api/contracts/delete/contract_id=${this.obj['id']}`
@@ -337,26 +338,31 @@ export default {
           break
         case 'users':
           url = `http://localhost:8080/api/users/delete/user_id=${this.obj['id']}`
+          ans = confirm('Вы уверены, что хотите удалить пользователя? Вместе с ним удалятся все закрепленные за этим пользователем договоры.')
           break
       }
-      try {
-        let response = await fetch(url, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': localStorage.getItem('access_token')
+      if(ans){
+        try {
+          let response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': localStorage.getItem('access_token')
+            }
+          })
+          if(response.ok) {
+            console.log(`Объект ${this.mode} с id ${this.obj['id']} успешно удален.`)
+            this.$emit('close')
+          } else if(response.status === 403) {
+            alert('Для удаления объекта нужны права администратора.')
+          } else if(response.status === 409) {
+            alert('Объект невозможно удалить из-за наличия привязанных к нему договоров.')
+          } else {
+            alert("Ошибка HTTP в удалении договора: " + response.status);
+            this.$emit('close')
           }
-        })
-        if(response.ok) {
-          console.log(`Объект ${this.mode} с id ${this.obj['id']} успешно удален.`)
-          this.$emit('close')
-        } else if(response.status === 403) {
-          alert('Для удаления объекта нужны права администратора.')
-        } else {
-          alert("Ошибка HTTP в удалении договора: " + response.status);
-          this.$emit('close')
+        } catch(error) {
+          console.error(error)
         }
-      } catch(error) {
-        console.error(error)
       }
     },
     async changePassword(){

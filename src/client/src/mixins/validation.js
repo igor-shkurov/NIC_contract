@@ -77,14 +77,13 @@ export const checkValid = {
             let msgElem = document.getElementById('validation-message')
             msgElem.innerHTML=''
             let validMsg = this.checkValidation()
-
             if(validMsg) {
                 const msg = document.createElement('span')
                 msg.innerHTML = validMsg
                 msgElem.appendChild(msg)
             }
             else {
-
+                console.log(validMsg)
                 console.log('Введенные данные для получения отчета прошли валидацию.')
             }
         },
