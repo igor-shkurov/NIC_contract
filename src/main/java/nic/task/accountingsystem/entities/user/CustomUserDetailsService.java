@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,13 +29,20 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public HttpStatus saveUser(UserDTO dto, boolean isModify) {
         User user = mapper.DTOtoUser(dto);
-        if (userDetailsRepo.findUserByUsername(user.getUsername()) != null && !isModify)   {
-             return HttpStatus.CONFLICT;
+        if (!isModify) {
+            if (user.getRole() == User.Role.ADMIN) {
+                user.setExpirationDate(LocalDateTime.now().plusYears(100));
+            }
+            else {
+                user.setExpirationDate(LocalDateTime.now().plusMonths(6));
+            }
+            if (userDetailsRepo.findUserByUsername(user.getUsername()) != null)   {
+                return HttpStatus.CONFLICT;
+            }
         }
-        else {
-            userDetailsRepo.save(user);
-            return isModify ? HttpStatus.OK : HttpStatus.CREATED;
-        }
+
+        userDetailsRepo.save(user);
+        return isModify ? HttpStatus.OK : HttpStatus.CREATED;
     }
 
     @Override

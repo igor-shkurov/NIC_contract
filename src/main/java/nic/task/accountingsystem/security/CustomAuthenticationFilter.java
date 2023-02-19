@@ -19,6 +19,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         User user = (User) authentication.getPrincipal();
+        if (user.getRole() != User.Role.ADMIN) {
+            user.setExpirationDate(LocalDateTime.now().plusMonths(6));
+        }
 //        loginRepo.save(LoginRecord.construct(user));
         Algorithm algorithm = AlgorithmBuilder.algorithmInstance;
         String access_token = JWT.create()

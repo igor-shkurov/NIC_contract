@@ -17,25 +17,13 @@ public class SystemConfiguration {
     @Bean
     CommandLineRunner commandLineRunner(CustomUserDetailsService userDetailsService) {
         return args -> {
-            BCryptPasswordEncoder cryptPasswordEncoder = new BCryptPasswordEncoder();
-
             UserDTO administrator = new UserDTO();
             administrator.setFIO("Shkurov Igor Olegovich");
             administrator.setUsername("admin");
             administrator.setPassword("root");
             administrator.setRole(User.Role.ADMIN);
-            administrator.setExpirationDate(LocalDateTime.now().plusMonths(6));
 
             userDetailsService.saveUser(administrator, false);
-
-            UserDTO user = new UserDTO();
-            user.setFIO("Pyatizbyantsev Ilya Andreevich");
-            user.setUsername("aboba");
-            user.setPassword("snusik");
-            user.setRole(User.Role.USER);
-            user.setExpirationDate(LocalDateTime.now().plusMonths(6));
-
-            userDetailsService.saveUser(user, false);
         };
     }
 }
