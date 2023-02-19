@@ -1,7 +1,6 @@
 package nic.task.accountingsystem.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import nic.task.accountingsystem.entities.contract.Contract;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

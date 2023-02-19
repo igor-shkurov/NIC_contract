@@ -34,24 +34,23 @@ public class UserController {
         return new ResponseEntity<>(userService.isAdmin());
     }
 
-
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public ResponseEntity<Object> addUser(@RequestBody @Validated(UserDTO.New.class) UserDTO dto) {
+    public ResponseEntity<HttpStatus> addUser(@RequestBody @Validated(UserDTO.New.class) UserDTO dto) {
         return new ResponseEntity<>(userService.saveUser(dto, false));
     }
 
     @PostMapping(path = "/change_password", consumes = {"application/json"})
-    public ResponseEntity<Object> updatePassword(@RequestBody @Validated(UserDTO.PasswordOnly.class) UserDTO dto) {
+    public ResponseEntity<HttpStatus> updatePassword(@RequestBody @Validated(UserDTO.PasswordOnly.class) UserDTO dto) {
         return new ResponseEntity<>(userService.updatePassword(dto));
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public ResponseEntity<Object> updateUser(@RequestBody @Validated(UserDTO.Modify.class) UserDTO dto) {
+    public ResponseEntity<HttpStatus> updateUser(@RequestBody @Validated(UserDTO.Modify.class) UserDTO dto) {
         return new ResponseEntity<>(userService.updateUser(dto));
     }
 
     @DeleteMapping(path = "/delete/user_id={id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable("id") Long id) {
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") Long id) {
         return new ResponseEntity<>(userService.deleteUser(id));
     }
 }

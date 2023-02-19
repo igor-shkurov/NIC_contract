@@ -3,7 +3,6 @@ package nic.task.accountingsystem.entities.counterparty_contract;
 import nic.task.accountingsystem.entities.ContractType;
 import nic.task.accountingsystem.entities.contract.Contract;
 import nic.task.accountingsystem.entities.counterparty.Counterparty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.*;
 import java.time.LocalDate;

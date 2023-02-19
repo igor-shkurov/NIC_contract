@@ -9,6 +9,7 @@ public class UserDTO {
     public interface New {}
     public interface Modify {}
     public interface PasswordOnly {}
+
     public interface PublicView {}
 
     @Null(groups = {New.class})
