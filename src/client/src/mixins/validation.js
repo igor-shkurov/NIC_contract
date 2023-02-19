@@ -75,15 +75,17 @@ export const checkValid = {
         validation(){
             this.$v.$touch()
             let msgElem = document.getElementById('validation-message')
+            if(this.cardHeader === 'этапа' || this.cardHeader === 'договора с контрагентом')
+                msgElem = document.getElementById('inserting-validation-message')
             msgElem.innerHTML=''
             let validMsg = this.checkValidation()
             if(validMsg) {
                 const msg = document.createElement('span')
                 msg.innerHTML = validMsg
                 msgElem.appendChild(msg)
+                console.log(msgElem)
             }
             else {
-                console.log(validMsg)
                 console.log('Введенные данные для получения отчета прошли валидацию.')
             }
         },

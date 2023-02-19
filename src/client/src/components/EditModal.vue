@@ -40,6 +40,7 @@
           >После изменений нажмите "Сохранить".</div>
 
           <div id="validation-message"></div>
+          <div v-if="this.cardHeader === 'этапа' || this.cardHeader === 'договора с контрагентом'" id="inserting-validation-message"></div>
 
           <div class="edit-fields">
             <div
