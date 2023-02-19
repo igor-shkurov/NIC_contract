@@ -44,8 +44,9 @@
 import { validationMixin } from 'vuelidate'
 import { required } from 'vuelidate/lib/validators'
 import {mapActions, mapGetters} from "vuex";
+import {checkAdmin} from "@/mixins/isAdmin";
 export default {
-  mixins: [validationMixin],
+  mixins: [validationMixin, checkAdmin],
   data() {
     return {
       mode: 'signIn',
@@ -80,8 +81,13 @@ export default {
         }                                                             // в другом формате аутентификация не срабатывала
         formBody = formBody.join("&");                                //
         await this.login(formBody)
-        if(this.isAuthorized)
+        if(this.isAuthorized) {
+          await this.checkAdmin()
+
+
           await this.$router.push({name: 'contractsList'});
+
+        }
 
       } else {
         console.log('Введенные данные не прошли валидацию.')

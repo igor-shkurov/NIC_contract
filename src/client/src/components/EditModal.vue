@@ -13,7 +13,7 @@
           <div class="edit-modal-controls">
             <button
                 class="edit-modal-controls__button"
-                @click="editMode ? editMode=false : editMode=true"
+                @click="getIsAdminFromLocalStorage()? (editMode ? editMode=false : editMode=true) : printAccessMessage()"
                 v-if="!editMode"
             >
               <img src="../assets/icons/edit.png" alt="">
@@ -27,7 +27,7 @@
             </button>
             <button
                 class="edit-modal-controls__button"
-                @click="removeObj"
+                @click="getIsAdminFromLocalStorage()? removeObj() : printAccessMessage()"
             >
               <img src="../assets/icons/remove.png" alt="">
               <div class="controls-button__header">Удалить</div>
@@ -209,6 +209,7 @@
 import {mapGetters, mapActions} from "vuex"
 import { checkValid} from "@/mixins/validation";
 import {inputElems} from "@/mixins/chooseInputFields";
+import {checkAdmin} from "@/mixins/isAdmin";
 
 export default {
   name: 'edit-modal',
@@ -222,7 +223,7 @@ export default {
     cardFields: Array,
     cardHeader: String
   },
-  mixins: [checkValid, inputElems],
+  mixins: [checkValid, inputElems, checkAdmin],
   data() {
     return {
       editMode: false,
