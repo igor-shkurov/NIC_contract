@@ -1,15 +1,12 @@
 package nic.task.accountingsystem.utility;
 
+import lombok.extern.slf4j.Slf4j;
 import nic.task.accountingsystem.entities.user.CustomUserDetailsService;
 import nic.task.accountingsystem.entities.user.User;
 import nic.task.accountingsystem.entities.user.UserDTO;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.time.LocalDateTime;
 
 @Slf4j
 @Configuration

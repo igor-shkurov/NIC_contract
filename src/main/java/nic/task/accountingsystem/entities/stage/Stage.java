@@ -1,8 +1,7 @@
 package nic.task.accountingsystem.entities.stage;
 
-import nic.task.accountingsystem.entities.contract.Contract;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import nic.task.accountingsystem.entities.contract.Contract;
 
 import javax.persistence.*;
 import java.time.LocalDate;

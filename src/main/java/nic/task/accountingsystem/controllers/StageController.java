@@ -28,17 +28,17 @@ public class StageController {
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public ResponseEntity<Object> addContract(@RequestBody @Validated({StageDTO.New.class}) StageDTO dto) {
+    public ResponseEntity<HttpStatus> addContract(@RequestBody @Validated({StageDTO.New.class}) StageDTO dto) {
         return new ResponseEntity<>(stageService.addStage(dto));
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public ResponseEntity<Object> updateStage(@RequestBody @Validated({StageDTO.Modify.class}) StageDTO dto) {
+    public ResponseEntity<HttpStatus> updateStage(@RequestBody @Validated({StageDTO.Modify.class}) StageDTO dto) {
         return new ResponseEntity<>(stageService.updateStage(dto));
     }
 
     @DeleteMapping(path = "/delete/stage_id={id}")
-    public ResponseEntity<Object> deleteStage(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteStage(@PathVariable Long id) {
         return new ResponseEntity<>(stageService.deleteStage(id));
     }
 }

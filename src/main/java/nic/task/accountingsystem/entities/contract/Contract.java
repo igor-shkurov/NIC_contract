@@ -4,7 +4,6 @@ import nic.task.accountingsystem.entities.ContractType;
 import nic.task.accountingsystem.entities.counterparty_contract.CounterpartyContract;
 import nic.task.accountingsystem.entities.stage.Stage;
 import nic.task.accountingsystem.entities.user.User;
-import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

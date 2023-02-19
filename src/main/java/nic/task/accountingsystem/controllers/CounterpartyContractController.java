@@ -29,17 +29,17 @@ public class CounterpartyContractController {
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public ResponseEntity<Object> addContract(@RequestBody @Validated({CounterpartyContractDTO.New.class}) CounterpartyContractDTO dto) {
+    public ResponseEntity<HttpStatus> addContract(@RequestBody @Validated({CounterpartyContractDTO.New.class}) CounterpartyContractDTO dto) {
         return new ResponseEntity<>(counterpartyContractService.addCounterpartyContract(dto));
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public ResponseEntity<Object> updateContract(@RequestBody @Validated(CounterpartyContractDTO.Modify.class)  CounterpartyContractDTO dto) {
+    public ResponseEntity<HttpStatus> updateContract(@RequestBody @Validated(CounterpartyContractDTO.Modify.class)  CounterpartyContractDTO dto) {
         return new ResponseEntity<>(counterpartyContractService.updateContract(dto));
     }
 
     @DeleteMapping(path = "/delete/contract_id={id}")
-    public ResponseEntity<Object> deleteContract(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteContract(@PathVariable Long id) {
         return new ResponseEntity<>(counterpartyContractService.deleteContract(id));
     }
 }
