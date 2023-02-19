@@ -106,6 +106,26 @@
                 <option value="WORK">Работы</option>
               </select>
             </div>
+
+            <div
+                class="edit-fields-element"
+                v-if="mode === 'users'"
+            >
+              <div class="fields-element__title">
+                Роль пользователя:
+              </div>
+              <div class="fields-element__value" id="select-contractType__value">
+                {{ this.$props.obj['role'] }}
+              </div>
+              <select
+                  class="fields-element__edit"
+                  v-model="newObj['role']"
+                  v-if="editMode"
+              >
+                <option value="USER">USER</option>
+                <option value="ADMIN">ADMIN</option>
+              </select>
+            </div>
           </div>
           <div class="edit-modal-controls" v-if="$props.mode === 'users'" id="changePassBtn">
             <button

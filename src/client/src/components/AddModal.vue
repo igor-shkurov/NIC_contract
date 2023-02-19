@@ -62,7 +62,34 @@
                   <option value="WORK">Работы</option>
                 </select>
             </div>
-
+            <div
+                class="add-fields-element"
+                v-if="mode === 'users'"
+            >
+              <div class="fields-element__title">
+                Роль пользователя:
+              </div>
+              <select
+                  class="fields-element__edit"
+                  v-model="addForm['role']"
+              >
+                <option value=0>USER</option>
+                <option value=1>ADMIN</option>
+              </select>
+            </div>
+            <div
+                class="add-fields-element"
+                v-if="mode === 'users'"
+            >
+              <div class="fields-element__title">
+                Пароль:
+              </div>
+              <input
+                  class="fields-element__edit"
+                  v-model="addForm['password']"
+                  type="password"
+              >
+            </div>
           </div>
           <button class="add-button" @click="addObj">
             <div class="controls-button__header"> Добавить</div>
@@ -129,7 +156,7 @@ export default {
           break
       }
 
-      this.validation()
+      this.checkAddForm()
 
       if (this.isValidForm) {
         try {

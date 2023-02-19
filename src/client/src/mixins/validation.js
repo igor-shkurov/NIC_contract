@@ -13,7 +13,8 @@ export const checkValid = {
     validations: {
         userForm: {
             FIO: { required, minLength: minLength(5), maxLength: maxLength(50), alphaWithoutWhitespaces},
-            username : { required , minLength: minLength(3), maxLength: maxLength(50)}
+            username : { required , minLength: minLength(3), maxLength: maxLength(50)},
+            role: { required}
         },
         contractForm: {
             name: { required, minLength: minLength(3), maxLength: maxLength(30)},
@@ -62,6 +63,12 @@ export const checkValid = {
             id: {},
             password: {required, minLength: minLength(3), maxLength: maxLength(50)},
             confirmPassword: {required}
+        },
+        addForm: {
+            FIO: { required, minLength: minLength(5), maxLength: maxLength(50), alphaWithoutWhitespaces},
+            username : { required , minLength: minLength(3), maxLength: maxLength(50)},
+            role: { required},
+            password : { required, minLength: minLength(3), maxLength: maxLength(50)}
         }
     },
     methods: {
@@ -217,6 +224,41 @@ export const checkValid = {
             else {
                 console.log('Введенные данные для получения отчета прошли валидацию.')
             }
+        },
+        checkAddForm() {
+            let s = ''
+            this.$v.changePassForm.$touch()
+            let msgElem = document.getElementById('validation-message')
+            msgElem.innerHTML=''
+
+            let form = this.$v.addForm
+            if (form.FIO.$invalid) {
+                this.isValidForm = false
+                s = 'ФИО пользователя должно содержать от 5 до 50 символов(только букв, латиницы/кириллицы).'
+            } else if (form.username.$invalid) {
+                this.isValidForm = false
+                s = 'Имя пользователя(username) должно содержать от 3 до 50 символов(букв, цифр и символов).'
+            } else if (form.role.$invalid) {
+                this.isValidForm = false
+                s = 'Введите роль пользователя.'
+            } else if (form.password.$invalid) {
+                this.isValidForm = false
+                s = 'Новый пароль должен содержать от 3 до 50 символов(букв, цифр и символов).'
+            } else if (form.$error) {
+                this.isValidForm = false
+                s = 'Пожалуйста, введите все поля.'
+            } else this.isValidForm = true
+
+            let validMsg = s
+            if(validMsg) {
+                const msg = document.createElement('span')
+                msg.innerHTML = validMsg
+                msgElem.appendChild(msg)
+            }
+            else {
+                console.log('Введенные данные для получения отчета прошли валидацию.')
+            }
+            console.log(this.addForm)
         }
     }
 }
