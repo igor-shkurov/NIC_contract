@@ -83,7 +83,6 @@ export const checkValid = {
                 const msg = document.createElement('span')
                 msg.innerHTML = validMsg
                 msgElem.appendChild(msg)
-                console.log(msgElem)
             }
             else {
                 console.log('Введенные данные для получения отчета прошли валидацию.')
@@ -216,7 +215,6 @@ export const checkValid = {
                 s = 'Подтвержденный пароль не совпадает с введенным выше'
             } else this.isValidForm = true
             let validMsg = s
-            console.log(s)
             if(validMsg) {
                 const msg = document.createElement('span')
                 msg.innerHTML = validMsg

@@ -294,7 +294,6 @@ export default {
       this.validation()
 
       if(this.isValidForm){
-        console.log('Валидация прошла успешно.')
         this.editMode = false
         try {
           let response = await fetch(url, {
@@ -375,7 +374,6 @@ export default {
 
         if(this.isValidForm){
           this.isOpenChangePass = !this.isOpenChangePass
-          console.log('Валидация прошла успешно.')
           let obj = {
             id: this.changePassForm.id,
             password: this.changePassForm.password
