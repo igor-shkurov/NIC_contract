@@ -8,6 +8,12 @@ services:
     depends_on:
       - mysqldb
       - mongodb
+  frontend_server:
+    build: ./src/client
+    ports:
+      - 8081:8081
+    depends_on:
+      - backend_server
   mysqldb:
     image: "mysql:8.0.25"
     restart: always

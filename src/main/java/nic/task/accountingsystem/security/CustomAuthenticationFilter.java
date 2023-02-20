@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import nic.task.accountingsystem.entities.user.User;
 import nic.task.accountingsystem.security.jwt.AlgorithmBuilder;
 import nic.task.accountingsystem.security.jwt.JWTUtils;
+import nic.task.accountingsystem.utility.LoginRecord;
 import nic.task.accountingsystem.utility.LoginRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,7 +46,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         if (user.getRole() != User.Role.ADMIN) {
             user.setExpirationDate(LocalDateTime.now().plusMonths(6));
         }
-//        loginRepo.save(LoginRecord.construct(user));
+        loginRepo.save(LoginRecord.construct(user));
         Algorithm algorithm = AlgorithmBuilder.algorithmInstance;
         String access_token = JWT.create()
                 .withSubject(user.getUsername())
