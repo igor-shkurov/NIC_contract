@@ -4,7 +4,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.math3.util.Pair;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.server.Http2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +63,7 @@ public class CounterpartyService {
     public HttpStatus deleteCounterparty(long id) {
         Optional<Counterparty> opt = counterpartyRepo.findById(id);
         if (opt.isPresent()) {
-            if (opt.get().getCounterpartyContracts().isEmpty()) {
+            if (!opt.get().getCounterpartyContracts().isEmpty()) {
                 return HttpStatus.CONFLICT;
             }
             counterpartyRepo.deleteById(id);

@@ -42,11 +42,8 @@ public class ContractService {
 
     public HttpStatus addContract(ContractDTO dto) {
         User currentUser = userDetailsService.getCurrentUser();
-        if (!Objects.equals(dto.getUserId(), currentUser.getId()) && currentUser.getRole() != User.Role.ADMIN) {
-            return HttpStatus.FORBIDDEN;
-        }
         Contract contract = mapper.DTOtoContract(dto);
-        contract.setAssociatedUser(userDetailsService.getCurrentUser());
+        contract.setAssociatedUser(currentUser);
 
         contractRepo.save(contract);
         return HttpStatus.CREATED;

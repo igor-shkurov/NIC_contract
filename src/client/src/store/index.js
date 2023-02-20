@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import router from '../router/index.js'
 
 Vue.use(Vuex)
 
@@ -11,10 +12,7 @@ export default new Vuex.Store({
         contractsCounterparty: [],
         users: [],
         cardHeader: [],
-        accessToken: '',
-        refreshToken: '',
-        isAuthorized: !!(localStorage.getItem('access_token')),
-        firstReport: ''
+        isAuthorized: !!(localStorage.getItem('access_token'))
     },
     getters: {
         getContracts(state) {
@@ -34,13 +32,6 @@ export default new Vuex.Store({
         },
         getCardHeader(state) {
             return state.cardHeader
-        //},
-        },
-        getAccessToken(state) {
-            return state.accessToken
-        },
-        getRefreshToken(state) {
-            return state.refreshToken
         },
         checkAuthorized(state) {
             return state.isAuthorized
@@ -68,14 +59,13 @@ export default new Vuex.Store({
         SET_AUTHORIZED(state, payload) {
             state.isAuthorized = payload
         },
-        SET_ACCESS_TOKEN(state, payload) {
-            state.accessToken = payload
-        },
-        SET_REFRESH_TOKEN(state, payload) {
-            state.refreshToken = payload
-        },
-        SET_FIRST_REPORT(state, payload) {
-            state.firstReport = payload
+        UNAUTHORIZE(state) {
+            state.contracts = null
+            state.users = null
+            state.stages = null
+            state.counterparties = null
+            state.contractsCounterparty = null
+            state.isAuthorized = false
         }
     },
     actions: {
@@ -109,6 +99,8 @@ export default new Vuex.Store({
                     const contracts = await response.json();
                     commit("SET_CONTRACTS", contracts)
                     console.log('Договоры загружены успешно.')
+                } else if (response.status === 401) {
+                    await router.push({name: 'auth'})
                 } else {
                     console.log("Ошибка HTTP: " + response.status);
                 }
@@ -125,6 +117,8 @@ export default new Vuex.Store({
                     const stages = await response.json();
                     commit("SET_STAGES", stages)
                     console.log(`Этапы для договора №${id} загружены успешно.`)
+                } else if (response.status === 401) {
+                    await router.push({name: 'auth'})
                 } else {
                     alert("Ошибка HTTP: " + response.status);
                 }
@@ -141,6 +135,8 @@ export default new Vuex.Store({
                     const contractsCounterparty = await response.json();
                     commit("SET_CONTRACTS_COUNTERPARTY", contractsCounterparty)
                     console.log(`Договоры контрагентов для договора №${id} загружены успешно.`)
+                } else if (response.status === 401) {
+                    await router.push({name: 'auth'})
                 } else {
                     alert("Ошибка HTTP: " + response.status);
                 }
@@ -157,6 +153,8 @@ export default new Vuex.Store({
                     const counterparties = await response.json();
                     commit("SET_COUNTERPARTIES", counterparties)
                     console.log(`Перечень контрагентов успешно загружен.`)
+                } else if (response.status === 401) {
+                    await router.push({name: 'auth'})
                 } else {
                     alert("Ошибка HTTP: " + response.status);
                 }
@@ -173,69 +171,10 @@ export default new Vuex.Store({
                     const users = await response.json();
                     commit("SET_USERS", users)
                     console.log(`Пользователи успешно загружены.`)
-                } else {
-                    alert("Ошибка HTTP: " + response.status);
-                }
-            } catch(error) {
-                console.error(error)
-            }
-        },
-        async loadFirstReport({commit}, form) {
-            try {
-                let obj = {}
-                obj.beginDate = form.approxBeginDate
-                obj.endDate = form.approxEndDate
-                let response = await fetch(`http://localhost:8080/api/reports`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': localStorage.getItem('access_token')
-                    },
-                    body: JSON.stringify(obj)
-                })
-                if(response.ok) {
-                    let blob = await response.blob();
-                    let url = window.URL.createObjectURL(blob, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-                    let a = document.createElement('a');
-                    a.href = url;
-                    a.download = "contracts.xlsx";
-                    a.innerHTML = 'Ссылка на скачивание отчета с договорами за указанный период.'
-                    const firstLinkBlock = document.getElementById('firstReportLink')
-                    firstLinkBlock.innerHTML=''
-                    firstLinkBlock.appendChild(a);
-
-                    commit("SET_FIRST_REPORT", '')
-                    console.log(`Договоры за плановый период ${form.approxBeginDate}-${form.approxEndDate} успешно загружены.`)
-                } else {
-                    alert("Ошибка HTTP: " + response.status);
-                }
-            } catch(error) {
-                console.error(error)
-            }
-        },
-        async loadSecondReport({commit}, id) {
-            try {
-                let response = await fetch(`http://localhost:8080/api/reports/contract_id=${id}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `${localStorage.getItem('access_token')}`
-                    }
-                })
-                if(response.ok) {
-                    let blob = await response.blob();
-                    let url = window.URL.createObjectURL(blob, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                    let a = document.createElement('a');
-                    a.href = url;
-                    a.download = `stages${id}.xlsx`;
-                    a.innerHTML = 'Ссылка на скачивание отчета с этапами для выбранного договора.'
-                    const secondLinkBlock = document.getElementById('secondReportLink')
-                    secondLinkBlock.innerHTML=''
-                    secondLinkBlock.appendChild(a);
-
-                    commit("SET_SECOND_REPORT", '')
-                    console.log(`Этапы для договора с id ${id} успешно загружены.`)
+                } else if (response.status === 401) {
+                    await router.push({name: 'auth'})
+                } else if (response.status === 403) {
+                    await router.push({name: 'administrationForbidden'})
                 } else {
                     alert("Ошибка HTTP: " + response.status);
                 }
@@ -254,13 +193,8 @@ export default new Vuex.Store({
                 })
                 if (res.ok) {
                     let obj = await res.json()  // тут токены
-                    console.log(obj)
                     localStorage.setItem('access_token', `Bearer ${obj['access_token']}`)
                     localStorage.setItem('refresh_token', obj['refresh_token'])
-                    commit('SET_AUTHORIZED', true)
-                    commit('SET_ACCESS_TOKEN', `Bearer ${obj['access_token']}`)
-                    commit('SET_REFRESH_TOKEN', obj['refresh_token'])
-
                     commit('SET_AUTHORIZED', true)
                     console.log('Авторизация прошла успешно')
                 } else {
@@ -276,6 +210,9 @@ export default new Vuex.Store({
                 localStorage.setItem('refresh_token', '')
                 commit('SET_AUTHORIZED', false)
             }
+        },
+        logout({commit}){
+            commit('UNAUTHORIZE')
         }
     }
 })

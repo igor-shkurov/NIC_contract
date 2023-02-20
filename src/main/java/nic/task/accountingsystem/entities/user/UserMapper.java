@@ -23,7 +23,9 @@ public interface UserMapper {
 
     @AfterMapping
     default void encodePassword(@MappingTarget User user) {
-        String plainText = user.getPassword();
-        user.setPassword(encoder.encode(plainText));
+        if (user.getPassword() != null) {
+            String plainText = user.getPassword();
+            user.setPassword(encoder.encode(plainText));
+        }
     }
 }

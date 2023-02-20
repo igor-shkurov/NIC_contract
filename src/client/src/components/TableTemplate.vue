@@ -31,6 +31,8 @@
 
 <script>
 
+import {mapActions, mapGetters} from "vuex";
+
 export default {
   name: "TableTemplate.vue",
   data() {
@@ -42,7 +44,14 @@ export default {
     arrData: Array,
     mode: String
   },
+  computed: {
+    ...mapGetters(['getCounterparties']),
+    counterparties(){
+      return this.getCounterparties
+    }
+  },
   methods: {
+    ...mapActions(['loadCounterparties']),
     openModalEvent(id) {
       this.$emit('openModal', id)
     },
@@ -72,17 +81,16 @@ export default {
           keysElemData = ['name','contractType','counterpartyId', 'sum', 'approxBeginDate','approxEndDate','beginDate', 'endDate']
           break
         case 'users':
-          headers = ['ФИО', 'Логин', 'Пароль']
+          headers = ['ФИО', 'Логин', 'Роль']
           cardHeader = 'пользователя'
-          keysElemData = ['fio', 'username', 'password']
+          keysElemData = ['FIO', 'username', 'role']
       }
       return { fieldsHeaders: headers, cardHeader: cardHeader, keysElemData: keysElemData}
     },
     returnElemDataByKey(obj, key){
       if(key === 'counterpartyId'){
-        let counterparties = this.$store.getters.getCounterparties
         let id = obj[key]
-        return counterparties.find((elem)=>elem.id === id).name
+        return this.counterparties.find((elem)=>elem.id === id).name
       }
       if(key === 'contractType'){
         switch (obj[key]){
@@ -100,6 +108,9 @@ export default {
   created() {
     this.headers = this.getHeaders()
     this.$emit('sendHeaders', this.headers)
+    if(this.counterparties && this.counterparties.length === 0) {
+      this.loadCounterparties()
+    }
   }
 
 

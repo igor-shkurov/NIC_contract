@@ -13,7 +13,7 @@
           <div class="edit-modal-controls">
             <button
                 class="edit-modal-controls__button"
-                @click="editMode ? editMode=false : editMode=true"
+                @click="getIsAdminFromLocalStorage()? (editMode ? editMode=false : editMode=true) : printAccessMessage()"
                 v-if="!editMode"
             >
               <img src="../assets/icons/edit.png" alt="">
@@ -27,7 +27,7 @@
             </button>
             <button
                 class="edit-modal-controls__button"
-                @click="removeObj"
+                @click="getIsAdminFromLocalStorage()? removeObj() : printAccessMessage()"
             >
               <img src="../assets/icons/remove.png" alt="">
               <div class="controls-button__header">Удалить</div>
@@ -40,6 +40,7 @@
           >После изменений нажмите "Сохранить".</div>
 
           <div id="validation-message"></div>
+          <div v-if="this.cardHeader === 'этапа' || this.cardHeader === 'договора с контрагентом'" id="inserting-validation-message"></div>
 
           <div class="edit-fields">
             <div
@@ -106,6 +107,76 @@
                 <option value="WORK">Работы</option>
               </select>
             </div>
+
+            <div
+                class="edit-fields-element"
+                v-if="mode === 'users'"
+            >
+              <div class="fields-element__title">
+                Роль пользователя:
+              </div>
+              <div class="fields-element__value" id="select-contractType__value">
+                {{ this.$props.obj['role'] }}
+              </div>
+              <select
+                  class="fields-element__edit"
+                  v-model="newObj['role']"
+                  v-if="editMode"
+              >
+                <option value="USER">USER</option>
+                <option value="ADMIN">ADMIN</option>
+              </select>
+            </div>
+          </div>
+          <div class="edit-modal-controls" v-if="$props.mode === 'users'" id="changePassBtn">
+            <button
+                class="edit-modal-controls__button"
+                @click="isOpenChangePass? isOpenChangePass=false : isOpenChangePass=true"
+                v-if="!isOpenChangePass"
+            >
+              <img src="../assets/icons/key.png" alt="">
+              <div class="controls-button__header">
+                Сменить пароль
+              </div>
+            </button>
+            <button class="edit-modal-controls__button save-button" v-if="isOpenChangePass" @click="changePassword">
+              <img src="../assets/icons/key.png" alt="">
+              <div class="controls-button__header"> Сохранить новый пароль</div>
+            </button>
+          </div>
+          <div
+              class="edit-modal-control-warning"
+              v-if="isOpenChangePass"
+          >После ввода нажмите "Сохранить новый пароль".</div>
+          <div id="changePass-validation-message"></div>
+          <div
+              class="edit-fields"
+              v-if="isOpenChangePass"
+          >
+            <div class="edit-fields-element">
+              <div class="fields-element__title">
+                Новый пароль:
+              </div>
+              <input
+                  class="fields-element-password__edit"
+                  v-model="changePassForm['password']"
+                  type="password"
+                  placeholder="Введите пароль"
+              >
+            </div>
+            <div
+                class="edit-fields-element"
+            >
+              <div class="fields-element__title">
+                Подтверждение пароля:
+              </div>
+              <input
+                  class="fields-element-password__edit"
+                  v-model="changePassForm['confirmPassword']"
+                  type="password"
+                  placeholder="Подтвердите введенный пароль"
+              >
+            </div>
           </div>
         </div>
         <div
@@ -137,6 +208,8 @@
 
 import {mapGetters, mapActions} from "vuex"
 import { checkValid} from "@/mixins/validation";
+import {inputElems} from "@/mixins/chooseInputFields";
+import {checkAdmin} from "@/mixins/isAdmin";
 
 export default {
   name: 'edit-modal',
@@ -150,7 +223,7 @@ export default {
     cardFields: Array,
     cardHeader: String
   },
-  mixins: [checkValid],
+  mixins: [checkValid, inputElems, checkAdmin],
   data() {
     return {
       editMode: false,
@@ -162,28 +235,14 @@ export default {
       contractCounterpartyForm: {},
       counterpartyForm: {},
       stageForm: {},
+      isOpenChangePass: false,
+      changePassForm: {}
     }
   },
   computed: {
     ...mapGetters(['getCounterparties']),
     counterparties(){
       return this.getCounterparties
-    },
-    inputElemsKeys(){
-      let arr = []
-      this.$props.cardKeys.forEach(key => {
-        if (key !== 'contractType' && key !== 'counterpartyId')
-          arr.push(key)
-      })
-      return arr
-    },
-    inputElemsHeaders(){
-      let arr = []
-      this.$props.cardFields.forEach(header => {
-        if (header !== 'Тип договора' && header !== 'Организация-контрагент')
-          arr.push(header)
-      })
-      return arr
     },
     getCounterpartyName() {
       let counterparty = this.counterparties.find((counterparty) => {
@@ -235,7 +294,6 @@ export default {
       this.validation()
 
       if(this.isValidForm){
-        console.log('Валидация прошла успешно.')
         this.editMode = false
         try {
           let response = await fetch(url, {
@@ -249,6 +307,8 @@ export default {
           if (response.ok) {
             console.log(`Объект  ${this.mode} успешно отредактирован и сохранен.`)
             this.$emit('close')
+          } else if(response.status === 403) {
+            alert('Для редактирования объекта нужны права администратора.')
           } else {
             alert("Ошибка редактирования: " + response.status);
           }
@@ -263,6 +323,7 @@ export default {
 
     async removeObj() {
       let url =''
+      let ans = true;
       switch (this.$props.mode) {
         case 'contracts':
           url = `http://localhost:8080/api/contracts/delete/contract_id=${this.obj['id']}`
@@ -278,30 +339,75 @@ export default {
           break
         case 'users':
           url = `http://localhost:8080/api/users/delete/user_id=${this.obj['id']}`
+          ans = confirm('Вы уверены, что хотите удалить пользователя? Вместе с ним удалятся все закрепленные за этим пользователем договоры.')
           break
       }
-      try {
-        let response = await fetch(url, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': localStorage.getItem('access_token')
+      if(ans){
+        try {
+          let response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': localStorage.getItem('access_token')
+            }
+          })
+          if(response.ok) {
+            console.log(`Объект ${this.mode} с id ${this.obj['id']} успешно удален.`)
+            this.$emit('close')
+          } else if(response.status === 403) {
+            alert('Для удаления объекта нужны права администратора.')
+          } else if(response.status === 409) {
+            alert('Объект невозможно удалить из-за наличия привязанных к нему договоров.')
+          } else {
+            alert("Ошибка HTTP в удалении договора: " + response.status);
+            this.$emit('close')
           }
-        })
-        if(response.ok) {
-          console.log(`Объект ${this.mode} с id ${this.obj['id']} успешно удален.`)
-          this.$emit('close', true)
-        } else {
-          alert("Ошибка HTTP в удалении договора: " + response.status);
-          this.$emit('close', false)
+        } catch(error) {
+          console.error(error)
         }
-      } catch(error) {
-        console.error(error)
       }
     },
+    async changePassword(){
+      if(this.$props.mode === 'users') {  // доп защита
+
+        let url = 'http://localhost:8080/api/users/change_password'
+        this.checkChangePass()
+
+        if(this.isValidForm){
+          this.isOpenChangePass = !this.isOpenChangePass
+          let obj = {
+            id: this.changePassForm.id,
+            password: this.changePassForm.password
+          }
+          try {
+            let response = await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('access_token')
+              },
+              body: JSON.stringify(obj)
+            })
+            if (response.ok) {
+              console.log(`Новый пароль для пользователя с id {${this.changePassForm['id']}} установлен.`)
+              this.$emit('close')
+            } else {
+              alert("Ошибка установки нового пароля: " + response.status);
+            }
+          } catch (error) {
+            console.error(error)
+            this.$emit('close')
+          }
+        } else {
+          console.log('Введенный пароль не прошел валидацию')
+        }
+      }
+    }
   },
 
   created() {
-    this.loadCounterparties()
+    this.changePassForm['id']=this.$props.obj['id']
+    if(!this.counterparties)
+      this.loadCounterparties()
     let clone = {};
     //глубокое копирование
     for (let key in this.obj) {
@@ -425,10 +531,10 @@ button .edit-modal-cancel-btn > img {
   word-wrap: break-word;
   width: 100%;
 }
-.fields-element__value:hover{
+.fields-element__value:hover, .fields-element-password__edit:hover{
   background-color: #606060;
 }
-.fields-element__title{
+.fields-element__title {
   background-color: #ababab;
   display: flex;
   justify-content: center;
@@ -436,13 +542,13 @@ button .edit-modal-cancel-btn > img {
   border: 4px solid #454545;
   border-radius: 6px;
   width: 20%;
-  padding: 5px 0;
+  padding: 5px 5px;
   font-weight: 600;
   margin-right: 10px;
   text-align: center;
   text-shadow: 1px 0.5px 0 rgba(0,0,0,0.5);
 }
-.fields-element__value, .fields-element__edit {
+.fields-element__value, .fields-element__edit, .fields-element-password__edit {
   background-color: #525252;
   border: 4px solid #454545;
   border-radius: 6px;
@@ -451,8 +557,12 @@ button .edit-modal-cancel-btn > img {
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #FFFFFF;
 }
-.fields-element__edit{
+.fields-element-password__edit {
+  width: 40%;
+}
+.fields-element__edit {
   width: 40%;
   margin-left: 10px;
   background-color: #A0A0A0;
@@ -513,5 +623,8 @@ button .edit-modal-cancel-btn > img {
   text-align: center;
   font: inherit;
   padding: 5px 10px;
+}
+#changePassBtn {
+  margin-top: 15px;
 }
 </style>

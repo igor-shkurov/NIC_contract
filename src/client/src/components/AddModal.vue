@@ -9,6 +9,7 @@
         </div>
         <div class="add-modal-header-text">Добавление {{ this.cardHeader }}</div>
         <div id="validation-message"></div>
+        <div v-if="this.cardHeader === 'этапа' || this.cardHeader === 'договора с контрагентом'" id="inserting-validation-message"></div>
 
         <div class="add-modal-info">
           <div class="add-fields">
@@ -62,7 +63,34 @@
                   <option value="WORK">Работы</option>
                 </select>
             </div>
-
+            <div
+                class="add-fields-element"
+                v-if="mode === 'users'"
+            >
+              <div class="fields-element__title">
+                Роль пользователя:
+              </div>
+              <select
+                  class="fields-element__edit"
+                  v-model="addForm['role']"
+              >
+                <option value='USER'>USER</option>
+                <option value='ADMIN'>ADMIN</option>
+              </select>
+            </div>
+            <div
+                class="add-fields-element"
+                v-if="mode === 'users'"
+            >
+              <div class="fields-element__title">
+                Пароль:
+              </div>
+              <input
+                  class="fields-element__edit"
+                  v-model="addForm['password']"
+                  type="password"
+              >
+            </div>
           </div>
           <button class="add-button" @click="addObj">
             <div class="controls-button__header"> Добавить</div>
@@ -76,6 +104,7 @@
 <script>
 import { mapActions, mapGetters} from "vuex";
 import {checkValid} from "@/mixins/validation";
+import {inputElems} from "@/mixins/chooseInputFields";
 
 export default {
   name: "AddModal",
@@ -86,7 +115,7 @@ export default {
     cardFields: Array,
     cardHeader: String
   },
-  mixins: [checkValid],
+  mixins: [checkValid, inputElems],
   data(){
     return {
       addForm: {},
@@ -101,22 +130,6 @@ export default {
     ...mapGetters(['getCounterparties']),
     counterparties(){
       return this.getCounterparties
-    },
-    inputElemsKeys(){
-      let arr = []
-      this.$props.cardKeys.forEach(key => {
-        if (key !== 'contractType' && key !== 'counterpartyId')
-          arr.push(key)
-      })
-      return arr
-    },
-    inputElemsHeaders(){
-      let arr = []
-      this.$props.cardFields.forEach(header => {
-        if (header !== 'Тип договора' && header !== 'Организация-контрагент')
-          arr.push(header)
-      })
-      return arr
     }
   },
   methods: {
@@ -144,7 +157,10 @@ export default {
           break
       }
 
-      this.validation()
+      if(this.$props.mode === 'users')
+        this.checkAddForm()
+      else
+        this.validation()
 
       if (this.isValidForm) {
         try {
@@ -159,6 +175,8 @@ export default {
           if(response.ok) {
             console.log(`Добавление в ${this.$props.mode}...`)
             this.$emit('close')
+          } else if(response.status === 403) {
+            alert('Для добавления объекта нужны права администратора.')
           } else {
             alert("Ошибка HTTP в добавлении: " + response.status);
           }
@@ -173,7 +191,8 @@ export default {
     ...mapActions(['loadCounterparties'])
   },
   created() {
-    this.loadCounterparties()
+    if(!this.counterparties)
+      this.loadCounterparties()
   },
   updated() {
     switch (this.$props.mode) {

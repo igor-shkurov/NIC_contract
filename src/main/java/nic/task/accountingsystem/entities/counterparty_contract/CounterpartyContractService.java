@@ -84,8 +84,8 @@ public class CounterpartyContractService {
 
         CounterpartyContract contractToBeUpdated = getCounterpartyContractById(id);
 
-        if (!Objects.equals(contractToBeUpdated.getContract().getAssociatedUser().getId(), currentUser.getId()) ||
-            !Objects.equals(updatingContract.getContract().getAssociatedUser().getId(), currentUser.getId()) &&
+        if ((!Objects.equals(contractToBeUpdated.getContract().getAssociatedUser().getId(), currentUser.getId()) ||
+                !Objects.equals(updatingContract.getContract().getAssociatedUser().getId(), contractToBeUpdated.getContract().getAssociatedUser().getId())) &&
                 currentUser.getRole() != User.Role.ADMIN)
         {
             return HttpStatus.FORBIDDEN;

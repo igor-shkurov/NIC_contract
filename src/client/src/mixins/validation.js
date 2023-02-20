@@ -1,5 +1,7 @@
-import {alpha, maxLength, minLength, minValue, numeric, required} from "vuelidate/lib/validators";
+import {maxLength, minLength, minValue, numeric, required, helpers} from "vuelidate/lib/validators";
 import {validationMixin} from "vuelidate";
+
+const alphaWithoutWhitespaces = helpers.regex('alphaWithoutWhitespaces', /^[а-яА-ЯёЁa-zA-Z\s]*$/)
 
 export const checkValid = {
     data() {
@@ -10,9 +12,9 @@ export const checkValid = {
     mixins: [validationMixin],
     validations: {
         userForm: {
-            FIO: { required, minLength: minLength(5), maxLength: maxLength(50), alpha },
+            FIO: { required, minLength: minLength(5), maxLength: maxLength(50), alphaWithoutWhitespaces},
             username : { required , minLength: minLength(3), maxLength: maxLength(50)},
-            password : { required, minLength: minLength(3), maxLength: maxLength(50) }
+            role: { required}
         },
         contractForm: {
             name: { required, minLength: minLength(3), maxLength: maxLength(30)},
@@ -56,22 +58,33 @@ export const checkValid = {
         },
         secondReportForm: {
             contractId: {required}
+        },
+        changePassForm: {
+            id: {},
+            password: {required, minLength: minLength(3), maxLength: maxLength(50)},
+            confirmPassword: {required}
+        },
+        addForm: {
+            FIO: { required, minLength: minLength(5), maxLength: maxLength(50), alphaWithoutWhitespaces},
+            username : { required , minLength: minLength(3), maxLength: maxLength(50)},
+            role: { required},
+            password : { required, minLength: minLength(3), maxLength: maxLength(50)}
         }
     },
     methods: {
         validation(){
             this.$v.$touch()
             let msgElem = document.getElementById('validation-message')
+            if(this.cardHeader === 'этапа' || this.cardHeader === 'договора с контрагентом')
+                msgElem = document.getElementById('inserting-validation-message')
             msgElem.innerHTML=''
             let validMsg = this.checkValidation()
-
             if(validMsg) {
                 const msg = document.createElement('span')
                 msg.innerHTML = validMsg
                 msgElem.appendChild(msg)
             }
             else {
-
                 console.log('Введенные данные для получения отчета прошли валидацию.')
             }
         },
@@ -138,13 +151,10 @@ export const checkValid = {
                     form = this.$v.userForm
                     if (form.FIO.$invalid) {
                         this.isValidForm = false
-                        s = 'ФИО пользователя должно содержать от 5 до 50 символов(букв, цифр и символов).'
+                        s = 'ФИО пользователя должно содержать от 5 до 50 символов(только букв, латиницы/кириллицы).'
                     } else if (form.username.$invalid) {
                         this.isValidForm = false
                         s = 'Имя пользователя(username) должно содержать от 3 до 50 символов(букв, цифр и символов).'
-                    } else if (form.password.$invalid) {
-                        this.isValidForm = false
-                        s = 'Пароль пользователя должен содержать от 3 до 50 символов(букв, цифр и символов).'
                     } else if (form.$error) {
                         this.isValidForm = false
                         s = 'Пожалуйста, введите все поля.'
@@ -167,7 +177,6 @@ export const checkValid = {
 
 
                 case 'reports':
-                    console.log("i'm here")
                     if(this.formNumber === 1){
                         form = this.$v.firstReportForm
                         if (form.approxBeginDate.$invalid) {
@@ -187,6 +196,67 @@ export const checkValid = {
                     break
             }
             return s
+        },
+        checkChangePass() {
+            let s = ''
+            this.$v.changePassForm.$touch()
+            let msgElem = document.getElementById('changePass-validation-message')
+            msgElem.innerHTML=''
+
+            let form = this.$v.changePassForm
+            if (form.password.$invalid) {
+                this.isValidForm = false
+                s = 'Новый пароль должен содержать от 3 до 50 символов(букв, цифр и символов).'
+            } else if (form.$error) {
+                this.isValidForm = false
+                s = 'Пожалуйста, введите все поля.'
+            } else if (this.changePassForm.confirmPassword !== this.changePassForm.password) {
+                this.isValidForm = false
+                s = 'Подтвержденный пароль не совпадает с введенным выше'
+            } else this.isValidForm = true
+            let validMsg = s
+            if(validMsg) {
+                const msg = document.createElement('span')
+                msg.innerHTML = validMsg
+                msgElem.appendChild(msg)
+            }
+            else {
+                console.log('Введенные данные для получения отчета прошли валидацию.')
+            }
+        },
+        checkAddForm() {
+            let s = ''
+            this.$v.changePassForm.$touch()
+            let msgElem = document.getElementById('validation-message')
+            msgElem.innerHTML=''
+
+            let form = this.$v.addForm
+            if (form.FIO.$invalid) {
+                this.isValidForm = false
+                s = 'ФИО пользователя должно содержать от 5 до 50 символов(только букв, латиницы/кириллицы).'
+            } else if (form.username.$invalid) {
+                this.isValidForm = false
+                s = 'Имя пользователя(username) должно содержать от 3 до 50 символов(букв, цифр и символов).'
+            } else if (form.role.$invalid) {
+                this.isValidForm = false
+                s = 'Введите роль пользователя.'
+            } else if (form.password.$invalid) {
+                this.isValidForm = false
+                s = 'Новый пароль должен содержать от 3 до 50 символов(букв, цифр и символов).'
+            } else if (form.$error) {
+                this.isValidForm = false
+                s = 'Пожалуйста, введите все поля.'
+            } else this.isValidForm = true
+
+            let validMsg = s
+            if(validMsg) {
+                const msg = document.createElement('span')
+                msg.innerHTML = validMsg
+                msgElem.appendChild(msg)
+            }
+            else {
+                console.log('Введенные данные для получения отчета прошли валидацию.')
+            }
         }
     }
 }

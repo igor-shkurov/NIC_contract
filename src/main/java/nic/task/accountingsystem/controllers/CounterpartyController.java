@@ -30,17 +30,17 @@ public class CounterpartyController {
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public ResponseEntity<Object> addCounterparty(@RequestBody @Validated({CounterpartyDTO.New.class}) CounterpartyDTO dto) {
+    public ResponseEntity<HttpStatus> addCounterparty(@RequestBody @Validated({CounterpartyDTO.New.class}) CounterpartyDTO dto) {
         return new ResponseEntity<>(counterpartyService.addCounterparty(dto));
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public ResponseEntity<Object> updateCounterparty(@RequestBody @Validated({CounterpartyDTO.Modify.class}) CounterpartyDTO dto) {
+    public ResponseEntity<HttpStatus> updateCounterparty(@RequestBody @Validated({CounterpartyDTO.Modify.class}) CounterpartyDTO dto) {
         return new ResponseEntity<>(counterpartyService.updateCounterparty(dto));
     }
 
     @DeleteMapping(path = "/delete/counterparty_id={id}")
-    public ResponseEntity<Object> deleteCounterparty(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteCounterparty(@PathVariable Long id) {
         return new ResponseEntity<>(counterpartyService.deleteCounterparty(id));
     }
 }

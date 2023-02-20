@@ -116,21 +116,24 @@ public class ExcelExportService {
             }
 
             cell = row.createCell(1);
-            cell.setCellValue(contract.getName());
-
-            cell = row.createCell(2);
             cell.setCellValue(contract.getApproxBeginDate().toString());
 
-            cell = row.createCell(3);
+            cell = row.createCell(2);
             cell.setCellValue(contract.getApproxEndDate().toString());
 
-            cell = row.createCell(4);
+            cell = row.createCell(3);
             cell.setCellValue(contract.getBeginDate().toString());
 
-            cell = row.createCell(5);
+            cell = row.createCell(4);
             cell.setCellValue(contract.getEndDate().toString());
 
+            cell = row.createCell(5);
+            cell.setCellValue(contract.getName());
+
             cell = row.createCell(6);
+            cell.setCellValue(contract.getSum().floatValue());
+
+            cell = row.createCell(7);
             String str;
             switch (contract.getContractType()) {
                 case SUPPLY:
@@ -147,9 +150,6 @@ public class ExcelExportService {
                     break;
             }
             cell.setCellValue(str);
-
-            cell = row.createCell(7);
-            cell.setCellValue(contract.getSum().floatValue());
 
             cell = row.createCell(8);
             Cell cellCounterparty = row.createCell(9);

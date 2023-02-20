@@ -1,6 +1,5 @@
 package nic.task.accountingsystem.entities.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.validation.constraints.*;
@@ -10,13 +9,14 @@ public class UserDTO {
     public interface New {}
     public interface Modify {}
     public interface PasswordOnly {}
+
     public interface PublicView {}
 
     @Null(groups = {New.class})
     @NotNull(groups = {Modify.class, PasswordOnly.class})
     @Min(value = 1, groups = {Modify.class, PasswordOnly.class})
     @JsonView(PublicView.class)
-    private long id;
+    private Long id;
 
     @Null(groups = PasswordOnly.class)
     @NotBlank(groups = {New.class, Modify.class})
@@ -38,14 +38,15 @@ public class UserDTO {
     @Null(groups = {New.class, Modify.class, PasswordOnly.class})
     private LocalDateTime expirationDate;
 
-    @Null(groups = {New.class, Modify.class, PasswordOnly.class})
+    @Null(groups = {PasswordOnly.class})
+    @JsonView(PublicView.class)
     private User.Role role;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

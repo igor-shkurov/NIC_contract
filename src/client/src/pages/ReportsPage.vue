@@ -106,7 +106,7 @@ export default {
   },
   mixins: [checkValid],
   methods: {
-    ...mapActions(['loadFirstReport', "loadSecondReport", 'loadContracts']),
+    ...mapActions(['loadContracts']),
     formSubmit(formNumber) {
       this.formNumber = formNumber
       this.validation()
@@ -122,7 +122,68 @@ export default {
       } else {
         console.log('Данные для получения отчета не прошли валидацию.')
       }
-    }
+    },
+    async loadFirstReport(form) {
+      try {
+        let obj = {}
+        obj.beginDate = form.approxBeginDate
+        obj.endDate = form.approxEndDate
+        let response = await fetch(`http://localhost:8080/api/reports`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('access_token')
+          },
+          body: JSON.stringify(obj)
+        })
+        if(response.ok) {
+          let blob = await response.blob();
+          let url = window.URL.createObjectURL(blob, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+          let a = document.createElement('a');
+          a.href = url;
+          a.download = "contracts.xlsx";
+          a.innerHTML = 'Ссылка на скачивание отчета с договорами за указанный период.'
+          const firstLinkBlock = document.getElementById('firstReportLink')
+          firstLinkBlock.innerHTML=''
+          firstLinkBlock.appendChild(a);
+
+          console.log(`Договоры за плановый период ${form.approxBeginDate}-${form.approxEndDate} успешно загружены.`)
+        } else {
+          alert("Ошибка HTTP: " + response.status);
+        }
+      } catch(error) {
+        console.error(error)
+      }
+    },
+    async loadSecondReport(id) {
+      try {
+        let response = await fetch(`http://localhost:8080/api/reports/contract_id=${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${localStorage.getItem('access_token')}`
+          }
+        })
+        if(response.ok) {
+          let blob = await response.blob();
+          let url = window.URL.createObjectURL(blob, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          let a = document.createElement('a');
+          a.href = url;
+          a.download = `stages${id}.xlsx`;
+          a.innerHTML = 'Ссылка на скачивание отчета с этапами для выбранного договора.'
+          const secondLinkBlock = document.getElementById('secondReportLink')
+          secondLinkBlock.innerHTML=''
+          secondLinkBlock.appendChild(a);
+
+          console.log(`Этапы для договора с id ${id} успешно загружены.`)
+        } else {
+          alert("Ошибка HTTP: " + response.status);
+        }
+      } catch(error) {
+        console.error(error)
+      }
+    },
   },
   created(){
     if (!this.contracts.length)

@@ -1,7 +1,5 @@
 package nic.task.accountingsystem.controllers;
 
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import nic.task.accountingsystem.entities.contract.ContractDTO;
 import nic.task.accountingsystem.entities.contract.ContractService;
 import org.apache.commons.math3.util.Pair;
@@ -37,17 +35,17 @@ public class ContractController {
     }
 
     @PostMapping(path = "/add", consumes = {"application/json"})
-    public ResponseEntity<Object> addContract(@RequestBody @Validated({ContractDTO.New.class}) ContractDTO dto) {
+    public ResponseEntity<HttpStatus> addContract(@RequestBody @Validated({ContractDTO.New.class}) ContractDTO dto) {
         return new ResponseEntity<>(contractService.addContract(dto));
     }
 
     @PutMapping(path = "/update", consumes = {"application/json"})
-    public ResponseEntity<Object> updateContract(@RequestBody @Validated({ContractDTO.Modify.class}) ContractDTO dto) {
+    public ResponseEntity<HttpStatus> updateContract(@RequestBody @Validated({ContractDTO.Modify.class}) ContractDTO dto) {
         return new ResponseEntity<>(contractService.updateContract(dto));
     }
 
     @DeleteMapping(path = "/delete/contract_id={id}")
-    public ResponseEntity<Object> deleteContract(@PathVariable("id") Long id) {
+    public ResponseEntity<HttpStatus> deleteContract(@PathVariable("id") Long id) {
         return new ResponseEntity<>(contractService.deleteContract(id));
     }
 }

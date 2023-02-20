@@ -9,7 +9,7 @@
       <div class="list-all-container">
         <button
             class="table-add-button"
-            @click="isOpenAddModal=true"
+            @click="getIsAdminFromLocalStorage()? isOpenAddModal=true : printAccessMessage()"
         >
           <img src="../assets/icons/add.png" alt="">
           <div class="table-add-button__header">Добавить</div>
@@ -51,6 +51,7 @@ import {mapActions, mapGetters} from 'vuex'
 import EditModal from '../components/EditModal.vue'
 import TableTemplate from '../components/TableTemplate'
 import AddModal from "../components/AddModal";
+import {checkAdmin} from "@/mixins/isAdmin";
 
 export default {
   name: 'ListAll',
@@ -63,6 +64,7 @@ export default {
     mode: String,
     inserting: Object
   },
+  mixins: [checkAdmin],
   data() {
       return {
         arrData: null,
@@ -232,9 +234,9 @@ export default {
   .bordered tr:last-child td:last-child {
     border-radius: 0 0 6px 0;
   }
-  th:nth-child(1) {
-    width: 17%;
-  }
+  /*th:nth-child(1) {*/
+  /*  width: 17%;*/
+  /*}*/
   .table-add-button {
     align-self: flex-end;
     display: flex;
