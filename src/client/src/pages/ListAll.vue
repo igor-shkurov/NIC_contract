@@ -9,7 +9,8 @@
       <div class="list-all-container">
         <button
             class="table-add-button"
-            @click="getIsAdminFromLocalStorage()? isOpenAddModal=true : printAccessMessage()"
+            @click="isOpenAddModal=true"
+            id="addButton"
         >
           <img src="../assets/icons/add.png" alt="">
           <div class="table-add-button__header">Добавить</div>
@@ -158,6 +159,16 @@ export default {
     },
   created() {
     this.loadData()
+  },
+  mounted() {
+    let val = this.getIsAdminFromLocalStorage()
+    const btn = document.getElementById('addButton')
+    if(!val){
+      btn.disabled=true
+    }
+    else {
+      btn.disabled = false
+    }
   }
 }
 </script>
@@ -263,5 +274,13 @@ export default {
     display: flex;
     align-items: center;
     margin-left: 3px;
+  }
+  #addButton:disabled{
+    background-color: #454545;
+    color: grey;
+  }
+  #addButton:disabled:hover{
+    transform: translateY(0px);
+    cursor: default;
   }
 </style>

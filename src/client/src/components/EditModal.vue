@@ -12,9 +12,10 @@
         <div class="edit-modal-info">
           <div class="edit-modal-controls">
             <button
-                class="edit-modal-controls__button"
-                @click="getIsAdminFromLocalStorage()? (editMode ? editMode=false : editMode=true) : printAccessMessage()"
+                class="edit-modal-controls__button editButton"
+                @click="editMode ? editMode=false : editMode=true"
                 v-if="!editMode"
+
             >
               <img src="../assets/icons/edit.png" alt="">
               <div class="controls-button__header">
@@ -26,8 +27,8 @@
               <div class="controls-button__header"> Сохранить</div>
             </button>
             <button
-                class="edit-modal-controls__button"
-                @click="getIsAdminFromLocalStorage()? removeObj() : printAccessMessage()"
+                class="edit-modal-controls__button removeButton"
+                @click="removeObj"
             >
               <img src="../assets/icons/remove.png" alt="">
               <div class="controls-button__header">Удалить</div>
@@ -433,6 +434,27 @@ export default {
         this.userForm = this.newObj
         break
     }
+  },
+  mounted() {
+    let val = this.getIsAdminFromLocalStorage()
+    const btns = document.getElementsByClassName('editButton')
+    const btns2 = document.getElementsByClassName('removeButton')
+    if(!val){
+      for(let i=0; i<btns.length;i++){
+        btns[i].disabled = true
+      }
+      for(let i=0; i<btns2.length;i++){
+        btns2[i].disabled = true
+      }
+    }
+    else {
+      for(let i=0; i<btns.length;i++){
+        btns[i].disabled = false
+      }
+      for(let i=0; i<btns2.length;i++){
+        btns2[i].disabled = false
+      }
+    }
   }
 }
 </script>
@@ -626,5 +648,14 @@ button .edit-modal-cancel-btn > img {
 }
 #changePassBtn {
   margin-top: 15px;
+}
+.editButton:disabled, .removeButton:disabled{
+  background-color: #454545;
+  color: grey;
+}
+.editButton:disabled:hover, .removeButton:disabled:hover{
+  transform: translateY(0px);
+  cursor: default;
+
 }
 </style>
