@@ -1,5 +1,12 @@
 <template>
+
   <div class="table-template">
+    <filters-module
+      :cardKeys="getHeaders()['keysElemData']"
+      :cardFields="getHeaders()['fieldsHeaders']"
+      v-if="isOpenFilters"
+    >
+    </filters-module>
     <table class="bordered">
       <thead>
         <tr>
@@ -32,9 +39,13 @@
 <script>
 
 import {mapActions, mapGetters} from "vuex";
+import FiltersModule from "@/components/FiltersModule";
 
 export default {
   name: "TableTemplate.vue",
+  components: {
+    'filters-module': FiltersModule
+  },
   data() {
     return {
       headers: null,
@@ -42,7 +53,8 @@ export default {
   },
   props: {
     arrData: Array,
-    mode: String
+    mode: String,
+    isOpenFilters: Boolean
   },
   computed: {
     ...mapGetters(['getCounterparties']),
