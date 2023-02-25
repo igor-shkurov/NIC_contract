@@ -4,6 +4,7 @@
     <filters-module
       :cardKeys="getHeaders()['keysElemData']"
       :cardFields="getHeaders()['fieldsHeaders']"
+      :mode="this.mode"
       v-if="isOpenFilters"
     >
     </filters-module>

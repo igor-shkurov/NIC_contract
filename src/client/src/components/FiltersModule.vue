@@ -1,13 +1,9 @@
 <template>
   <div class="filters-module">
     <div class="module-header">Фильтры:</div>
+    <div class="module-tip"> Введите значения фильтров, которые хотите применить (необязательно все). </div>
     <form class="filter-form" @submit.prevent="showFiltered()">
       <div class="filter-fields">
-        <div class="filter-elem-inner"
-             v-if="$props.mode === 'contractsCounterparty'"
-        >
-
-        </div>
         <div class="filter-elem-inner"
              v-for="(key, index) in inputElemsKeys"
              :key="index"
@@ -66,6 +62,53 @@
           </div>
         </div>
       </div>
+      <div class="filter-elem-inner"
+           v-if="$props.mode === 'contractsCounterparty'"
+      >
+        <div class="filter-elem__header"> Организация-контрагент:</div>
+        <div class="filter-elem__field">
+          <select
+              class="filter-elem-field__select"
+              v-model="filters['counterpartyId']"
+          >
+            <option
+                v-for="(counterparty, index) in this.counterparties"
+                :key="index"
+                :value="counterparty.id">
+              {{counterparty.name}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-elem-inner"
+           v-if="$props.mode === 'contractsCounterparty' || $props.mode === 'contracts'"
+      >
+        <div class="filter-elem__header"> Тип договора:</div>
+        <div class="filter-elem__field">
+          <select
+              class="filter-elem-field__select"
+              v-model="filters['contractType']"
+          >
+            <option value="PURCHASE">Закупка</option>
+            <option value="SUPPLY">Поставка</option>
+            <option value="WORK">Работы</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-elem-inner"
+           v-if="$props.mode === 'users'"
+      >
+        <div class="filter-elem__header"> Роль пользователя:</div>
+        <div class="filter-elem__field">
+          <select
+              class="filter-elem-field__select"
+              v-model="filters['role']"
+          >
+            <option value='USER'>USER</option>
+            <option value='ADMIN'>ADMIN</option>
+          </select>
+        </div>
+      </div>
       <div class="filter-controls">
         <button
             class="filter-controls-button"
@@ -79,7 +122,6 @@
           Сбросить
         </button>
       </div>
-      NOTE: Фильтрация - UI продуман, реализация - в разработке, поэтому кнопки пока нерабочие.
     </form>
   </div>
 </template>
@@ -92,7 +134,8 @@ export default {
   name: "filters-module",
   props: {
     cardKeys: Array,
-    cardFields: Array
+    cardFields: Array,
+    mode: String
   },
   mixins: [inputElems],
   data(){
@@ -135,6 +178,11 @@ export default {
     color: #EFEFEF;
     text-shadow: 2px 2px 3px rgba(0,0,0,0.4);
   }
+  .module-tip{
+    font-style: italic;
+    margin-top: 3px;
+    color: #A0A0A0;
+  }
   .filter-fields {
     margin-top: 10px;
     display: flex;
@@ -146,15 +194,15 @@ export default {
     margin-bottom: 5px;
   }
   .filter-elem__header {
-    width: 21%;
+    width: 25%;
     justify-content: flex-start;
   }
   .filter-elem__field {
-    width: 78%;
+    width: 75%;
     display: flex;
     margin-left: 10px;
   }
-  .filter-elem-field__input {
+  .filter-elem-field__input, .filter-elem-field__select {
     background-color: #929292;
     border: 4px solid #454545;
     border-radius: 6px;
@@ -165,6 +213,9 @@ export default {
     color: #FFFFFF;
     margin-left: 10px;
     width: 260px;
+  }
+  .filter-elem-field__input:hover {
+
   }
 
   .filter-elem__field, .filter-elem__header {
