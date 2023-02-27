@@ -6,7 +6,14 @@
     <div
         :class="this.inserting.isInserted ? '' : 'mainWindow'"
     >
-      <div class="list-all-container">
+      <div class="btns-inner">
+        <button
+            class="table-add-button"
+            @click="isOpenFilters=!isOpenFilters"
+        >
+          <img src="../assets/icons/filter.png" alt="">
+          <div class="table-add-button__header">{{isOpenFilters? 'Скрыть фильтры' : 'Показать фильтры'}}</div>
+        </button>
         <button
             class="table-add-button"
             @click="isOpenAddModal=true"
@@ -15,9 +22,12 @@
           <img src="../assets/icons/add.png" alt="">
           <div class="table-add-button__header">Добавить</div>
         </button>
+      </div>
+      <div class="list-all-container">
         <table-template
-            :arr-data="this.getArrData()"
+            :arr-data="this.arrData"
             :mode="this.mode"
+            :is-open-filters="isOpenFilters"
             @openModal="openModalWindow"
             @sendHeaders="getHeaders"
         >
@@ -68,13 +78,13 @@ export default {
   mixins: [checkAdmin],
   data() {
       return {
-        arrData: null,
         isOpenModal: false,
         openObj: null,
         isOpenAddModal: false,
         cardFields: null,
         cardHeader:  null,
-        cardKeys: null
+        cardKeys: null,
+        isOpenFilters: false
       }
     },
     computed: {
@@ -93,11 +103,26 @@ export default {
       },
       users() {
         return this.getUsers
+      },
+      arrData() {
+        switch(this.mode) {
+          case 'contracts':
+            return this.contracts
+          case 'counterparties':
+            return this.counterparties
+          case 'stages':
+            return this.stages
+          case 'contractsCounterparty':
+            return this.contractsCounterparty
+          case 'users':
+            return this.users
+        }
+        return ''
       }
     },
     methods: {
-      openModalWindow(ind) {
-        this.openObj = this.arrData[ind]
+      openModalWindow(obj) {
+        this.openObj = obj
         this.isOpenModal = true
       },
       closeEditModal() {
@@ -115,28 +140,6 @@ export default {
         this.cardKeys = headers.keysElemData
       },
       ...mapActions(['loadContracts', 'loadCounterparties', 'loadStages', 'loadContractsCounterparty', 'loadUsers']),
-      getArrData() {
-        let data = null
-        switch(this.mode) {
-          case 'contracts':
-            data = this.contracts
-            break
-          case 'counterparties':
-            data = this.counterparties
-            break
-          case 'stages':
-            data = this.stages
-            break
-          case 'contractsCounterparty':
-            data = this.contractsCounterparty
-            break
-          case 'users':
-            data=this.users
-            break
-        }
-        this.arrData = data
-        return data
-      },
       loadData() {
         switch (this.mode){
           case 'contracts':
@@ -194,8 +197,8 @@ export default {
   tr:nth-child(2) th:first-child{border-left: 1px solid #FFF;}
   .bordered {
     border: solid #fff 1px;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
+    /*-moz-border-radius: 6px;*/
+    /*-webkit-border-radius: 6px;*/
     border-radius: 6px;
   }
   .bordered tr:hover {
@@ -258,6 +261,7 @@ export default {
     border: 2px solid #454545;
     border-radius: 6px;
     padding: 3px 10px;
+    margin-left: 3px;
   }
   .table-add-button:hover{
     transform: translateY(-2px);
@@ -267,13 +271,19 @@ export default {
     transform: translateY(2px);
     background-color: #606060;
   }
-  .table-add-button >img {
+  .table-add-button > img {
     width: 30px;
   }
   .table-add-button__header{
     display: flex;
     align-items: center;
     margin-left: 3px;
+  }
+  .btns-inner {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 100%;
   }
   #addButton:disabled{
     background-color: #454545;
