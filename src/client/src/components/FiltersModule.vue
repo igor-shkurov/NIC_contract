@@ -2,7 +2,10 @@
   <div class="filters-module">
     <div class="module-header">Фильтры:</div>
     <div class="module-tip"> Введите значения фильтров, которые хотите применить (необязательно все). </div>
-    <form class="filter-form" @submit.prevent="showFiltered()">
+
+    <div id="filter-validation-msg"></div>
+
+    <form class="filter-form" @submit.prevent="">
       <div class="filter-fields">
         <div class="filter-elem-inner"
              v-for="(key, index) in inputElemsKeys"
@@ -57,7 +60,7 @@
                 :type="'text'"
                 class="filter-elem-field__input"
                 v-model="filters[key]"
-                placeholder="Название"
+                :placeholder="key === 'name'? 'Название': (key === 'address'? 'Адрес': (key === 'inn'? 'ИНН': (key === 'FIO'? 'ФИО': (key === 'username'? 'Логин': ''))))"
             >
           </div>
         </div>
@@ -71,6 +74,7 @@
               class="filter-elem-field__select"
               v-model="filters['counterpartyId']"
           >
+            <option value="" selected>Не выбрана---</option>
             <option
                 v-for="(counterparty, index) in this.counterparties"
                 :key="index"
@@ -89,6 +93,7 @@
               class="filter-elem-field__select"
               v-model="filters['contractType']"
           >
+            <option value="" selected>Не выбран---</option>
             <option value="PURCHASE">Закупка</option>
             <option value="SUPPLY">Поставка</option>
             <option value="WORK">Работы</option>
@@ -104,22 +109,25 @@
               class="filter-elem-field__select"
               v-model="filters['role']"
           >
+            <option value="" selected>Не выбрана---</option>
             <option value='USER'>USER</option>
             <option value='ADMIN'>ADMIN</option>
           </select>
         </div>
       </div>
+
       <div class="filter-controls">
         <button
             class="filter-controls-button"
-            type="submit"
+            @click="sendFilters"
         >
           Применить
         </button>
         <button
             class="filter-controls-button"
+            @click="$emit('sendFilters', null)"
         >
-          Сбросить
+          Сбросить фильтры
         </button>
       </div>
     </form>
@@ -129,6 +137,7 @@
 <script>
 import {inputElems} from "@/mixins/chooseInputFields";
 import {mapActions, mapGetters} from "vuex";
+import {checkValid} from "@/mixins/validation";
 
 export default {
   name: "filters-module",
@@ -137,7 +146,7 @@ export default {
     cardFields: Array,
     mode: String
   },
-  mixins: [inputElems],
+  mixins: [inputElems, checkValid],
   data(){
     return {
       filterHeaders: this.$props.cardFields,
@@ -152,10 +161,14 @@ export default {
     }
   },
   methods: {
-    showFiltered() {
-      console.log('hey, i show filtered')
-    },
-    ...mapActions(['loadCounterparties'])
+    ...mapActions(['loadCounterparties']),
+    sendFilters(){
+      this.filterValidation()
+      if(this.isValidForm)
+        this.$emit('sendFilters', this.filters)
+      else
+        console.log('Введенные для фильтра данные не прошли валидацию.')
+    }
   },
   created() {
     if(!this.counterparties)

@@ -25,7 +25,7 @@
       </div>
       <div class="list-all-container">
         <table-template
-            :arr-data="this.getArrData()"
+            :arr-data="this.arrData"
             :mode="this.mode"
             :is-open-filters="isOpenFilters"
             @openModal="openModalWindow"
@@ -78,7 +78,6 @@ export default {
   mixins: [checkAdmin],
   data() {
       return {
-        arrData: null,
         isOpenModal: false,
         openObj: null,
         isOpenAddModal: false,
@@ -104,11 +103,26 @@ export default {
       },
       users() {
         return this.getUsers
+      },
+      arrData() {
+        switch(this.mode) {
+          case 'contracts':
+            return this.contracts
+          case 'counterparties':
+            return this.counterparties
+          case 'stages':
+            return this.stages
+          case 'contractsCounterparty':
+            return this.contractsCounterparty
+          case 'users':
+            return this.users
+        }
+        return ''
       }
     },
     methods: {
-      openModalWindow(ind) {
-        this.openObj = this.arrData[ind]
+      openModalWindow(obj) {
+        this.openObj = obj
         this.isOpenModal = true
       },
       closeEditModal() {
@@ -126,28 +140,6 @@ export default {
         this.cardKeys = headers.keysElemData
       },
       ...mapActions(['loadContracts', 'loadCounterparties', 'loadStages', 'loadContractsCounterparty', 'loadUsers']),
-      getArrData() {
-        let data = null
-        switch(this.mode) {
-          case 'contracts':
-            data = this.contracts
-            break
-          case 'counterparties':
-            data = this.counterparties
-            break
-          case 'stages':
-            data = this.stages
-            break
-          case 'contractsCounterparty':
-            data = this.contractsCounterparty
-            break
-          case 'users':
-            data=this.users
-            break
-        }
-        this.arrData = data
-        return data
-      },
       loadData() {
         switch (this.mode){
           case 'contracts':

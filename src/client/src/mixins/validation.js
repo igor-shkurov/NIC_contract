@@ -69,13 +69,25 @@ export const checkValid = {
             username : { required , minLength: minLength(3), maxLength: maxLength(50)},
             role: { required},
             password : { required, minLength: minLength(3), maxLength: maxLength(50)}
+        },
+        filters: {
+            sum_from: {numeric},
+            sum_to: {numeric},
+            approxCredit_from: {numeric},
+            approxCredit_to: {numeric},
+            approxSalary_from: {numeric},
+            approxSalary_to: {numeric},
+            credit_from: {numeric},
+            credit_to: {numeric},
+            salary_from: {numeric},
+            salary_to: {numeric}
         }
     },
     methods: {
         validation(){
             this.$v.$touch()
             let msgElem = document.getElementById('validation-message')
-            if(this.cardHeader === 'этапа' || this.cardHeader === 'договора с контрагентом')
+            if(this.mode === 'stages' || this.mode === 'contractsCounterparty')
                 msgElem = document.getElementById('inserting-validation-message')
             msgElem.innerHTML=''
             let validMsg = this.checkValidation()
@@ -256,6 +268,26 @@ export const checkValid = {
             }
             else {
                 console.log('Введенные данные для получения отчета прошли валидацию.')
+            }
+        },
+        filterValidation() {
+            let validMsg = ''
+            this.$v.filters.$touch()
+            let msgElem = document.getElementById('filter-validation-msg')
+            msgElem.innerHTML=''
+
+            if (this.$v.filters.$invalid) {
+                this.isValidForm = false
+                validMsg = 'Начальные и конечные значения сумм / расходов должны являться числами.'
+            } else this.isValidForm = true
+
+            if(validMsg) {
+                const msg = document.createElement('span')
+                msg.innerHTML = validMsg
+                msgElem.appendChild(msg)
+            }
+            else {
+                console.log('Введенные данные для фильтра прошли валидацию.')
             }
         }
     }
