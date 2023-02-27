@@ -134,10 +134,13 @@ export default {
       } else {
         this.filtersObj =  filtersObj
         let inputKeys = ['name', 'FIO', 'address', 'inn', 'username']
-        let typeKeys = ['contractType', 'counterpartyId']
+        let typeKeys = ['contractType', 'counterpartyId', 'role']
         let fromKeys = {'sum_from':'sum', 'approxCredit_from':'approxCredit', 'approxSalary_from':'approxSalary', 'credit_from':'credit', 'salary_from':'salary'}
         let toKeys = {'sum_to':'sum', 'approxCredit_to':'approxCredit', 'approxSalary_to':'approxSalary', 'credit_to':'credit', 'salary_to':'salary'}
+        let fromDataKeys = {'approxBeginDate_from':'approxBeginDate', 'approxEndDate_from':'approxEndDate', 'beginDate_from':'beginDate', 'endDate_from':'endDate'}
+        let toDataKeys = {'approxBeginDate_to':'approxBeginDate', 'approxEndDate_to':'approxEndDate', 'beginDate_to':'beginDate', 'endDate_to':'endDate'}
         this.filteredData = this.arrData
+
         for(let key in filtersObj) {
 
           if(filtersObj[key]){
@@ -153,6 +156,12 @@ export default {
             }
             if (toKeys[key]) {
               this.filteredData = this.getFilteredByTo(this.filteredData, toKeys[key], filtersObj[key])
+            }
+            if (fromDataKeys[key]) {
+              this.filteredData = this.getFilteredByFromData(this.filteredData, fromDataKeys[key], filtersObj[key])
+            }
+            if (toDataKeys[key]) {
+              this.filteredData = this.getFilteredByToData(this.filteredData, toDataKeys[key], filtersObj[key])
             }
             this.isFiltered = true
           }

@@ -11,6 +11,12 @@ export const filtration = {
         },
         getFilteredByTo(arrData, keyTo, dataTo) {
             return arrData.filter(elem => parseInt(elem[keyTo]) <= parseInt(dataTo))
+        },
+        getFilteredByFromData(arrData, keyFrom, dataFrom) {
+            return arrData.filter(elem => new Date(elem[keyFrom]) >= new Date(dataFrom))
+        },
+        getFilteredByToData(arrData, keyTo, dataTo) {
+            return arrData.filter(elem => new Date(elem[keyTo]) <= new Date(dataTo))
         }
     }
 }
