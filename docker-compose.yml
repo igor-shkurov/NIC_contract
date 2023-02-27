@@ -10,6 +10,7 @@ services:
       - mongodb
   frontend_server:
     build: ./src/client
+    restart: always
     ports:
       - 8081:8081
     depends_on:
