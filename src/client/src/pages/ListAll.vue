@@ -32,6 +32,8 @@
             @sendHeaders="getHeaders"
         >
         </table-template>
+        <div :id="`${this.inserting.isInserted ? (this.mode === 'stages' ? 'stagesEmptyList' : 'contrCountEmptyList') : 'emptyList'}` " hidden ></div>
+        <div :id="`${this.inserting.isInserted ? (this.mode === 'stages' ? 'stagesFilteredNotFound' : 'contrCountFilteredNotFound') : 'filteredNotFound'}`" hidden></div>
         <edit-modal
             v-if="this.isOpenModal"
             @close="closeEditModal"

@@ -126,8 +126,8 @@ export default {
       }
       return obj[key]
     },
-    getFiltered(filtersObj) {
-      if(!filtersObj) { // if filtersObj === null then RESET FILTERS
+    async getFiltered(filtersObj) {
+      if(!filtersObj) { // if filtersObj === null from emit() ->> then RESET FILTERS
         this.isFiltered = false
         this.filtersObj =  {}
         this.filteredData = this.arrData
@@ -171,22 +171,42 @@ export default {
   },
   watch: {
     arrData: function (){
-      this.getFiltered(this.filtersObj)
+      let emptyList = {}
+      if(this.mode === 'contracts' || this.mode === 'counterparties' || this.mode === 'users')
+        emptyList = document.getElementById('emptyList')
+      else if(this.mode === 'stages')
+        emptyList = document.getElementById('stagesEmptyList')
+      else if(this.mode === 'contractsCounterparty')
+        emptyList = document.getElementById('contrCountEmptyList')
+
+      if(this.arrData.length === 0 && !emptyList.innerHTML){
+        emptyList.innerHTML = 'Список пуст. Добавьте объекты в список.'
+        emptyList.removeAttribute('hidden')
+        emptyList.classList.add('bordered')
+      } else if(this.arrData.length !== 0 && emptyList.innerHTML){
+        emptyList.innerHTML = ''
+        emptyList.setAttribute('hidden', 'hidden')
+        emptyList.classList.remove('bordered')
+        this.getFiltered(this.filtersObj)
+      }
     },
     filteredData: function () {   // отображение сообщения о том, что результаты по заданным фильтрам не найдены
-      const tr = document.getElementById('filteredResultsNotFound')
-      const body = document.getElementById('tableBody')
+      let filtWarning = {}
+      if(this.mode === 'contracts' || this.mode === 'counterparties' || this.mode === 'users')
+        filtWarning = document.getElementById('filteredNotFound')
+      else if(this.mode === 'stages')
+        filtWarning = document.getElementById('stagesFilteredNotFound')
+      else if(this.mode === 'contractsCounterparty')
+        filtWarning = document.getElementById('contrCountFilteredNotFound')
 
-      if (this.filteredData.length === 0 && !tr){
-        const tr = document.createElement('tr')
-        const td = document.createElement('td')
-        td.innerHTML = 'По заданным фильтрам результатов не найдено'
-        td.colSpan=this.getHeaders().fieldsHeaders.length
-        tr.id = 'filteredResultsNotFound'
-        tr.appendChild(td)
-        body.appendChild(tr)
-      } else if(this.filteredData.length !== 0 && tr){
-        body.removeChild(tr)
+      if (this.filteredData.length === 0 && !filtWarning.innerHTML && this.isFiltered && this.arrData.length !== 0){
+        filtWarning.innerHTML = 'По заданным фильтрам результатов не найдено'
+        filtWarning.removeAttribute('hidden')
+        filtWarning.classList.add('bordered')
+      } else if(this.filteredData.length !== 0 && filtWarning.innerHTML){
+        filtWarning.innerHTML = ''
+        filtWarning.setAttribute('hidden', 'hidden')
+        filtWarning.classList.remove('bordered')
       }
     }
   },
@@ -204,7 +224,7 @@ export default {
 .bordered {
   margin-top: 5px;
 }
-#filteredResultsNotFound {
+#filteredNotFound, #stagesFilteredNotFound, #contrCountFilteredNotFound, #emptyList, #stagesEmptyList, #contrCountEmptyList {
   font-size: 16px;
   font-style: italic;
   text-align: center;

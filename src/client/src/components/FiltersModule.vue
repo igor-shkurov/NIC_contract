@@ -125,7 +125,7 @@
         </button>
         <button
             class="filter-controls-button"
-            @click="$emit('sendFilters', null)"
+            @click="resetFilters"
         >
           Сбросить фильтры
         </button>
@@ -164,10 +164,24 @@ export default {
     ...mapActions(['loadCounterparties']),
     sendFilters(){
       this.filterValidation()
-      if(this.isValidForm)
+      if(this.isValidForm){
+        const inputs = document.getElementsByTagName('input')
+        for(let i=0; i<inputs.length; i++){
+          inputs[i].classList.add('filter-elem-field-input-accept')
+          setTimeout(()=>{inputs[i].classList.remove('filter-elem-field-input-accept')}, 200)
+        }
         this.$emit('sendFilters', this.filters)
-      else
+      } else
         console.log('Введенные для фильтра данные не прошли валидацию.')
+    },
+    resetFilters(){
+      this.filters = {}
+      const inputs = document.getElementsByTagName('input')
+      for(let i=0; i<inputs.length; i++){
+        inputs[i].classList.add('filter-elem-field-input-reset')
+        setTimeout(()=>{inputs[i].classList.remove('filter-elem-field-input-reset')}, 200)
+      }
+      this.$emit('sendFilters', null)
     }
   },
   created() {
@@ -227,8 +241,13 @@ export default {
     margin-left: 10px;
     width: 260px;
   }
-  .filter-elem-field__input:hover {
-
+  .filter-elem-field-input-reset {
+    border: 4px solid #dee05ea8;
+    transition: border 1ms ease-in-out;
+  }
+  .filter-elem-field-input-accept {
+    border: 4px solid #70e05ea8;
+    transition: border 1ms ease-in-out;
   }
 
   .filter-elem__field, .filter-elem__header {
@@ -254,6 +273,9 @@ export default {
   }
   .filter-controls-button:nth-child(1) {
     background-color: #A0A0A0;
+  }
+  .filter-controls-button:active{
+    background-color: #707070;
   }
   button:hover {
     transform: translateY(-2px);
