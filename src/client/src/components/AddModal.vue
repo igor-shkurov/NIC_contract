@@ -135,7 +135,6 @@ export default {
   methods: {
     async addObj() {
 
-      console.log('Добавляемый объект', this.addForm)
       let url = ''
       switch (this.$props.mode) {
         case 'contracts':

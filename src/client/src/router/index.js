@@ -14,7 +14,7 @@ export default new VueRouter ({
     routes: [
         {
             path: '/',
-            component: AuthPage
+            redirect: {name: 'auth'}
         },
         {
             path: '/auth',
