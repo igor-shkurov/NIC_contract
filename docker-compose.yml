@@ -21,7 +21,7 @@ services:
     volumes:
       - ./mysql-volume:/var/lib/mysql
     ports:
-      - 3307:3306
+      - 3306
     environment:
       MYSQL_DATABASE: contract_db
       MYSQL_USER: account
@@ -29,12 +29,12 @@ services:
       MYSQL_ROOT_PASSWORD: contract
     cap_add: [ SYS_NICE ]
   mongodb:
-    image: "mongo"
+    image: "mongo:4.4"
     restart: always
     volumes:
       - ./mongo-volume:/data/db
     ports:
-      - 27018:27017
+      - 27017
     environment:
       MONGO_INITDB_DATABASE: login_history
       MONGO_INITDB_ROOT_USERNAME: account

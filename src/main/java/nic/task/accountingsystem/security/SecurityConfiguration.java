@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.net.InetAddress;
 import java.util.Arrays;
 
 @Configuration
@@ -63,16 +64,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.formLogin();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-        String corsOrigin = "http://localhost:8081";
+        String corsOrigin = "*";
         http.addFilterBefore(new CorsFilter(corsConfigurationSource(corsOrigin)), AbstractPreAuthenticatedProcessingFilter.class);
     }
 
     private CorsConfigurationSource corsConfigurationSource(String corsOrigin) {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(corsOrigin));
+        configuration.setAllowedOriginPatterns(Arrays.asList(corsOrigin));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setMaxAge(10L);
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false);
         configuration.setAllowedHeaders(Arrays.asList("Accept", "Access-Control-Request-Method", "Access-Control-Request-Headers",
                  "Accept-Language", "Authorization", "Content-Type", "Request-Name", "Request-Surname", "Origin", "X-Request-AppVersion",
                  "X-Request-OsVersion", "X-Request-Device", "X-Requested-With"));
