@@ -1,5 +1,5 @@
 <template>
-  <form action="http://localhost:8081/contracts" class="sign-in" @submit.prevent="signIn">
+  <form action="http://host.docker.internal:8081/contracts" class="sign-in" @submit.prevent="signIn">
     <div class="form-container">
       <div class="form-header">Авторизация в учётной системе:</div>
       <div class="form-group-element">

@@ -277,19 +277,19 @@ export default {
       let url = ''
       switch (this.$props.mode) {
         case 'contracts':
-          url = `http://localhost:8080/api/contracts/update`
+          url = `http://host.docker.internal:8080/api/contracts/update`
           break
         case 'counterparties':
-          url = `http://localhost:8080/api/counterparties/update`
+          url = `http://host.docker.internal:8080/api/counterparties/update`
           break
         case 'stages':
-          url = `http://localhost:8080/api/stages/update`
+          url = `http://host.docker.internal:8080/api/stages/update`
           break
         case 'contractsCounterparty':
-          url = `http://localhost:8080/api/counterparty_contracts/update`
+          url = `http://host.docker.internal:8080/api/counterparty_contracts/update`
           break
         case 'users':
-          url = `http://localhost:8080/api/users/update`
+          url = `http://host.docker.internal:8080/api/users/update`
           break
       }
       this.validation()
@@ -327,19 +327,19 @@ export default {
       let ans = true;
       switch (this.$props.mode) {
         case 'contracts':
-          url = `http://localhost:8080/api/contracts/delete/contract_id=${this.obj['id']}`
+          url = `http://host.docker.internal:8080/api/contracts/delete/contract_id=${this.obj['id']}`
           break
         case 'counterparties':
-          url = `http://localhost:8080/api/counterparties/delete/counterparty_id=${this.obj['id']}`
+          url = `http://host.docker.internal:8080/api/counterparties/delete/counterparty_id=${this.obj['id']}`
           break
         case 'stages':
-          url = `http://localhost:8080/api/stages/delete/stage_id=${this.obj['id']}`
+          url = `http://host.docker.internal:8080/api/stages/delete/stage_id=${this.obj['id']}`
           break
         case 'contractsCounterparty':
-          url = `http://localhost:8080/api/counterparty_contracts/delete/contract_id=${this.obj['id']}`
+          url = `http://host.docker.internal:8080/api/counterparty_contracts/delete/contract_id=${this.obj['id']}`
           break
         case 'users':
-          url = `http://localhost:8080/api/users/delete/user_id=${this.obj['id']}`
+          url = `http://host.docker.internal:8080/api/users/delete/user_id=${this.obj['id']}`
           ans = confirm('Вы уверены, что хотите удалить пользователя? Вместе с ним удалятся все закрепленные за этим пользователем договоры.')
           break
       }
@@ -370,7 +370,7 @@ export default {
     async changePassword(){
       if(this.$props.mode === 'users') {  // доп защита
 
-        let url = 'http://localhost:8080/api/users/change_password'
+        let url = 'http://host.docker.internal:8080/api/users/change_password'
         this.checkChangePass()
 
         if(this.isValidForm){

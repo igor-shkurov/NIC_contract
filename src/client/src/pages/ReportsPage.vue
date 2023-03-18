@@ -128,7 +128,7 @@ export default {
         let obj = {}
         obj.beginDate = form.approxBeginDate
         obj.endDate = form.approxEndDate
-        let response = await fetch(`http://localhost:8080/api/reports`, {
+        let response = await fetch(`http://host.docker.internal:8080/api/reports`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ export default {
     },
     async loadSecondReport(id) {
       try {
-        let response = await fetch(`http://localhost:8080/api/reports/contract_id=${id}`, {
+        let response = await fetch(`http://host.docker.internal:8080/api/reports/contract_id=${id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
