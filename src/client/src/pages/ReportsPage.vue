@@ -128,7 +128,9 @@ export default {
         let obj = {}
         obj.beginDate = form.approxBeginDate
         obj.endDate = form.approxEndDate
-        let response = await fetch(`http://localhost:8080/api/reports`, {
+        let host = document.location.host
+        host = host.split(':')
+        let response = await fetch(`http://${host[0]}:8080/api/reports`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -158,7 +160,9 @@ export default {
     },
     async loadSecondReport(id) {
       try {
-        let response = await fetch(`http://localhost:8080/api/reports/contract_id=${id}`, {
+        let host = document.location.host
+        host = host.split(':')
+        let response = await fetch(`http://${host[0]}:8080/api/reports/contract_id=${id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

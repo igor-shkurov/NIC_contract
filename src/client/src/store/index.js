@@ -92,7 +92,9 @@ export default new Vuex.Store({
         },
         async loadContracts({commit}) {
             try {
-                let response = await fetch(`http://localhost:8080/api/contracts`, {
+                let host = document.location.host
+                host = host.split(':')
+                let response = await fetch( `http://${host[0]}:8080/api/contracts`, {
                     headers: {'Authorization': localStorage.getItem('access_token')}
                 });
                 if(response.ok){
@@ -110,7 +112,9 @@ export default new Vuex.Store({
         },
         async loadStages({commit}, id) {
             try {
-                let response = await fetch(`http://localhost:8080/api/stages/contract_id=${id}`, {
+                let host = document.location.host
+                host = host.split(':')
+                let response = await fetch( `http://${host[0]}:8080/api/stages/contract_id=${id}`, {
                     headers: {'Authorization': localStorage.getItem('access_token')}
                 });
                 if(response.ok) {
@@ -128,7 +132,9 @@ export default new Vuex.Store({
         },
         async loadContractsCounterparty({commit}, id) {
             try {
-                let response = await fetch(`http://localhost:8080/api/counterparty_contracts/contract_id=${id}`, {
+                let host = document.location.host
+                host = host.split(':')
+                let response = await fetch( `http://${host[0]}:8080/api/counterparty_contracts/contract_id=${id}`, {
                     headers: {'Authorization': localStorage.getItem('access_token')}
                 });
                 if(response.ok) {
@@ -146,7 +152,9 @@ export default new Vuex.Store({
         },
         async loadCounterparties({commit}) {
             try {
-                let response = await fetch(`http://localhost:8080/api/counterparties`, {
+                let host = document.location.host
+                host = host.split(':')
+                let response = await fetch( `http://${host[0]}:8080/api/counterparties`, {
                     headers: {'Authorization': localStorage.getItem('access_token')}
                 });
                 if(response.ok) {
@@ -164,7 +172,9 @@ export default new Vuex.Store({
         },
         async loadUsers({commit}) {
             try {
-                let response = await fetch(`http://localhost:8080/api/users`, {
+                let host = document.location.host
+                host = host.split(':')
+                let response = await fetch( `http://${host[0]}:8080/api/users`, {
                     headers: {'Authorization': localStorage.getItem('access_token')}
                 })
                 if(response.ok) {
@@ -184,7 +194,9 @@ export default new Vuex.Store({
         },
         async login({commit}, formBody) {
             try {
-                let res = await fetch('http://localhost:8080/login', {
+                let host = document.location.host
+                host = host.split(':')
+                let res = await fetch( `http://${host[0]}:8080/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
