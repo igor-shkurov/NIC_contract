@@ -22,7 +22,7 @@ services:
       MYSQL_ROOT_PASSWORD: contract
     cap_add: [ SYS_NICE ]
   mongodb:
-    image: "mongo"
+    image: "mongo:4.4"
     restart: always
     volumes:
       - ./mongo-volume:/data/db
