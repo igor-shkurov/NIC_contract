@@ -136,23 +136,25 @@ export default {
     async addObj() {
 
       let url = ''
+      let host = document.location.host
+      host = host.split(':')
       switch (this.$props.mode) {
         case 'contracts':
-          url = `http://host.docker.internal:8080/api/contracts/add`
+          url = `http://${host[0]}:8080/api/contracts/add`
           break
         case 'counterparties':
-          url = `http://host.docker.internal:8080/api/counterparties/add`
+          url = `http://${host[0]}:8080/api/counterparties/add`
           break
         case 'stages':
-          url = url = `http://host.docker.internal:8080/api/stages/add`
+          url = url = `http://${host[0]}:8080/api/stages/add`
           this.addForm['contractId']=this.id
           break
         case 'contractsCounterparty':
-          url = `http://host.docker.internal:8080/api/counterparty_contracts/add`
+          url = `http://${host[0]}:8080/api/counterparty_contracts/add`
           this.addForm['contractId']=this.id
           break
         case 'users':
-          url = `http://host.docker.internal:8080/api/users/add`
+          url = `http://${host[0]}:8080/api/users/add`
           break
       }
 

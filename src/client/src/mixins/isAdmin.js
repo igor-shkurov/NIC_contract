@@ -7,7 +7,9 @@ export const checkAdmin = {
     methods: {
         async checkAdmin(){
               try{
-                  let response = await fetch('http://host.docker.internal:8080/api/users/is_admin', {
+                  let host = document.location.host
+                  host = host.split(':')
+                  let response = await fetch( `http://${host[0]}:8080/api/users/is_admin`, {
                       method: 'GET',
                       headers: {
                           'Authorization': localStorage.getItem('access_token')
