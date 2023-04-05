@@ -178,15 +178,17 @@ export default {
             this.$emit('close')
           } else if(response.status === 403) {
             alert('Для добавления объекта нужны права администратора.')
+          } else if(this.mode==='counterparties' && response.status === 409) {
+            alert('Организация-контрагент с таким ИНН уже существует.')
           } else {
             alert("Ошибка HTTP в добавлении: " + response.status);
           }
-          this.$emit('close')
         } catch(error) {
           console.error(error)
         }
       } else {
         console.log('Введенные данные не прошли валидацию.')
+        window.scrollTo(0, 0)
       }
     },
     ...mapActions(['loadCounterparties'])

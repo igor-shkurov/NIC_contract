@@ -312,12 +312,13 @@ export default {
             this.$emit('close')
           } else if(response.status === 403) {
             alert('Для редактирования объекта нужны права администратора.')
+          } else if(this.mode==='counterparties' && response.status === 409) {
+            alert('Организация-контрагент с таким ИНН уже существует.')
           } else {
             alert("Ошибка редактирования: " + response.status);
           }
         } catch (error) {
           console.error(error)
-          this.$emit('close')
         }
       } else {
         console.log('Введенные данные не прошли валидацию')
@@ -332,15 +333,19 @@ export default {
       switch (this.$props.mode) {
         case 'contracts':
           url = `http://${host[0]}:8080/api/contracts/delete/contract_id=${this.obj['id']}`
+          ans = confirm('Вы уверены, что хотите удалить договор? Вместе с ним удалятся его этапы и договоры с контрагентами.')
           break
         case 'counterparties':
           url = `http://${host[0]}:8080/api/counterparties/delete/counterparty_id=${this.obj['id']}`
+          ans = confirm('Вы уверены, что хотите удалить контрагента?')
           break
         case 'stages':
           url = `http://${host[0]}:8080/api/stages/delete/stage_id=${this.obj['id']}`
+          ans = confirm('Вы уверены, что хотите удалить этап договора?')
           break
         case 'contractsCounterparty':
           url = `http://${host[0]}:8080/api/counterparty_contracts/delete/contract_id=${this.obj['id']}`
+          ans = confirm('Вы уверены, что хотите удалить договор с контрагентом?')
           break
         case 'users':
           url = `http://${host[0]}:8080/api/users/delete/user_id=${this.obj['id']}`
