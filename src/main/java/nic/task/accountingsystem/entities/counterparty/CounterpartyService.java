@@ -52,6 +52,9 @@ public class CounterpartyService {
                 e.printStackTrace();
             }
             cpToBeUpdated.setId(id);
+            if (counterpartyRepo.existsCounterpartyByInn(cpToBeUpdated.getInn())) {
+                return HttpStatus.CONFLICT;
+            }
             counterpartyRepo.save(cpToBeUpdated);
             return HttpStatus.OK;
         }

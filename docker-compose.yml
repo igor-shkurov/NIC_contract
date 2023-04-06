@@ -16,7 +16,7 @@ services:
     depends_on:
       - backend_server
   mysqldb:
-    image: "mysql:8.0.25"
+    image: "mysql"
     restart: always
     volumes:
       - ./mysql-volume:/var/lib/mysql

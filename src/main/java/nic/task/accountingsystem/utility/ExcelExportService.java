@@ -52,34 +52,31 @@ public class ExcelExportService {
         Row row = sheet.createRow(0);
 
         Cell cell = row.createCell(0);
-        cell.setCellValue("Id");
-
-        cell = row.createCell(1);
         cell.setCellValue("Срок начала (план)");
 
-        cell = row.createCell(2);
+        cell = row.createCell(1);
         cell.setCellValue("Срок окончания (план)");
 
-        cell = row.createCell(3);
+        cell = row.createCell(2);
         cell.setCellValue("Срок начала (факт)");
 
-        cell = row.createCell(4);
+        cell = row.createCell(3);
         cell.setCellValue("Срок окончания (факт)");
 
-        cell = row.createCell(5);
+        cell = row.createCell(4);
         cell.setCellValue("Название");
 
-        cell = row.createCell(6);
+        cell = row.createCell(5);
         cell.setCellValue("Сумма");
 
         if (ExportableContractDTO.class.isAssignableFrom(cl)) {
-            cell = row.createCell(7);
+            cell = row.createCell(6);
             cell.setCellValue("Тип договора");
 
-            cell = row.createCell(8);
+            cell = row.createCell(7);
             cell.setCellValue("Основной/номер основного");
 
-            cell = row.createCell(9);
+            cell = row.createCell(8);
             cell.setCellValue("Организация-контрагент");
         }
 
@@ -111,29 +108,24 @@ public class ExcelExportService {
             cellStyle.setAlignment(HorizontalAlignment.CENTER);
 
             Cell cell = row.createCell(0);
-            if (contract.getClass() == ContractDTO.class) {
-                cell.setCellValue(id);
-            }
-
-            cell = row.createCell(1);
             cell.setCellValue(contract.getApproxBeginDate().toString());
 
-            cell = row.createCell(2);
+            cell = row.createCell(1);
             cell.setCellValue(contract.getApproxEndDate().toString());
 
-            cell = row.createCell(3);
+            cell = row.createCell(2);
             cell.setCellValue(contract.getBeginDate().toString());
 
-            cell = row.createCell(4);
+            cell = row.createCell(3);
             cell.setCellValue(contract.getEndDate().toString());
 
-            cell = row.createCell(5);
+            cell = row.createCell(4);
             cell.setCellValue(contract.getName());
 
-            cell = row.createCell(6);
+            cell = row.createCell(5);
             cell.setCellValue(contract.getSum().floatValue());
 
-            cell = row.createCell(7);
+            cell = row.createCell(6);
             String str;
             switch (contract.getContractType()) {
                 case SUPPLY:
@@ -151,8 +143,8 @@ public class ExcelExportService {
             }
             cell.setCellValue(str);
 
-            cell = row.createCell(8);
-            Cell cellCounterparty = row.createCell(9);
+            cell = row.createCell(7);
+            Cell cellCounterparty = row.createCell(8);
 
             if (contract.getClass() == ContractDTO.class) {
                 cell.setCellValue("Основной");
@@ -160,7 +152,8 @@ public class ExcelExportService {
                 writeTableRowsForContracts(counterpartyContractService.getCounterpartyContractsByContractId(id).getFirst());
             }
             else {
-                cell.setCellValue(((CounterpartyContractDTO) contract).getContractId());
+                long contractId = ((CounterpartyContractDTO) contract).getContractId();
+                cell.setCellValue(contractService.getContractById(contractId).getName());
                 long counterpartyId = ((CounterpartyContractDTO) contract).getCounterpartyId();
                 cellCounterparty.setCellValue(counterpartyService.getCounterpartyById(counterpartyId).getName());
             }
@@ -175,10 +168,7 @@ public class ExcelExportService {
 
             long id = stage.getId();
 
-            Cell cell = row.createCell(0);
-            cell.setCellValue(id);
-
-            cell = row.createCell(1);
+            Cell cell = row.createCell(1);
             cell.setCellValue(stage.getApproxBeginDate().toString());
 
             cell = row.createCell(2);
