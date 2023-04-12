@@ -13,7 +13,7 @@
           <div class="edit-modal-controls">
             <button
                 class="edit-modal-controls__button editButton"
-                @click="editMode ? editMode=false : editMode=true"
+                @click="changeEditMode"
                 v-if="!editMode"
 
             >
@@ -55,14 +55,42 @@
                   {{inputElemsHeaders[index]}}:
                 </div>
                 <div class="fields-element__value">
-                  {{ $props.obj[key]}}
+                  {{ (key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')? getDateFormat($props.obj[key]) : $props.obj[key] }}
+                </div>
+
+                <div
+                    class="fields-element__edit fieldset"
+                     v-if="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')&&editMode"
+                >
+                  <label v-if="(key === 'beginDate')&&!isValidBeginDate">
+                    Срок окончания {{getMaxMinDate(key)}}
+                  </label>
+                  <label v-if="(key === 'endDate')&&!isValidEndDate">
+                    Срок начала {{getMaxMinDate(key)}}
+                  </label>
+                  <label v-if="(key === 'approxBeginDate')&&!isValidApproxBeginDate">
+                    План. срок окончания {{getMaxMinDate(key)}}
+                  </label>
+                  <label v-if="(key === 'approxEndDate')&&!isValidApproxEndDate">
+                    План. срок начала {{getMaxMinDate(key)}}
+                  </label>
+
+                  <input
+                      :id="getDateInputId(key)"
+                      type="date"
+                      @focusout="changeDateHandler(key)"
+                      v-model="newObj[key]"
+                  >
                 </div>
                 <input
-                    :type="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')? 'date' : 'text'"
+                    v-if="!(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')&&editMode"
+                    type="text"
+
                     class="fields-element__edit"
-                    v-if="editMode"
                     v-model="newObj[key]"
+
                 >
+
               </div>
             </div>
 
@@ -295,8 +323,9 @@ export default {
           break
       }
       this.validation()
+      this.checkDates()
 
-      if(this.isValidForm){
+      if(this.isValidForm&&this.isValidEndDate&&this.isValidBeginDate&&this.isValidApproxEndDate&&this.isValidApproxBeginDate){
         this.editMode = false
         try {
           let response = await fetch(url, {
@@ -412,6 +441,159 @@ export default {
           console.log('Введенный пароль не прошел валидацию')
         }
       }
+    },
+    getDateFormat(inputDate){
+      inputDate = new Date(inputDate)
+      let date, month, year;
+
+      date = inputDate.getDate();
+      month = inputDate.getMonth() + 1; // take care of the month's number
+      year = inputDate.getFullYear();
+
+      if (date < 10) {
+        date = '0' + date;
+      }
+
+      if (month < 10) {
+        month = '0' + month;
+      }
+
+      return `${date}.${month}.${year}`;
+    },
+    getDateInputId(key){
+      switch(key){
+        case 'endDate':
+          return 'inputEndDate'
+        case 'approxEndDate':
+          return 'inputApproxEndDate'
+        case 'approxBeginDate':
+          return 'inputApproxBeginDate'
+        case 'beginDate':
+          return 'inputBeginDate'
+      }
+      return ''
+    },
+    getIndexForHTMLElem(selector){
+      let ind = ''
+      if(this.mode==='contracts'|| this.mode==='counterparties' || this.mode === 'users')
+        ind = 0
+      else if(document.querySelectorAll(selector).length===1){
+        ind = 0
+      } else {
+        ind = 1
+      }
+      return ind
+    },
+    getMaxMinDate(key){
+      let res = ''
+      switch(key){
+        case 'endDate':
+          res = this.newObj['beginDate']
+          break
+        case 'approxEndDate':
+          res = this.newObj['approxBeginDate']
+          break
+        case 'beginDate':
+          res = this.newObj['endDate']
+          break
+        case 'approxBeginDate':
+          res = this.newObj['approxEndDate']
+          break
+      }
+      if(res)
+        return this.getDateFormat(res)
+      return 'null'
+    },
+    setMaxMinDate(key){
+      let selector1= '', selector2 = '', ind = '', attr1 = '', attr2 = '', newValue = '', value = ''
+      switch(key){
+        case 'endDate':
+          if(this.newObj['beginDate']) {
+            value = this.newObj['beginDate']
+            ind = this.getIndexForHTMLElem('#inputEndDate')
+            selector1 = '#inputEndDate'
+            selector2 = '#inputBeginDate'
+            attr1 = 'min'
+            attr2 = 'max'
+            newValue = this.newObj['endDate']
+          }
+          break
+        case 'approxEndDate':
+          if(this.newObj['approxBeginDate']) {
+            value = this.newObj['approxBeginDate']
+            ind = this.getIndexForHTMLElem('#inputApproxEndDate')
+            selector1 = '#inputApproxEndDate'
+            selector2 = '#inputApproxBeginDate'
+            attr1 = 'min'
+            attr2 = 'max'
+            newValue = this.newObj['approxEndDate']
+          }
+          break
+        case 'approxBeginDate':
+          if(this.newObj['approxEndDate']) {
+            value = this.newObj['approxEndDate']
+            ind = this.getIndexForHTMLElem('#inputApproxBeginDate')
+            selector1 = '#inputApproxBeginDate'
+            selector2 = '#inputApproxEndDate'
+            attr1 = 'max'
+            attr2 = 'min'
+            newValue = this.newObj['approxBeginDate']
+          }
+          break
+        case 'beginDate':
+          if(this.newObj['endDate']) {
+            value = this.newObj['endDate']
+            ind = this.getIndexForHTMLElem('#inputBeginDate')
+            selector1 = '#inputBeginDate'
+            selector2 = '#inputEndDate'
+            attr1 = 'max'
+            attr2 = 'min'
+            newValue = this.newObj['beginDate']
+          }
+          break
+      }
+      document.querySelectorAll(selector1)[ind]?.setAttribute(attr1, value)
+      document.querySelectorAll(selector2)[ind]?.setAttribute(attr2, newValue)
+    },
+    changeDateHandler(key){
+      console.log('hmmm')
+      if(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')
+        this.setMaxMinDate(key)
+    },
+    changeEditMode(){
+      this.editMode = !this.editMode
+      setTimeout(()=>{
+        let dateInputList = ''
+        if(this.mode==='contracts'|| this.mode==='counterparties' || this.mode === 'users')
+          dateInputList = document.querySelectorAll("input[type='date']")
+        else{
+         let insertModal = document.getElementsByClassName("modal")[1]
+          dateInputList = insertModal.querySelectorAll("input[type='date']")
+        }
+        for(let ind=0; ind<dateInputList.length; ind++){
+          let node = dateInputList[ind]
+          let prop = ''
+          switch(node.id){
+            case 'inputApproxBeginDate':
+              prop = 'approxBeginDate'
+              break
+            case 'inputBeginDate':
+              prop = 'beginDate'
+              break
+            case 'inputApproxEndDate':
+              prop = 'approxEndDate'
+              break
+            case 'inputEndDate':
+              prop = 'endDate'
+              break
+            default:
+              return
+          }
+          this.setMaxMinDate(prop)
+        }
+      }, 100)
+
+
     }
   },
 
@@ -472,6 +654,7 @@ export default {
 <style>
 .modal{
   position: fixed;
+  z-index: 0;
   display: block;
   top: 10vh;
   left:10vw;
@@ -524,9 +707,11 @@ export default {
   margin-right: 10px;
   border: none;
   position: fixed;
+  z-index: 1;
 }
 button .edit-modal-cancel-btn > img {
   position: fixed;
+  z-index: 1;
 }
 .edit-modal-cancel-btn:hover{
   transform: translate(0, -2px);
@@ -667,5 +852,49 @@ button .edit-modal-cancel-btn > img {
   transform: translateY(0px);
   cursor: default;
 
+}
+.fieldset {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 41%;
+  align-self: stretch;
+  padding: 0 !important;
+  position: relative;
+  z-index: 1;
+}
+.fieldset:hover input{
+  background-color: #C0C0C0;
+}
+.fieldset label:hover {
+  pointer-events: none;
+}
+
+.fieldset label {
+  position: absolute;
+  z-index: 1;
+  top: 2px;
+  left: 11px;
+  font-size: 12px;
+  color: #454545;
+  text-align: left;
+}
+.fieldset input{
+  color: #FFFFFF;
+  width: 100%;
+  background-color: #A0A0A0;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  border: none;
+  padding: 5px 10px;
+  line-height: 100%;
+}
+.fieldset input:hover{
+  background-color: #C0C0C0;
+  border: none;
+}
+.fieldset input:focus{
+  outline: none;
 }
 </style>

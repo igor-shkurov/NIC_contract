@@ -6,7 +6,11 @@ const alphaWithoutWhitespaces = helpers.regex('alphaWithoutWhitespaces', /^[а-�
 export const checkValid = {
     data() {
         return {
-            isValidForm: true
+            isValidForm: true,
+            isValidBeginDate: true,
+            isValidApproxBeginDate: true,
+            isValidEndDate: true,
+            isValidApproxEndDate: true
         }
     },
     mixins: [validationMixin],
@@ -289,6 +293,26 @@ export const checkValid = {
             else {
                 console.log('Введенные данные для фильтра прошли валидацию.')
             }
+        },
+        checkDates(){
+            let beginDate = document.getElementById('inputBeginDate')
+            let approxBeginDate = document.getElementById('inputApproxBeginDate')
+            let endDate = document.getElementById('inputEndDate')
+            let approxEndDate = document.getElementById('inputApproxEndDate')
+
+            if(beginDate.value > endDate.value ) {
+                this.isValidBeginDate = false
+                this.isValidEndDate = false
+            }else if(approxBeginDate.value > approxEndDate.value) {
+                this.isValidApproxBeginDate = false
+                this.isValidApproxEndDate = false
+            } else {
+                this.isValidBeginDate = true
+                this.isValidEndDate = true
+                this.isValidApproxBeginDate = true
+                this.isValidApproxEndDate = true
+            }
+
         }
     }
 }
