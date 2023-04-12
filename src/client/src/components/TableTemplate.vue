@@ -43,6 +43,7 @@
 import {mapActions, mapGetters} from "vuex";
 import FiltersModule from "@/components/FiltersModule";
 import {filtration} from "@/mixins/filtration";
+import {dateFormat} from "@/mixins/getDateFormat";
 
 export default {
   name: "TableTemplate.vue",
@@ -57,7 +58,7 @@ export default {
       filtersObj: {}
     }
   },
-  mixins: [filtration],
+  mixins: [filtration, dateFormat],
   props: {
     arrData: Array,
     mode: String,
@@ -123,6 +124,9 @@ export default {
           case 'PURCHASE':
             return 'Закупка'
         }
+      }
+      if(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate'){
+        return this.getDateFormat(new Date(obj[key]))
       }
       return obj[key]
     },

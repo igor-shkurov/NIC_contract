@@ -556,9 +556,9 @@ export default {
       document.querySelectorAll(selector2)[ind]?.setAttribute(attr2, newValue)
     },
     changeDateHandler(key){
-      console.log('hmmm')
       if(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')
         this.setMaxMinDate(key)
+      this.checkDates()
     },
     changeEditMode(){
       this.editMode = !this.editMode
