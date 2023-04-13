@@ -1,5 +1,6 @@
 import {maxLength, minLength, minValue, numeric, required, helpers} from "vuelidate/lib/validators";
 import {validationMixin} from "vuelidate";
+import app from "@/App";
 
 const alphaWithoutWhitespaces = helpers.regex('alphaWithoutWhitespaces', /^[а-яА-ЯёЁa-zA-Z\s]*$/)
 
@@ -107,12 +108,17 @@ export const checkValid = {
         checkValidation() {
             let s = ''
             let form;
+            if(this.$props.mode !== 'users' && this.$props.mode !== 'counterparties')
+                this.checkDates()
             switch (this.$props.mode) {
                 case 'contracts':
                     form = this.$v.contractForm
                     if (form.name.$invalid) {
                         this.isValidForm = false
                         s = 'Название договора должно содержать от 3 до 30 символов(букв, цифр и символов).'
+                    } else if((this.$props.mode !== 'users' && this.$props.mode !== 'counterparties') &&
+                        !(this.isValidApproxBeginDate && this.isValidApproxEndDate && this.isValidBeginDate && this.isValidEndDate)){
+                        s = 'Проверьте фактические и плановые сроки начала и окончания договора.'
                     } else if (form.sum.$invalid) {
                         this.isValidForm = false
                         s = 'Сумма договора должна быть числом, больше нуля.'
@@ -142,6 +148,9 @@ export const checkValid = {
                     if (form.name.$invalid) {
                         this.isValidForm = false
                         s = 'Название этапа должно содержать от 3 до 30 символов(букв, цифр и символов).'
+                    } else if((this.$props.mode !== 'users' && this.$props.mode !== 'counterparties') &&
+                        !(this.isValidApproxBeginDate && this.isValidApproxEndDate && this.isValidBeginDate && this.isValidEndDate)){
+                        s = 'Проверьте фактические и плановые сроки начала и окончания этапа.'
                     } else if (form.sum.$invalid) {
                         this.isValidForm = false
                         s = 'Сумма этапа должна быть числом, больше нуля.'
@@ -185,6 +194,9 @@ export const checkValid = {
                     } else if (form.sum.$invalid) {
                         this.isValidForm = false
                         s = 'Сумма договора с контрагентом должна быть числом, больше нуля.'
+                    } else if((this.$props.mode !== 'users' && this.$props.mode !== 'counterparties') &&
+                        !(this.isValidApproxBeginDate && this.isValidApproxEndDate && this.isValidBeginDate && this.isValidEndDate)){
+                        s = 'Проверьте фактические и плановые сроки начала и окончания договора с контрагентом.'
                     } else if (form.$error) {
                         this.isValidForm = false
                         s = 'Пожалуйста, введите все поля.'
@@ -294,24 +306,53 @@ export const checkValid = {
                 console.log('Введенные данные для фильтра прошли валидацию.')
             }
         },
-        checkDates(){
-            let beginDate = document.getElementById('inputBeginDate')
-            let approxBeginDate = document.getElementById('inputApproxBeginDate')
-            let endDate = document.getElementById('inputEndDate')
-            let approxEndDate = document.getElementById('inputApproxEndDate')
+        checkDates() {
+            let ind = this.getIndexForHTMLElem('#inputBeginDate')
 
-            if(beginDate.value > endDate.value ) {
+            let beginDate = document.querySelectorAll('#inputBeginDate')[ind]
+            let approxBeginDate = document.querySelectorAll('#inputApproxBeginDate')[ind]
+            let endDate = document.querySelectorAll('#inputEndDate')[ind]
+            let approxEndDate = document.querySelectorAll('#inputApproxEndDate')[ind]
+
+            let isValidDates = true
+            let isValidApproxDates = true
+
+           //  if(!endDate.value) {
+           //      this.isValidEndDate = false
+           //      isValidDates = false
+           //  }
+           //  if(!beginDate.value) {
+           //      this.isValidBeginDate = false
+           //      isValidDates = false
+           //
+           //  }
+           //
+           // if(!approxEndDate.value){
+           //     this.isValidApproxEndDate = false
+           //     isValidApproxDates = false
+           // }
+           // if(!approxBeginDate.value) {
+           //     this.isValidApproxBeginDate = false
+           //     isValidApproxDates = false
+           // }
+           if(approxBeginDate.value > approxEndDate.value) {
+               this.isValidApproxBeginDate = false
+               this.isValidApproxEndDate = false
+               isValidApproxDates = false
+           }
+           if(beginDate.value > endDate.value ) {
                 this.isValidBeginDate = false
                 this.isValidEndDate = false
-            }else if(approxBeginDate.value > approxEndDate.value) {
-                this.isValidApproxBeginDate = false
-                this.isValidApproxEndDate = false
-            } else {
+               isValidDates = false
+            }
+           if(isValidDates){
                 this.isValidBeginDate = true
                 this.isValidEndDate = true
-                this.isValidApproxBeginDate = true
-                this.isValidApproxEndDate = true
             }
+           if(isValidApproxDates){
+               this.isValidApproxBeginDate = true
+               this.isValidApproxEndDate = true
+           }
 
         }
     }

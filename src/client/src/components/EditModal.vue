@@ -60,19 +60,19 @@
 
                 <div
                     class="fields-element__edit fieldset"
-                     v-if="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')&&editMode"
+                     v-if="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')&&editMode&&!isOpenAddStage&&!isOpenAddContractCounterparty"
                 >
                   <label v-if="(key === 'beginDate')&&!isValidBeginDate">
-                    Срок окончания {{getMaxMinDate(key)}}
+                    Максимальное значение {{getMaxMinDate(key)}}
                   </label>
                   <label v-if="(key === 'endDate')&&!isValidEndDate">
-                    Срок начала {{getMaxMinDate(key)}}
+                    Минимальное значение {{getMaxMinDate(key)}}
                   </label>
                   <label v-if="(key === 'approxBeginDate')&&!isValidApproxBeginDate">
-                    План. срок окончания {{getMaxMinDate(key)}}
+                    Максимальное значение {{getMaxMinDate(key)}}
                   </label>
                   <label v-if="(key === 'approxEndDate')&&!isValidApproxEndDate">
-                    План. срок начала {{getMaxMinDate(key)}}
+                    Минимальное значение {{getMaxMinDate(key)}}
                   </label>
 
                   <input
@@ -85,7 +85,6 @@
                 <input
                     v-if="!(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')&&editMode"
                     type="text"
-
                     class="fields-element__edit"
                     v-model="newObj[key]"
 
@@ -239,6 +238,8 @@ import {mapGetters, mapActions} from "vuex"
 import { checkValid} from "@/mixins/validation";
 import {inputElems} from "@/mixins/chooseInputFields";
 import {checkAdmin} from "@/mixins/isAdmin";
+import {dateFormat} from "@/mixins/getDateFormat";
+import {maxMinDates} from "@/mixins/maxMinDates";
 
 export default {
   name: 'edit-modal',
@@ -252,7 +253,7 @@ export default {
     cardFields: Array,
     cardHeader: String
   },
-  mixins: [checkValid, inputElems, checkAdmin],
+  mixins: [checkValid, inputElems, checkAdmin, dateFormat, maxMinDates],
   data() {
     return {
       editMode: false,
@@ -323,7 +324,7 @@ export default {
           break
       }
       this.validation()
-      this.checkDates()
+
 
       if(this.isValidForm&&this.isValidEndDate&&this.isValidBeginDate&&this.isValidApproxEndDate&&this.isValidApproxBeginDate){
         this.editMode = false
@@ -442,25 +443,7 @@ export default {
         }
       }
     },
-    getDateFormat(inputDate){
-      inputDate = new Date(inputDate)
-      let date, month, year;
-
-      date = inputDate.getDate();
-      month = inputDate.getMonth() + 1; // take care of the month's number
-      year = inputDate.getFullYear();
-
-      if (date < 10) {
-        date = '0' + date;
-      }
-
-      if (month < 10) {
-        month = '0' + month;
-      }
-
-      return `${date}.${month}.${year}`;
-    },
-    getDateInputId(key){
+    /*getDateInputId(key){
       switch(key){
         case 'endDate':
           return 'inputEndDate'
@@ -559,7 +542,7 @@ export default {
       if(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')
         this.setMaxMinDate(key)
       this.checkDates()
-    },
+    },*/
     changeEditMode(){
       this.editMode = !this.editMode
       setTimeout(()=>{
@@ -750,6 +733,7 @@ button .edit-modal-cancel-btn > img {
 }
 .fields-element__value:hover, .fields-element-password__edit:hover{
   background-color: #606060;
+  transition: background-color .1s ease-in;
 }
 .fields-element__title {
   background-color: #ababab;
@@ -767,6 +751,7 @@ button .edit-modal-cancel-btn > img {
 }
 .fields-element__value, .fields-element__edit, .fields-element-password__edit {
   background-color: #525252;
+  transition: background-color .1s ease-in;
   border: 4px solid #454545;
   border-radius: 6px;
   width: 80%;
@@ -809,13 +794,17 @@ button .edit-modal-cancel-btn > img {
   border-radius: 6px;
   margin-left: 5px;
   padding: 3px 10px;
+  transform: translateY(0);
+  transition: transform .1s ease-in;
 }
 .edit-modal-controls__button:hover{
   transform: translateY(-2px);
+  transition: transform .1s ease-in;
   background-color: #808080;
 }
 .edit-modal-controls__button:active{
   transform: translateY(2px);
+  transition: transform .1s ease-in;
   background-color: #606060;
 }
 .edit-modal-controls__button > img {
@@ -850,6 +839,7 @@ button .edit-modal-cancel-btn > img {
 }
 .editButton:disabled:hover, .removeButton:disabled:hover{
   transform: translateY(0px);
+  transition: transform .1s ease-in;
   cursor: default;
 
 }
@@ -864,6 +854,7 @@ button .edit-modal-cancel-btn > img {
 }
 .fieldset:hover input{
   background-color: #C0C0C0;
+  transition: background-color .1s ease-in;
 }
 .fieldset label:hover {
   pointer-events: none;
@@ -889,10 +880,12 @@ button .edit-modal-cancel-btn > img {
   border: none;
   padding: 5px 10px;
   line-height: 100%;
+  transition: background-color .1s ease-in;
 }
 .fieldset input:hover{
   background-color: #C0C0C0;
   border: none;
+  transition: background-color .1s ease-in;
 }
 .fieldset input:focus{
   outline: none;
