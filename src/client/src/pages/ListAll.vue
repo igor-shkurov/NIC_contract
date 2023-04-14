@@ -16,7 +16,7 @@
         </button>
         <button
             class="table-add-button"
-            @click="openAddModalWindow"
+            @click="isOpenAddModal=true"
             id="addButton"
         >
           <img src="../assets/icons/add.png" alt="">
@@ -28,7 +28,7 @@
             :arr-data="this.arrData"
             :mode="this.mode"
             :is-open-filters="isOpenFilters"
-            @openModal="openEditModalWindow"
+            @openModal="openModalWindow"
             @sendHeaders="getHeaders"
             @sendContractDates="getContractDates"
         >
@@ -87,6 +87,8 @@ export default {
   data() {
       return {
         openObj: null,
+        isOpenModal: false,
+        isOpenAddModal: false,
         cardFields: null,
         cardHeader:  null,
         cardKeys: null,

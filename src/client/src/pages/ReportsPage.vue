@@ -78,6 +78,7 @@
 <script>
 import {mapActions, mapGetters} from "vuex";
 import {checkValid} from "@/mixins/validation";
+import {maxMinDates} from "@/mixins/maxMinDates";
 
 export default {
   name: "ReportsPage",
@@ -104,7 +105,7 @@ export default {
     }
 
   },
-  mixins: [checkValid],
+  mixins: [checkValid, maxMinDates],
   methods: {
     ...mapActions(['loadContracts']),
     formSubmit(formNumber) {

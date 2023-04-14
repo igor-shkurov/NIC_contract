@@ -30,7 +30,7 @@ export default new VueRouter ({
                     path: '',
                     name: 'contractsList',
                     component: ContractsPage,
-                    props: { mode: 'contracts', inserting: {isInserted: false, openModalID: null}}
+                    props: { mode: 'contracts', inserting: {isInserted: false, openModalID: null}, contractDatesIntoInsertingListAll: {}}
                 }
             ]
         },
