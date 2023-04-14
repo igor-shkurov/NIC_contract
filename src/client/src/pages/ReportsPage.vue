@@ -255,13 +255,6 @@ export default {
     margin-top: 20px;
   }
 
-  #validation-message {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-
   .reports-element-link > a, .reports-element-link > a:hover {
     color: goldenrod;
     text-decoration: underline;

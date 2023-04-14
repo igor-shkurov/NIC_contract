@@ -96,6 +96,7 @@ export const checkValid = {
             if(this.mode === 'stages' || this.mode === 'contractsCounterparty')
                 msgElem = document.getElementById('inserting-validation-message')
             msgElem.innerHTML=''
+            msgElem.classList.add('newInvalidMsg')
             let validMsg = this.checkValidation()
             if(validMsg) {
                 const msg = document.createElement('span')

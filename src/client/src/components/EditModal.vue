@@ -576,7 +576,6 @@ export default {
   text-align: center;
   width: 100%;
   justify-self: center;
-  margin-left: 5%;
 }
 .edit-modal-info{
   margin-top: 10px;

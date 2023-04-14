@@ -8,6 +8,9 @@
           </button>
         </div>
         <div class="add-modal-header-text">Добавление {{ this.cardHeader }}</div>
+        <button class="add-button" @click="addObj">
+          <div class="controls-button__header"> Добавить</div>
+        </button>
         <div id="validation-message"></div>
         <div v-if="this.cardHeader === 'этапа' || this.cardHeader === 'договора с контрагентом'" id="inserting-validation-message"></div>
 
@@ -117,9 +120,6 @@
               >
             </div>
           </div>
-          <button class="add-button" @click="addObj">
-            <div class="controls-button__header"> Добавить</div>
-          </button>
         </div>
       </div>
     </div>
@@ -288,7 +288,7 @@ export default {
   text-align: center;
   width: 100%;
   justify-self: center;
-  margin-left: 5%;
+  /*margin-left: 5%;*/
 }
 .add-modal-info{
   width:70%;
@@ -392,6 +392,7 @@ button .add-modal-cancel-btn > img {
   padding: 10px 30px;
   transform: translateY(0);
   transition: transform .1s ease-in;
+  margin: 15px 0 0 0;
 }
 
 .add-button:hover{
@@ -454,6 +455,9 @@ button .add-modal-cancel-btn > img {
 }
 .fieldset input:focus{
   outline: none;
+}
+.newInvalidMsg{
+  margin: 10px 0 0 0;
 }
 
 </style>
