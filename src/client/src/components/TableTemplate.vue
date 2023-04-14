@@ -24,7 +24,7 @@
           <tr
               v-for="(elemData, ind) in elemsArray"
               :key="ind"
-              @click="openModalEvent(ind)"
+              @click="openModalEvent(ind, elemData)"
           >
             <td
                 v-for="(key, index) in headers.keysElemData"
@@ -55,7 +55,8 @@ export default {
       headers: null,
       isFiltered: false,
       filteredData: [],
-      filtersObj: {}
+      filtersObj: {},
+      contractDates: {}
     }
   },
   mixins: [filtration, dateFormat],
@@ -75,8 +76,16 @@ export default {
   },
   methods: {
     ...mapActions(['loadCounterparties']),
-    openModalEvent(ind) {
+    openModalEvent(ind, elemData) {
       this.$emit('openModal', this.elemsArray[ind])
+
+      if(this.mode === 'contracts'){
+        for(let key in elemData){
+          if(key === 'approxBeginDate'|| key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')
+            this.contractDates[key] = elemData[key]
+        }
+        this.$emit('sendContractDates', this.contractDates)
+      }
     },
     getHeaders() {
       let headers = null

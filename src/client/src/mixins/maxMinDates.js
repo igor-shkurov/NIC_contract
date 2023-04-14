@@ -14,7 +14,6 @@ export const maxMinDates = {
             return ''
         },
         getIndexForHTMLElem(selector){
-            console.log(document.querySelectorAll(selector))
             let ind = ''
             if(this.mode==='contracts'|| this.mode==='counterparties' || this.mode === 'users')
                 ind = 0
@@ -23,7 +22,6 @@ export const maxMinDates = {
             } else {
                 ind = 1
             }
-            console.log('index html: ', ind)
             return ind
         },
         getMaxMinDate(key){
@@ -47,8 +45,6 @@ export const maxMinDates = {
             return ''
         },
         setMaxMinDate(key){
-            console.log('in SetMaxMinDate')
-            console.log(this.newObj)
             let selector1= '', selector2 = '', ind = '', attr1 = '', attr2 = '', newValue = '', value = ''
             switch(key){
                 case 'endDate':     // this.newObj? - проверка edit или add режим модалки
@@ -110,7 +106,6 @@ export const maxMinDates = {
                 document.querySelectorAll(selector2)[ind]?.setAttribute(attr2, newValue)
         },
         changeDateHandler(key){
-            console.log('in changeDateHandler')
             if(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')
                 this.setMaxMinDate(key)
             this.checkDates()

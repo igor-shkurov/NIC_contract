@@ -63,16 +63,16 @@
                      v-if="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')&&editMode&&!isOpenAddStage&&!isOpenAddContractCounterparty"
                 >
                   <label v-if="(key === 'beginDate')&&!isValidBeginDate">
-                    Максимальное значение {{getMaxMinDate(key)}}
+                    Максимальное значение {{getMaxMinDate(key)}}.
                   </label>
                   <label v-if="(key === 'endDate')&&!isValidEndDate">
-                    Минимальное значение {{getMaxMinDate(key)}}
+                    Минимальное значение {{getMaxMinDate(key)}}.
                   </label>
                   <label v-if="(key === 'approxBeginDate')&&!isValidApproxBeginDate">
-                    Максимальное значение {{getMaxMinDate(key)}}
+                    Максимальное значение {{getMaxMinDate(key)}}.
                   </label>
                   <label v-if="(key === 'approxEndDate')&&!isValidApproxEndDate">
-                    Минимальное значение {{getMaxMinDate(key)}}
+                    Минимальное значение {{getMaxMinDate(key)}}.
                   </label>
 
                   <input
@@ -217,6 +217,7 @@
           <list-all-inserted
               :mode="'stages'"
               :inserting="{isInserted:true, openModalID: $props.obj.id}"
+              :contractDatesIntoInsertingListAll="this.$props.contractDates"
           ></list-all-inserted>
           <div class="edit-modal-header-container">
             <div class="edit-modal-header-text">Список договоров с контрагентами:</div>
@@ -224,6 +225,7 @@
           <list-all-inserted
               :mode="'contractsCounterparty'"
               :inserting="{isInserted:true, openModalID: $props.obj.id}"
+              :contractDatesIntoInsertingListAll="this.$props.contractDates"
           ></list-all-inserted>
         </div>
       </div>
@@ -251,7 +253,9 @@ export default {
     mode: String,
     cardKeys: Array,
     cardFields: Array,
-    cardHeader: String
+    cardHeader: String,
+    contractDates: Object,
+    contractsDatesIntoInsertingListAll: Object
   },
   mixins: [checkValid, inputElems, checkAdmin, dateFormat, maxMinDates],
   data() {
@@ -443,106 +447,6 @@ export default {
         }
       }
     },
-    /*getDateInputId(key){
-      switch(key){
-        case 'endDate':
-          return 'inputEndDate'
-        case 'approxEndDate':
-          return 'inputApproxEndDate'
-        case 'approxBeginDate':
-          return 'inputApproxBeginDate'
-        case 'beginDate':
-          return 'inputBeginDate'
-      }
-      return ''
-    },
-    getIndexForHTMLElem(selector){
-      let ind = ''
-      if(this.mode==='contracts'|| this.mode==='counterparties' || this.mode === 'users')
-        ind = 0
-      else if(document.querySelectorAll(selector).length===1){
-        ind = 0
-      } else {
-        ind = 1
-      }
-      return ind
-    },
-    getMaxMinDate(key){
-      let res = ''
-      switch(key){
-        case 'endDate':
-          res = this.newObj['beginDate']
-          break
-        case 'approxEndDate':
-          res = this.newObj['approxBeginDate']
-          break
-        case 'beginDate':
-          res = this.newObj['endDate']
-          break
-        case 'approxBeginDate':
-          res = this.newObj['approxEndDate']
-          break
-      }
-      if(res)
-        return this.getDateFormat(res)
-      return 'null'
-    },
-    setMaxMinDate(key){
-      let selector1= '', selector2 = '', ind = '', attr1 = '', attr2 = '', newValue = '', value = ''
-      switch(key){
-        case 'endDate':
-          if(this.newObj['beginDate']) {
-            value = this.newObj['beginDate']
-            ind = this.getIndexForHTMLElem('#inputEndDate')
-            selector1 = '#inputEndDate'
-            selector2 = '#inputBeginDate'
-            attr1 = 'min'
-            attr2 = 'max'
-            newValue = this.newObj['endDate']
-          }
-          break
-        case 'approxEndDate':
-          if(this.newObj['approxBeginDate']) {
-            value = this.newObj['approxBeginDate']
-            ind = this.getIndexForHTMLElem('#inputApproxEndDate')
-            selector1 = '#inputApproxEndDate'
-            selector2 = '#inputApproxBeginDate'
-            attr1 = 'min'
-            attr2 = 'max'
-            newValue = this.newObj['approxEndDate']
-          }
-          break
-        case 'approxBeginDate':
-          if(this.newObj['approxEndDate']) {
-            value = this.newObj['approxEndDate']
-            ind = this.getIndexForHTMLElem('#inputApproxBeginDate')
-            selector1 = '#inputApproxBeginDate'
-            selector2 = '#inputApproxEndDate'
-            attr1 = 'max'
-            attr2 = 'min'
-            newValue = this.newObj['approxBeginDate']
-          }
-          break
-        case 'beginDate':
-          if(this.newObj['endDate']) {
-            value = this.newObj['endDate']
-            ind = this.getIndexForHTMLElem('#inputBeginDate')
-            selector1 = '#inputBeginDate'
-            selector2 = '#inputEndDate'
-            attr1 = 'max'
-            attr2 = 'min'
-            newValue = this.newObj['beginDate']
-          }
-          break
-      }
-      document.querySelectorAll(selector1)[ind]?.setAttribute(attr1, value)
-      document.querySelectorAll(selector2)[ind]?.setAttribute(attr2, newValue)
-    },
-    changeDateHandler(key){
-      if(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')
-        this.setMaxMinDate(key)
-      this.checkDates()
-    },*/
     changeEditMode(){
       this.editMode = !this.editMode
       setTimeout(()=>{

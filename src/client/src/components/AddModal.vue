@@ -140,7 +140,9 @@ export default {
     id: Number,   // id договора, у которого добавляется этап. null, если добавление не во вложенный список
     cardKeys: Array,
     cardFields: Array,
-    cardHeader: String
+    cardHeader: String,
+    contractDates: Object,
+    contractsDatesIntoInsertingListAll: Object
   },
   mixins: [checkValid, inputElems, maxMinDates, dateFormat],
   data(){
@@ -215,7 +217,6 @@ export default {
         }
       } else {
         console.log('Введенные данные не прошли валидацию.')
-        window.scrollTo(0, 0)
       }
     },
     ...mapActions(['loadCounterparties'])
