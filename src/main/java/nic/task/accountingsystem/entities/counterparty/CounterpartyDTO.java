@@ -12,7 +12,7 @@ public class CounterpartyDTO {
     private Long id;
 
     @NotBlank(groups = {New.class, Modify.class})
-    @Size(min = 3, max = 30, groups = {New.class, Modify.class})
+    @Size(min = 1, max = 30, groups = {New.class, Modify.class})
     private String name;
 
     @NotBlank(groups = {New.class, Modify.class})

@@ -3,6 +3,7 @@ package nic.task.accountingsystem.entities;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public abstract class ExportableContractDTO {
     public interface New {}
@@ -14,7 +15,7 @@ public abstract class ExportableContractDTO {
     private Long id;
 
     @NotEmpty(groups = {New.class, Modify.class})
-    @Size(min = 3, max = 30, groups = {New.class, Modify.class})
+    @Size(min = 1, max = 30, groups = {New.class, Modify.class})
     private String name;
 
     private ContractType contractType;

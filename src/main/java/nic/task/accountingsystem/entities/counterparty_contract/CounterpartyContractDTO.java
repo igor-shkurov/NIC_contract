@@ -3,12 +3,15 @@ package nic.task.accountingsystem.entities.counterparty_contract;
 import nic.task.accountingsystem.entities.ExportableContractDTO;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 public class CounterpartyContractDTO extends ExportableContractDTO {
     @Min(value = 0, groups = {New.class, Modify.class})
+    @NotNull(groups = {New.class, Modify.class})
     private Long counterpartyId;
 
     @Min(value = 0, groups = {New.class, Modify.class})
+    @NotNull(groups = {New.class, Modify.class})
     private Long contractId;
 
     public Long getCounterpartyId() {

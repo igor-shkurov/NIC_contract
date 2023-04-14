@@ -9,10 +9,9 @@ import nic.task.accountingsystem.entities.counterparty_contract.CounterpartyCont
 import nic.task.accountingsystem.entities.stage.StageDTO;
 import nic.task.accountingsystem.entities.stage.StageService;
 import org.apache.commons.math3.util.Pair;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Iterator;
 import java.util.List;
 
@@ -102,22 +103,24 @@ public class ExcelExportService {
         for (ExportableContractDTO contract : list) {
             Row row = sheet.createRow(currentRow++);
 
+            CreationHelper createHelper = book.getCreationHelper();
+            short format = createHelper.createDataFormat().getFormat("d.m.yy");
+            CellStyle dateStyle = book.createCellStyle();
+            dateStyle.setDataFormat(format);
+
             long id = contract.getId();
 
-            CellStyle cellStyle = book.createCellStyle();
-            cellStyle.setAlignment(HorizontalAlignment.CENTER);
-
             Cell cell = row.createCell(0);
-            cell.setCellValue(contract.getApproxBeginDate().toString());
+            cell.setCellValue(contract.getApproxBeginDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
             cell = row.createCell(1);
-            cell.setCellValue(contract.getApproxEndDate().toString());
+            cell.setCellValue(contract.getApproxEndDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
             cell = row.createCell(2);
-            cell.setCellValue(contract.getBeginDate().toString());
+            cell.setCellValue(contract.getBeginDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
             cell = row.createCell(3);
-            cell.setCellValue(contract.getEndDate().toString());
+            cell.setCellValue(contract.getEndDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
             cell = row.createCell(4);
             cell.setCellValue(contract.getName());
@@ -168,34 +171,34 @@ public class ExcelExportService {
 
             long id = stage.getId();
 
-            Cell cell = row.createCell(1);
-            cell.setCellValue(stage.getApproxBeginDate().toString());
+            Cell cell = row.createCell(0);
+            cell.setCellValue(stage.getApproxBeginDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+
+            cell = row.createCell(1);
+            cell.setCellValue(stage.getApproxEndDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
             cell = row.createCell(2);
-            cell.setCellValue(stage.getApproxEndDate().toString());
+            cell.setCellValue(stage.getBeginDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
             cell = row.createCell(3);
-            cell.setCellValue(stage.getBeginDate().toString());
+            cell.setCellValue(stage.getEndDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
             cell = row.createCell(4);
-            cell.setCellValue(stage.getEndDate().toString());
-
-            cell = row.createCell(5);
             cell.setCellValue(stage.getName());
 
-            cell = row.createCell(6);
+            cell = row.createCell(5);
             cell.setCellValue(stage.getSum().floatValue());
 
-            cell = row.createCell(7);
+            cell = row.createCell(6);
             cell.setCellValue(stage.getSalary().floatValue());
 
-            cell = row.createCell(8);
+            cell = row.createCell(7);
             cell.setCellValue(stage.getCredit().floatValue());
 
-            cell = row.createCell(9);
+            cell = row.createCell(8);
             cell.setCellValue(stage.getApproxSalary().floatValue());
 
-            cell = row.createCell(10);
+            cell = row.createCell(9);
             cell.setCellValue(stage.getApproxCredit().floatValue());
 
             setRowAlignment(row);
@@ -226,6 +229,8 @@ public class ExcelExportService {
     public void exportContractsByGivenPeriod(HttpServletResponse response, LocalDate beginDate, LocalDate endDate) {
         book = new XSSFWorkbook();
         sheet = book.createSheet("Contracts");
+        if (beginDate == null) { beginDate = LocalDate.MIN; }
+        if (endDate == null) { endDate = LocalDate.MAX; }
 
         List<ContractDTO> contracts = contractService.getContractsByGivenPeriod(beginDate, endDate);
         writeHeaderRow(ExportableContractDTO.class);

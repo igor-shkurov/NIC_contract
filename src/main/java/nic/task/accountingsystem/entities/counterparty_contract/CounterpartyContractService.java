@@ -2,6 +2,7 @@ package nic.task.accountingsystem.entities.counterparty_contract;
 
 import nic.task.accountingsystem.entities.contract.Contract;
 import nic.task.accountingsystem.entities.contract.ContractService;
+import nic.task.accountingsystem.entities.counterparty.Counterparty;
 import nic.task.accountingsystem.entities.counterparty.CounterpartyService;
 import nic.task.accountingsystem.entities.user.CustomUserDetailsService;
 import nic.task.accountingsystem.entities.user.User;
@@ -80,7 +81,11 @@ public class CounterpartyContractService {
         long id = dto.getId();
         CounterpartyContract updatingContract = mapper.DTOtoCounterpartyContract(dto);
         updatingContract.setContract(contractService.getContractById(dto.getContractId()));
-        updatingContract.setCounterparty(counterpartyService.getCounterpartyById(dto.getCounterpartyId()));
+        Counterparty counterparty = counterpartyService.getCounterpartyById(dto.getCounterpartyId());
+        if (counterparty == null) {
+            return HttpStatus.NOT_MODIFIED;
+        }
+        updatingContract.setCounterparty(counterparty);
 
         CounterpartyContract contractToBeUpdated = getCounterpartyContractById(id);
 
