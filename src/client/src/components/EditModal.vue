@@ -54,7 +54,10 @@
                 <div class="fields-element__title">
                   {{inputElemsHeaders[index]}}:
                 </div>
-                <div class="fields-element__value">
+                <div
+                    class="fields-element__value"
+                    v-if="!editMode"
+                >
                   {{ (key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')? getDateFormat($props.obj[key]) : $props.obj[key] }}
                 </div>
 
@@ -98,7 +101,10 @@
                 v-if="mode === 'contractsCounterparty'"
             >
               <div class="fields-element__title">Организация-контрагент:</div>
-              <div class="fields-element__value" id="select-counterparty__value">
+              <div
+                  class="fields-element__value"
+                  v-if="!editMode"
+              >
                 {{this.getCounterpartyName }}
               </div>
               <select
@@ -122,7 +128,10 @@
               <div class="fields-element__title">
                 Тип договора:
               </div>
-              <div class="fields-element__value" id="select-contractType__value">
+              <div
+                  class="fields-element__value"
+                  v-if="!editMode"
+              >
                 {{ this.getContractType}}
               </div>
               <select
@@ -143,7 +152,10 @@
               <div class="fields-element__title">
                 Роль пользователя:
               </div>
-              <div class="fields-element__value" id="select-contractType__value">
+              <div
+                  class="fields-element__value"
+                  v-if="!editMode"
+              >
                 {{ this.$props.obj['role'] }}
               </div>
               <select
@@ -222,6 +234,7 @@
           <div class="edit-modal-header-container">
             <div class="edit-modal-header-text">Список договоров с контрагентами:</div>
           </div>
+          <!--contractDatesIntoInsertingAll prop у ListAll, который не вложенный(contracts mode) = undefined, у остальных - =contractDates -->
           <list-all-inserted
               :mode="'contractsCounterparty'"
               :inserting="{isInserted:true, openModalID: $props.obj.id}"
@@ -633,6 +646,7 @@ button .edit-modal-cancel-btn > img {
   align-items: stretch;
   word-wrap: break-word;
   width: 100%;
+  min-height: 50px;
 }
 .fields-element__value:hover, .fields-element-password__edit:hover{
   background-color: #606060;
@@ -646,6 +660,7 @@ button .edit-modal-cancel-btn > img {
   border: 4px solid #454545;
   border-radius: 6px;
   width: 20%;
+  min-width: 113px;
   padding: 5px 5px;
   font-weight: 600;
   margin-right: 10px;
@@ -657,26 +672,24 @@ button .edit-modal-cancel-btn > img {
   transition: background-color .1s ease-in;
   border: 4px solid #454545;
   border-radius: 6px;
-  width: 80%;
+  width: 60%;
   padding: 5px 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: #FFFFFF;
 }
-.fields-element-password__edit {
-  width: 40%;
-}
+
 .fields-element__edit {
-  width: 40%;
-  margin-left: 10px;
-  background-color: #A0A0A0;
+  /*width: 40%;*/
+  /*margin-left: 10px;*/
+  background-color: #7A7A7A;
   color: inherit;
   font: inherit;
   font-weight: 600;
 }
 .fields-element__edit:hover {
-  background-color: #C0C0C0;
+  background-color: #9A9A9A;
 }
 .edit-modal-controls, .edit-modal-header-container{
   display: flex;
@@ -749,14 +762,13 @@ button .edit-modal-cancel-btn > img {
 .fieldset {
   display: flex;
   flex-flow: column nowrap;
-  width: 41%;
   align-self: stretch;
   padding: 0 !important;
   position: relative;
   z-index: 1;
 }
 .fieldset:hover input{
-  background-color: #C0C0C0;
+  background-color: #9A9A9A;
   transition: background-color .1s ease-in;
 }
 .fieldset label:hover {
@@ -775,7 +787,7 @@ button .edit-modal-cancel-btn > img {
 .fieldset input{
   color: #FFFFFF;
   width: 100%;
-  background-color: #A0A0A0;
+  background-color: #7A7A7A;
   box-shadow: none;
   font-family: inherit;
   font-size: inherit;
@@ -786,7 +798,7 @@ button .edit-modal-cancel-btn > img {
   transition: background-color .1s ease-in;
 }
 .fieldset input:hover{
-  background-color: #C0C0C0;
+  background-color: #9A9A9A;
   border: none;
   transition: background-color .1s ease-in;
 }

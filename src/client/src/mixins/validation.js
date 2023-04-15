@@ -171,9 +171,9 @@ export const checkValid = {
                     } else if (form.$error){
                         this.isValidForm = false
                         s = 'Пожалуйста, введите все поля.'
-                    } else this.isValidForm = true          // поправить, getDateFormat для договора с КА возвращает NaN
+                    } else this.isValidForm = true
                     if(this.isValidForm){
-                        this.compareDatesWithContractDates()    // поправить, поскольку в случае, если введены не все поля - то срабатывает и ЗА РАМКИ, хотя поле пусто и S - перезаписывается
+                        this.compareDatesWithContractDates()
                         s = this.checkPropInsideContractDates(s)
                     }
                     break
@@ -364,10 +364,10 @@ export const checkValid = {
         },
         checkPropInsideContractDates(s){
             if(!(this.isInsideContractDates)){
-                s = `Фактические сроки начала и окончания этапа не должны выходить за рамки фактического срока договора: ${this.getDateFormat(this.contractDates['beginDate'])} - ${this.getDateFormat(this.contractDates['endDate'])} .`
+                s = `Фактические сроки начала и окончания не должны выходить за рамки фактического срока договора: ${this.getDateFormat(this.contractDates['beginDate'])} - ${this.getDateFormat(this.contractDates['endDate'])} .`
                 this.isValidForm = false
             } else if(!(this.isApproxInsideContractDates)){
-                s = `Плановые сроки начала и окончания договора с КА не должны выходить за рамки планового срока договора: ${this.getDateFormat(this.contractDates['approxBeginDate'])} - ${this.getDateFormat(this.contractDates['approxEndDate'])}.`
+                s = `Плановые сроки начала и окончания не должны выходить за рамки планового срока договора: ${this.getDateFormat(this.contractDates['approxBeginDate'])} - ${this.getDateFormat(this.contractDates['approxEndDate'])}.`
                 this.isValidForm = false
             }
             return s
