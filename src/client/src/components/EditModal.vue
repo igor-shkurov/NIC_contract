@@ -13,7 +13,7 @@
           <div class="edit-modal-controls">
             <button
                 class="edit-modal-controls__button editButton"
-                @click="editMode ? editMode=false : editMode=true"
+                @click="changeEditMode"
                 v-if="!editMode"
 
             >
@@ -54,15 +54,45 @@
                 <div class="fields-element__title">
                   {{inputElemsHeaders[index]}}:
                 </div>
-                <div class="fields-element__value">
-                  {{ $props.obj[key]}}
+                <div
+                    class="fields-element__value"
+                    v-if="!editMode"
+                >
+                  {{ (key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')? getDateFormat($props.obj[key]) : $props.obj[key] }}
+                </div>
+
+                <div
+                    class="fields-element__edit fieldset"
+                     v-if="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')&&editMode&&!isOpenAddStage&&!isOpenAddContractCounterparty"
+                >
+                  <label v-if="(key === 'beginDate')&&!isValidBeginDate">
+                    Максимальное значение {{getMaxMinDate(key)}}.
+                  </label>
+                  <label v-if="(key === 'endDate')&&!isValidEndDate">
+                    Минимальное значение {{getMaxMinDate(key)}}.
+                  </label>
+                  <label v-if="(key === 'approxBeginDate')&&!isValidApproxBeginDate">
+                    Максимальное значение {{getMaxMinDate(key)}}.
+                  </label>
+                  <label v-if="(key === 'approxEndDate')&&!isValidApproxEndDate">
+                    Минимальное значение {{getMaxMinDate(key)}}.
+                  </label>
+
+                  <input
+                      :id="getDateInputId(key)"
+                      type="date"
+                      @focusout="changeDateHandler(key)"
+                      v-model="newObj[key]"
+                  >
                 </div>
                 <input
-                    :type="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')? 'date' : 'text'"
+                    v-if="!(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')&&editMode"
+                    type="text"
                     class="fields-element__edit"
-                    v-if="editMode"
                     v-model="newObj[key]"
+
                 >
+
               </div>
             </div>
 
@@ -71,7 +101,10 @@
                 v-if="mode === 'contractsCounterparty'"
             >
               <div class="fields-element__title">Организация-контрагент:</div>
-              <div class="fields-element__value" id="select-counterparty__value">
+              <div
+                  class="fields-element__value"
+                  v-if="!editMode"
+              >
                 {{this.getCounterpartyName }}
               </div>
               <select
@@ -95,7 +128,10 @@
               <div class="fields-element__title">
                 Тип договора:
               </div>
-              <div class="fields-element__value" id="select-contractType__value">
+              <div
+                  class="fields-element__value"
+                  v-if="!editMode"
+              >
                 {{ this.getContractType}}
               </div>
               <select
@@ -116,7 +152,10 @@
               <div class="fields-element__title">
                 Роль пользователя:
               </div>
-              <div class="fields-element__value" id="select-contractType__value">
+              <div
+                  class="fields-element__value"
+                  v-if="!editMode"
+              >
                 {{ this.$props.obj['role'] }}
               </div>
               <select
@@ -190,13 +229,16 @@
           <list-all-inserted
               :mode="'stages'"
               :inserting="{isInserted:true, openModalID: $props.obj.id}"
+              :contractDatesIntoInsertingListAll="this.$props.contractDates"
           ></list-all-inserted>
           <div class="edit-modal-header-container">
             <div class="edit-modal-header-text">Список договоров с контрагентами:</div>
           </div>
+          <!--contractDatesIntoInsertingAll prop у ListAll, который не вложенный(contracts mode) = undefined, у остальных - =contractDates -->
           <list-all-inserted
               :mode="'contractsCounterparty'"
               :inserting="{isInserted:true, openModalID: $props.obj.id}"
+              :contractDatesIntoInsertingListAll="this.$props.contractDates"
           ></list-all-inserted>
         </div>
       </div>
@@ -211,6 +253,8 @@ import {mapGetters, mapActions} from "vuex"
 import { checkValid} from "@/mixins/validation";
 import {inputElems} from "@/mixins/chooseInputFields";
 import {checkAdmin} from "@/mixins/isAdmin";
+import {dateFormat} from "@/mixins/getDateFormat";
+import {maxMinDates} from "@/mixins/maxMinDates";
 
 export default {
   name: 'edit-modal',
@@ -222,9 +266,11 @@ export default {
     mode: String,
     cardKeys: Array,
     cardFields: Array,
-    cardHeader: String
+    cardHeader: String,
+    contractDates: Object,
+    contractsDatesIntoInsertingListAll: Object
   },
-  mixins: [checkValid, inputElems, checkAdmin],
+  mixins: [checkValid, inputElems, checkAdmin, dateFormat, maxMinDates],
   data() {
     return {
       editMode: false,
@@ -296,7 +342,8 @@ export default {
       }
       this.validation()
 
-      if(this.isValidForm){
+
+      if(this.isValidForm&&this.isValidEndDate&&this.isValidBeginDate&&this.isValidApproxEndDate&&this.isValidApproxBeginDate){
         this.editMode = false
         try {
           let response = await fetch(url, {
@@ -412,6 +459,41 @@ export default {
           console.log('Введенный пароль не прошел валидацию')
         }
       }
+    },
+    changeEditMode(){
+      this.editMode = !this.editMode
+      setTimeout(()=>{
+        let dateInputList = ''
+        if(this.mode==='contracts'|| this.mode==='counterparties' || this.mode === 'users')
+          dateInputList = document.querySelectorAll("input[type='date']")
+        else{
+         let insertModal = document.getElementsByClassName("modal")[1]
+          dateInputList = insertModal.querySelectorAll("input[type='date']")
+        }
+        for(let ind=0; ind<dateInputList.length; ind++){
+          let node = dateInputList[ind]
+          let prop = ''
+          switch(node.id){
+            case 'inputApproxBeginDate':
+              prop = 'approxBeginDate'
+              break
+            case 'inputBeginDate':
+              prop = 'beginDate'
+              break
+            case 'inputApproxEndDate':
+              prop = 'approxEndDate'
+              break
+            case 'inputEndDate':
+              prop = 'endDate'
+              break
+            default:
+              return
+          }
+          this.setMaxMinDate(prop)
+        }
+      }, 100)
+
+
     }
   },
 
@@ -472,6 +554,7 @@ export default {
 <style>
 .modal{
   position: fixed;
+  z-index: 0;
   display: block;
   top: 10vh;
   left:10vw;
@@ -506,7 +589,6 @@ export default {
   text-align: center;
   width: 100%;
   justify-self: center;
-  margin-left: 5%;
 }
 .edit-modal-info{
   margin-top: 10px;
@@ -524,9 +606,11 @@ export default {
   margin-right: 10px;
   border: none;
   position: fixed;
+  z-index: 1;
 }
 button .edit-modal-cancel-btn > img {
   position: fixed;
+  z-index: 1;
 }
 .edit-modal-cancel-btn:hover{
   transform: translate(0, -2px);
@@ -562,9 +646,11 @@ button .edit-modal-cancel-btn > img {
   align-items: stretch;
   word-wrap: break-word;
   width: 100%;
+  min-height: 50px;
 }
 .fields-element__value:hover, .fields-element-password__edit:hover{
   background-color: #606060;
+  transition: background-color .1s ease-in;
 }
 .fields-element__title {
   background-color: #ababab;
@@ -574,6 +660,7 @@ button .edit-modal-cancel-btn > img {
   border: 4px solid #454545;
   border-radius: 6px;
   width: 20%;
+  min-width: 113px;
   padding: 5px 5px;
   font-weight: 600;
   margin-right: 10px;
@@ -582,28 +669,27 @@ button .edit-modal-cancel-btn > img {
 }
 .fields-element__value, .fields-element__edit, .fields-element-password__edit {
   background-color: #525252;
+  transition: background-color .1s ease-in;
   border: 4px solid #454545;
   border-radius: 6px;
-  width: 80%;
+  width: 60%;
   padding: 5px 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: #FFFFFF;
 }
-.fields-element-password__edit {
-  width: 40%;
-}
+
 .fields-element__edit {
-  width: 40%;
-  margin-left: 10px;
-  background-color: #A0A0A0;
+  /*width: 40%;*/
+  /*margin-left: 10px;*/
+  background-color: #7A7A7A;
   color: inherit;
   font: inherit;
   font-weight: 600;
 }
 .fields-element__edit:hover {
-  background-color: #C0C0C0;
+  background-color: #9A9A9A;
 }
 .edit-modal-controls, .edit-modal-header-container{
   display: flex;
@@ -624,13 +710,17 @@ button .edit-modal-cancel-btn > img {
   border-radius: 6px;
   margin-left: 5px;
   padding: 3px 10px;
+  transform: translateY(0);
+  transition: transform .1s ease-in;
 }
 .edit-modal-controls__button:hover{
   transform: translateY(-2px);
+  transition: transform .1s ease-in;
   background-color: #808080;
 }
 .edit-modal-controls__button:active{
   transform: translateY(2px);
+  transition: transform .1s ease-in;
   background-color: #606060;
 }
 .edit-modal-controls__button > img {
@@ -665,7 +755,54 @@ button .edit-modal-cancel-btn > img {
 }
 .editButton:disabled:hover, .removeButton:disabled:hover{
   transform: translateY(0px);
+  transition: transform .1s ease-in;
   cursor: default;
 
+}
+.fieldset {
+  display: flex;
+  flex-flow: column nowrap;
+  align-self: stretch;
+  padding: 0 !important;
+  position: relative;
+  z-index: 1;
+}
+.fieldset:hover input{
+  background-color: #9A9A9A;
+  transition: background-color .1s ease-in;
+}
+.fieldset label:hover {
+  pointer-events: none;
+}
+
+.fieldset label {
+  position: absolute;
+  z-index: 1;
+  top: 2px;
+  left: 11px;
+  font-size: 12px;
+  color: #454545;
+  text-align: left;
+}
+.fieldset input{
+  color: #FFFFFF;
+  width: 100%;
+  background-color: #7A7A7A;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  border: none;
+  padding: 5px 10px;
+  line-height: 100%;
+  transition: background-color .1s ease-in;
+}
+.fieldset input:hover{
+  background-color: #9A9A9A;
+  border: none;
+  transition: background-color .1s ease-in;
+}
+.fieldset input:focus{
+  outline: none;
 }
 </style>

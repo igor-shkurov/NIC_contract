@@ -30,6 +30,7 @@
             :is-open-filters="isOpenFilters"
             @openModal="openModalWindow"
             @sendHeaders="getHeaders"
+            @sendContractDates="getContractDates"
         >
         </table-template>
         <div :id="`${this.inserting.isInserted ? (this.mode === 'stages' ? 'stagesEmptyList' : 'contrCountEmptyList') : 'emptyList'}` " hidden ></div>
@@ -42,6 +43,8 @@
             :cardKeys="this.cardKeys"
             :cardFields="this.cardFields"
             :cardHeader="this.cardHeader"
+            :contractDates="this.contractDates"
+            :contractDatesIntoInsertingListAll="this.$props.contractDatesIntoInsertingListAll"
         >
         </edit-modal>
         <add-modal
@@ -52,6 +55,8 @@
           :cardKeys="this.cardKeys"
           :cardFields="this.cardFields"
           :cardHeader="this.cardHeader"
+          :contractDates="this.contractDates"
+          :contractDatesIntoInsertingListAll="this.$props.contractDatesIntoInsertingListAll"
         >
         </add-modal>
       </div>
@@ -75,18 +80,20 @@ export default {
   },
   props: {
     mode: String,
-    inserting: Object
+    inserting: Object,
+    contractDatesIntoInsertingListAll: Object
   },
   mixins: [checkAdmin],
   data() {
       return {
-        isOpenModal: false,
         openObj: null,
+        isOpenModal: false,
         isOpenAddModal: false,
         cardFields: null,
         cardHeader:  null,
         cardKeys: null,
-        isOpenFilters: false
+        isOpenFilters: false,
+        contractDates: {}
       }
     },
     computed: {
@@ -160,6 +167,11 @@ export default {
             this.loadUsers()
             break
         }
+      },
+      getContractDates(objWithDates){
+        let obj = this.$props.contractDatesIntoInsertingListAll
+        if(Object.entries(obj).length === 0)
+          this.contractDates = objWithDates
       }
     },
   created() {
@@ -174,6 +186,9 @@ export default {
     else {
       btn.disabled = false
     }
+
+    if(this.$props.contractDatesIntoInsertingListAll)
+      this.contractDates = this.$props.contractDatesIntoInsertingListAll
   }
 }
 </script>

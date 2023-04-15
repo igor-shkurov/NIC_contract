@@ -2,6 +2,7 @@
   <list-all
     :mode = this.$props.mode
     :inserting = this.$props.inserting
+    :contract-dates-into-inserting-list-all = this.$props.contractDatesIntoInsertingListAll
   ></list-all>
 </template>
 
@@ -14,7 +15,8 @@ export default {
   },
   props: {
     mode: String,
-    inserting: Object
+    inserting: Object,
+    contractDatesIntoInsertingListAll: Object
   }
 }
 </script>

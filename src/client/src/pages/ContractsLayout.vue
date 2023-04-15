@@ -1,7 +1,7 @@
 <template>
   <div class="contracts-layout">
     <main-header />
-    <router-view></router-view>
+    <router-view />
   </div>
 </template>
 

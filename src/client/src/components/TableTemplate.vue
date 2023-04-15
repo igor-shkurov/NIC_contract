@@ -24,7 +24,7 @@
           <tr
               v-for="(elemData, ind) in elemsArray"
               :key="ind"
-              @click="openModalEvent(ind)"
+              @click="openModalEvent(ind, elemData)"
           >
             <td
                 v-for="(key, index) in headers.keysElemData"
@@ -43,6 +43,7 @@
 import {mapActions, mapGetters} from "vuex";
 import FiltersModule from "@/components/FiltersModule";
 import {filtration} from "@/mixins/filtration";
+import {dateFormat} from "@/mixins/getDateFormat";
 
 export default {
   name: "TableTemplate.vue",
@@ -54,10 +55,11 @@ export default {
       headers: null,
       isFiltered: false,
       filteredData: [],
-      filtersObj: {}
+      filtersObj: {},
+      contractDates: {}
     }
   },
-  mixins: [filtration],
+  mixins: [filtration, dateFormat],
   props: {
     arrData: Array,
     mode: String,
@@ -74,8 +76,16 @@ export default {
   },
   methods: {
     ...mapActions(['loadCounterparties']),
-    openModalEvent(ind) {
+    openModalEvent(ind, elemData) {
       this.$emit('openModal', this.elemsArray[ind])
+
+      if(this.mode === 'contracts'){
+        for(let key in elemData){
+          if(key === 'approxBeginDate'|| key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')
+            this.contractDates[key] = elemData[key]
+        }
+        this.$emit('sendContractDates', this.contractDates)
+      }
     },
     getHeaders() {
       let headers = null
@@ -123,6 +133,9 @@ export default {
           case 'PURCHASE':
             return 'Закупка'
         }
+      }
+      if(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate'){
+        return this.getDateFormat(new Date(obj[key]))
       }
       return obj[key]
     },

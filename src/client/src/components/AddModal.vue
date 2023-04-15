@@ -8,6 +8,9 @@
           </button>
         </div>
         <div class="add-modal-header-text">Добавление {{ this.cardHeader }}</div>
+        <button class="add-button" @click="addObj">
+          <div class="controls-button__header"> Добавить</div>
+        </button>
         <div id="validation-message"></div>
         <div v-if="this.cardHeader === 'этапа' || this.cardHeader === 'договора с контрагентом'" id="inserting-validation-message"></div>
 
@@ -23,9 +26,34 @@
               >
                   {{inputElemsHeaders[index]}}:
               </div>
+              <div
+                  class="fields-element__edit fieldset"
+                  v-if="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')"
+              >
+                <label v-if="(key === 'beginDate')&&!isValidBeginDate">
+                  {{ getMaxMinDate(key)? 'Максимальное значение '+getMaxMinDate(key) : '' }}
+                </label>
+                <label v-if="(key === 'endDate')&&!isValidEndDate">
+                  {{ getMaxMinDate(key)? 'Минимальное значение'+getMaxMinDate(key) : '' }}
+                </label>
+                <label v-if="(key === 'approxBeginDate')&&!isValidApproxBeginDate">
+                  {{ getMaxMinDate(key)? 'Максимальное значение'+getMaxMinDate(key) : '' }}
+                </label>
+                <label v-if="(key === 'approxEndDate')&&!isValidApproxEndDate">
+                  {{ getMaxMinDate(key)? 'Минимальное значение'+getMaxMinDate(key) : '' }}
+                </label>
 
+                <input
+                    :id="getDateInputId(key)"
+                    type="date"
+                    v-model="addForm[key]"
+                    @focusout="changeDateHandler(key)"
+                >
+              </div>
               <input
-                  :type="(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')? 'date' : 'text'"
+                  v-if="!(key === 'approxBeginDate' || key === 'approxEndDate' || key === 'beginDate' || key === 'endDate')"
+                  type="text"
+
                   class="fields-element__edit"
                   v-model="addForm[key]"
               >
@@ -92,9 +120,6 @@
               >
             </div>
           </div>
-          <button class="add-button" @click="addObj">
-            <div class="controls-button__header"> Добавить</div>
-          </button>
         </div>
       </div>
     </div>
@@ -105,6 +130,8 @@
 import { mapActions, mapGetters} from "vuex";
 import {checkValid} from "@/mixins/validation";
 import {inputElems} from "@/mixins/chooseInputFields";
+import {maxMinDates} from "@/mixins/maxMinDates";
+import {dateFormat} from "@/mixins/getDateFormat";
 
 export default {
   name: "AddModal",
@@ -113,9 +140,11 @@ export default {
     id: Number,   // id договора, у которого добавляется этап. null, если добавление не во вложенный список
     cardKeys: Array,
     cardFields: Array,
-    cardHeader: String
+    cardHeader: String,
+    contractDates: Object,
+    contractsDatesIntoInsertingListAll: Object
   },
-  mixins: [checkValid, inputElems],
+  mixins: [checkValid, inputElems, maxMinDates, dateFormat],
   data(){
     return {
       addForm: {},
@@ -163,7 +192,7 @@ export default {
       else
         this.validation()
 
-      if (this.isValidForm) {
+      if (this.isValidForm && this.isValidEndDate&&this.isValidBeginDate&&this.isValidApproxEndDate&&this.isValidApproxBeginDate) {
         try {
           let response = await fetch(url, {
             method: 'POST',
@@ -188,7 +217,6 @@ export default {
         }
       } else {
         console.log('Введенные данные не прошли валидацию.')
-        window.scrollTo(0, 0)
       }
     },
     ...mapActions(['loadCounterparties'])
@@ -222,6 +250,7 @@ export default {
 <style scoped>
 .modal{
   position: fixed;
+  z-index: 2;
   display: block;
   top: 10vh;
   left:10vw;
@@ -259,7 +288,7 @@ export default {
   text-align: center;
   width: 100%;
   justify-self: center;
-  margin-left: 5%;
+  /*margin-left: 5%;*/
 }
 .add-modal-info{
   width:70%;
@@ -278,15 +307,21 @@ export default {
   margin-right: 10px;
   border: none;
   position: fixed;
+  z-index: 3;
+  transform: translate(0, 0);
+  transition: transform .1s ease-in;
 }
 button .add-modal-cancel-btn > img {
   position: fixed;
+  z-index: 3;
 }
 .add-modal-cancel-btn:hover{
   transform: translate(0, -2px);
+  transition: transform .1s ease-in;
 }
 .add-modal-cancel-btn:active{
   transform: translate(1px, 0);
+  transition: transform .1s ease-in;
 }
 .add-modal-content::-webkit-scrollbar {
   width: 12px;               /* ширина scrollbar */
@@ -335,14 +370,16 @@ button .add-modal-cancel-btn > img {
   align-items: center;
   width: 70%;
   margin-left: 10px;
-  background-color: #707070;
+  background-color: #909090;
   color: inherit;
   font: inherit;
   font-weight: 600;
+  transition: background-color .1s ease-in;
 }
 
 .fields-element__edit:hover {
-  background-color: #909090;
+  background-color: #707070;
+  transition: background-color .1s ease-in;
 }
 .add-button{
   display: flex;
@@ -353,19 +390,74 @@ button .add-modal-cancel-btn > img {
   border: 2px solid #454545;
   border-radius: 6px;
   padding: 10px 30px;
+  transform: translateY(0);
+  transition: transform .1s ease-in;
+  margin: 15px 0 0 0;
 }
 
 .add-button:hover{
   background-color: #909090;
   transform: translateY(-2px);
   box-shadow: 0 0 3px #282828;
+  transition: transform .1s ease-in;
 }
 .add-button:active{
   background-color: #606060;
   transform: translateY(2px);
+  transition: transform .1s ease-in;
   box-shadow: 0 0 3px #282828 inset;
 }
 
+.fieldset {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 70%;
+  align-self: stretch;
+  padding: 0 !important;
+  position: relative;
+  z-index: 3;
+  transition: background-color .1s ease-in;
+}
+.fieldset:hover input{
+  background-color: #C0C0C0;
+  transition: background-color .1s ease-in;
+}
+.fieldset label:hover {
+  pointer-events: none;
+}
 
+.fieldset label {
+  position: absolute;
+  z-index: 3;
+  top: 2px;
+  left: 11px;
+  font-size: 12px;
+  color: #454545;
+  text-align: left;
+}
+.fieldset input{
+  color: #FFFFFF;
+  width: 100%;
+  background-color: #909090;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  border: none;
+  padding: 12px 10px;
+  line-height: 100%;
+  transition: background-color .1s ease-in;
+}
+.fieldset input:hover{
+  background-color: #707070;
+  border: none;
+  transition: background-color .1s ease-in;
+}
+.fieldset input:focus{
+  outline: none;
+}
+.newInvalidMsg{
+  margin: 10px 0 0 0;
+}
 
 </style>
