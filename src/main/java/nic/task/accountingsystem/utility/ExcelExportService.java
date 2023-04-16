@@ -229,8 +229,8 @@ public class ExcelExportService {
     public void exportContractsByGivenPeriod(HttpServletResponse response, LocalDate beginDate, LocalDate endDate) {
         book = new XSSFWorkbook();
         sheet = book.createSheet("Contracts");
-        if (beginDate == null) { beginDate = LocalDate.MIN; }
-        if (endDate == null) { endDate = LocalDate.MAX; }
+        if (beginDate == null) { beginDate = LocalDate.of(0, 1, 1); }
+        if (endDate == null) { endDate = LocalDate.of(9999, 1, 1); }
 
         List<ContractDTO> contracts = contractService.getContractsByGivenPeriod(beginDate, endDate);
         writeHeaderRow(ExportableContractDTO.class);

@@ -16,7 +16,7 @@ public class CounterpartyDTO {
     private String name;
 
     @NotBlank(groups = {New.class, Modify.class})
-    @Size(min = 5, max = 50, groups = {New.class, Modify.class})
+    @Size(min = 1, max = 50, groups = {New.class, Modify.class})
     private String address;
 
     @NotBlank(groups = {New.class, Modify.class})

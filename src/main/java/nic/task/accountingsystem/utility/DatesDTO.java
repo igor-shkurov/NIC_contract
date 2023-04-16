@@ -3,22 +3,22 @@ package nic.task.accountingsystem.utility;
 import java.time.LocalDate;
 
 public class DatesDTO {
-    private LocalDate beginDate;
-    private LocalDate endDate;
+    private LocalDate approxBeginDate;
+    private LocalDate approxEndDate;
 
     public LocalDate getBeginDate() {
-        return beginDate;
+        return approxBeginDate;
     }
 
     public void setBeginDate(LocalDate beginDate) {
-        this.beginDate = beginDate;
+        this.approxBeginDate = beginDate;
     }
 
     public LocalDate getEndDate() {
-        return endDate;
+        return approxEndDate;
     }
 
     public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+        this.approxEndDate = endDate;
     }
 }
