@@ -361,6 +361,8 @@ export default {
             alert('Для редактирования объекта нужны права администратора.')
           } else if(this.mode==='counterparties' && response.status === 409) {
             alert('Организация-контрагент с таким ИНН уже существует.')
+          } else if(this.mode==='contractsCounterparty' && response.status === 304) {
+            alert('Невозможно выбрать данную организацию-КА. Возможно, она была удалена или изменена.')
           } else {
             alert("Ошибка редактирования: " + response.status);
           }
